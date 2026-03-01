@@ -50,8 +50,8 @@ export default function BitacoraPage() {
 
   return (
     <div className="min-h-full">
-      {/* Page content */}
-      <div className="max-w-3xl mx-auto px-10 py-16">
+      {/* Contenido con padding responsivo */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-10 py-8 sm:py-16">
         {/* Header */}
         <div className="text-center mb-12">
           <p
@@ -97,8 +97,8 @@ export default function BitacoraPage() {
               </p>
             </div>
 
-            {/* Mood selector */}
-            <div className="flex gap-3 mb-8">
+            {/* Mood selector — grid 3 columnas en móvil, 5 en sm+ */}
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-3 mb-8">
               {MOOD_OPTIONS.map((mood) => {
                 const active = selectedMood === mood.id;
                 return (
@@ -106,7 +106,7 @@ export default function BitacoraPage() {
                     key={mood.id}
                     type="button"
                     onClick={() => setSelectedMood(mood.id)}
-                    className={`flex flex-col items-center gap-2 py-4 px-4 rounded-xl border flex-1 transition-all ${
+                    className={`flex flex-col items-center gap-2 py-3 sm:py-4 px-2 sm:px-4 rounded-xl border transition-all ${
                       active
                         ? "bg-[#f0f4f8] border-sky-400 shadow-[0_0_0_1px_#0ea5e9]"
                         : "bg-white border-slate-100 hover:border-slate-200 hover:bg-slate-50"
@@ -182,8 +182,8 @@ export default function BitacoraPage() {
           </div>
         </div>
 
-        {/* Bottom suggestion cards */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Bottom suggestion cards — 1 columna en móvil, 2 en sm+ */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="bg-white/50 border border-slate-100 p-6">
             <p
               className="text-[9px] tracking-[0.9px] uppercase text-sky-500 mb-3"
@@ -214,8 +214,8 @@ export default function BitacoraPage() {
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="mt-10 pt-6 border-t border-slate-200 flex items-center justify-between">
+        {/* Footer responsivo */}
+        <div className="mt-10 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
           <p
             className="text-[9px] tracking-[0.9px] uppercase text-slate-400 italic"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}

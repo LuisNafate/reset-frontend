@@ -9,8 +9,8 @@ export default function InicioPage() {
         <div className="absolute bg-[rgba(59,130,246,0.05)] blur-[32px] rounded-full w-48 h-48 -left-10 top-1/4" />
       </div>
 
-      {/* Header */}
-      <header className="sticky top-0 z-10 backdrop-blur-sm bg-[rgba(255,255,255,0.4)] border-b border-[rgba(132,139,148,0.4)] h-20 px-12 flex items-center justify-between">
+      {/* Header — padding responsivo */}
+      <header className="sticky top-0 z-10 backdrop-blur-sm bg-[rgba(255,255,255,0.4)] border-b border-[rgba(132,139,148,0.4)] h-16 sm:h-20 px-4 sm:px-8 md:px-12 flex items-center justify-between">
         <p
           className="text-[11px] uppercase text-[rgba(26,54,93,0.6)]"
           style={{ fontFamily: "'JetBrains Mono', monospace", letterSpacing: "0.05em" }}
@@ -31,8 +31,8 @@ export default function InicioPage() {
         </div>
       </header>
 
-      {/* ── Content ── */}
-      <div className="px-16 py-16 max-w-4xl mx-auto">
+      {/* ── Content ── — padding responsivo */}
+      <div className="px-4 sm:px-8 md:px-16 py-8 md:py-16 max-w-4xl mx-auto">
 
         {/* =============================================
             MAIN HERO CARD
@@ -55,10 +55,11 @@ export default function InicioPage() {
             {/* Inner border */}
             <div className="absolute inset-[12px] border border-[#e2e8f0] pointer-events-none z-0" />
 
-            <div className="grid grid-cols-2" style={{ minHeight: 520 }}>
+            {/* Grid del hero card: 1 columna en móvil, 2 en sm+ */}
+            <div className="grid grid-cols-1 sm:grid-cols-2" style={{ minHeight: 520 }}>
 
               {/* ── Left: Plant ── */}
-              <div className="relative flex flex-col items-center justify-center py-14">
+              <div className="relative flex flex-col items-center justify-center py-10 sm:py-14">
                 {/* Background circle */}
                 <div
                   className="absolute rounded-full bg-[#f8f8f8] border border-[rgba(59,130,246,0.1)] animate-breathe"
@@ -90,10 +91,9 @@ export default function InicioPage() {
                 </div>
               </div>
 
-              {/* ── Right: Stats ── */}
+              {/* Stats \u2014 borde superior en m\u00f3vil, borde izquierdo en sm+ */}
               <div
-                className="flex flex-col justify-center px-12 py-12"
-                style={{ borderLeft: "2px solid rgba(59,130,246,0.1)" }}
+                className="flex flex-col justify-center px-6 py-8 sm:px-12 sm:py-12 border-t-2 border-[rgba(59,130,246,0.1)] sm:border-t-0 sm:border-l-2"
               >
                 <p
                   className="uppercase text-[#1a365d] mb-8"
@@ -102,33 +102,34 @@ export default function InicioPage() {
                   Progreso del OASIS
                 </p>
 
-                {/* Counter */}
+                {/* Counter — font tamaño responsivo */}
                 <div className="flex items-end gap-4 mb-10">
                   <span
-                    className="font-bold italic leading-none text-[#1a365d]"
-                    style={{ fontFamily: "'Playfair Display', serif", fontSize: 128 }}
+                    className="font-bold italic leading-none text-[#1a365d] text-[72px] sm:text-[100px] md:text-[128px]"
+                    style={{ fontFamily: "'Playfair Display', serif" }}
                   >
                     42
                   </span>
                   <div className="pb-5">
+                    {/* "días" / "cumplidos" \u2014 tama\u00f1os responsivos */}
                     <p
-                      className="italic text-[rgba(26,54,93,0.8)] leading-none"
-                      style={{ fontFamily: "'Playfair Display', serif", fontSize: 30 }}
+                      className="italic text-[rgba(26,54,93,0.8)] leading-none text-[22px] sm:text-[30px]"
+                      style={{ fontFamily: "'Playfair Display', serif" }}
                     >
                       días
                     </p>
                     <p
-                      className="italic text-[rgba(26,54,93,0.5)]"
-                      style={{ fontFamily: "'Playfair Display', serif", fontSize: 18 }}
+                      className="italic text-[rgba(26,54,93,0.5)] text-[14px] sm:text-[18px]"
+                      style={{ fontFamily: "'Playfair Display', serif" }}
                     >
                       cumplidos
                     </p>
                   </div>
                 </div>
 
-                {/* CTA Button */}
+                {/* CTA Button — altura responsiva */}
                 <button
-                  className="flex items-center gap-3 justify-center h-[68px] w-full bg-[#3b82f6] hover:bg-blue-400 text-white transition-colors mb-8"
+                  className="flex items-center gap-3 justify-center h-[52px] sm:h-[68px] w-full bg-[#3b82f6] hover:bg-blue-400 text-white transition-colors mb-8"
                   style={{
                     fontFamily: "'JetBrains Mono', monospace",
                     fontSize: 14,
@@ -170,9 +171,9 @@ export default function InicioPage() {
         </div>
 
         {/* =============================================
-            BOTTOM INFO CARDS — 3 columns
+            BOTTOM INFO CARDS — 1 columna en móvil, 3 en sm+
         ============================================= */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
           {/* ── Última Nota ── */}
           <div className="relative pt-[15px]">

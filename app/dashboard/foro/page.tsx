@@ -21,7 +21,8 @@ export default function ForoPage() {
 
   return (
     <div className="min-h-full">
-      <div className="px-10 py-10 max-w-[1100px] mx-auto">
+      {/* Contenido con padding responsivo */}
+      <div className="px-4 sm:px-10 py-6 sm:py-10 max-w-[1100px] mx-auto">
         {/* Top label */}
         <p
           className="text-[9px] tracking-[1.8px] uppercase text-slate-400 mb-2"
@@ -30,7 +31,8 @@ export default function ForoPage() {
           Comunidad Oasis
         </p>
 
-        <div className="grid grid-cols-[1fr_280px] gap-8">
+        {/* Grid: columna única en móvil, 2 columnas en lg+ */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-8">
           {/* Main column */}
           <div>
             {/* Header */}
@@ -45,7 +47,8 @@ export default function ForoPage() {
               </div>
             </div>
 
-            <div className="flex items-end justify-between mb-6">
+            {/* Título + toggle anónimo: wrap en móvil */}
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-3 sm:gap-0">
               <h1
                 className="text-[44px] font-normal text-slate-800 leading-none"
                 style={{ fontFamily: "'Playfair Display', serif" }}
@@ -125,21 +128,21 @@ export default function ForoPage() {
                   className="bg-white border border-slate-100 rounded-sm p-6"
                   style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.03)" }}
                 >
-                  {/* Post header */}
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-start gap-3">
+                  {/* Post header \u2014 wrap en m\u00f3vil para evitar desbordamiento de tags */}
+                  <div className="flex flex-wrap items-start justify-between mb-3 gap-2">
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
                       <div className="w-8 h-8 rounded-full bg-sky-100 border border-sky-200 flex items-center justify-center flex-shrink-0 mt-0.5">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="1.5">
                           <path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </div>
-                      <div>
-                        <h3
-                          className="text-[18px] italic text-slate-700 leading-tight"
-                          style={{ fontFamily: "'Playfair Display', serif" }}
-                        >
-                          {post.title}
-                        </h3>
+                        <div className="min-w-0">
+                          <h3
+                            className="text-[18px] italic text-slate-700 leading-tight"
+                            style={{ fontFamily: "'Playfair Display', serif" }}
+                          >
+                            {post.title}
+                          </h3>
                         <p
                           className="text-[9px] tracking-[0.6px] uppercase text-slate-400 mt-0.5"
                           style={{ fontFamily: "'JetBrains Mono', monospace" }}

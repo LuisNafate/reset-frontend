@@ -31,7 +31,8 @@ export default function ConfiguracionPage() {
 
   return (
     <div className="min-h-full">
-      <div className="max-w-2xl mx-auto px-10 py-12">
+      {/* Contenido con padding responsivo */}
+      <div className="max-w-2xl mx-auto px-4 sm:px-10 py-8 sm:py-12">
         {/* Header */}
         <p
           className="text-[9px] tracking-[2px] uppercase italic text-slate-400 mb-2"
@@ -66,7 +67,8 @@ export default function ConfiguracionPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-5 mb-6">
+          {/* Grid perfil: 1 columna en móvil, 2 en sm+ */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
             {/* Username */}
             <div className="flex flex-col gap-1.5">
               <label
@@ -174,16 +176,17 @@ export default function ConfiguracionPage() {
             Estas son las personas que recibirán una alerta si decides activar tu &apos;Raíz de Emergencia&apos;.
           </p>
 
-          {/* Table header */}
-          <div className="grid grid-cols-[1fr_1fr_auto] gap-4 pb-2 mb-1">
+          {/* Cabecera de tabla — ocultar columna email en móvil */}
+          <div className="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_1fr_auto] gap-4 pb-2 mb-1">
             <p
               className="text-[9px] tracking-[1px] uppercase text-slate-300"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               Nombre
             </p>
+            {/* Columna email oculta en móvil */}
             <p
-              className="text-[9px] tracking-[1px] uppercase text-slate-300"
+              className="hidden sm:block text-[9px] tracking-[1px] uppercase text-slate-300"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               Correo Electrónico
@@ -193,7 +196,7 @@ export default function ConfiguracionPage() {
           {peers.map((peer) => (
             <div
               key={peer.id}
-              className="grid grid-cols-[1fr_1fr_auto] gap-4 py-3 border-t border-slate-50 items-center"
+              className="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_1fr_auto] gap-4 py-3 border-t border-slate-50 items-center"
             >
               <p
                 className="text-[14px] italic text-slate-700"
@@ -201,8 +204,9 @@ export default function ConfiguracionPage() {
               >
                 {peer.name}
               </p>
+              {/* Email oculto en móvil */}
               <p
-                className="text-[11px] text-slate-400"
+                className="hidden sm:block text-[11px] text-slate-400"
                 style={{ fontFamily: "'JetBrains Mono', monospace" }}
               >
                 {peer.email}
@@ -247,8 +251,8 @@ export default function ConfiguracionPage() {
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+        {/* Footer responsivo */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 pt-4 border-t border-slate-100">
           <p
             className="text-[9px] tracking-[0.9px] uppercase text-slate-400 italic"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
