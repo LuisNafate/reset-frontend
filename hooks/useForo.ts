@@ -11,7 +11,7 @@ export function useForo() {
   const [postTitle, setPostTitle] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAnon, setIsAnon] = useState(false);
+  const [isAnonymous, setIsAnonymous] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +39,7 @@ export function useForo() {
       const newPost = await createForoPost({
         title: postTitle,
         content: postText,
-        isAnon,
+        isAnonymous,
         tags: selectedTags,
       });
       setPosts((prev) => [newPost, ...prev]);
@@ -90,7 +90,7 @@ export function useForo() {
     postTitle,
     selectedTags,
     isModalOpen,
-    isAnon,
+    isAnonymous,
     isLoading,
     isSubmitting,
     error,
@@ -98,7 +98,7 @@ export function useForo() {
     setPostTitle,
     setSelectedTags,
     setIsModalOpen,
-    setIsAnon,
+    setIsAnonymous,
     toggleTag,
     handlePublish,
     handleToggleLike,

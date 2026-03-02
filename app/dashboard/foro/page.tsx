@@ -12,14 +12,14 @@ export default function ForoPage() {
     postTitle,
     selectedTags,
     isModalOpen,
-    isAnon,
+    isAnonymous,
     isLoading,
     isSubmitting,
     error,
     setPostText,
     setPostTitle,
     setIsModalOpen,
-    setIsAnon,
+    setIsAnonymous,
     toggleTag,
     handlePublish,
     handleToggleLike,
@@ -356,13 +356,13 @@ export default function ForoPage() {
               <button
                 type="button"
                 role="switch"
-                aria-checked={isAnon}
-                onClick={() => setIsAnon(!isAnon)}
+                aria-checked={isAnonymous}
+                onClick={() => setIsAnonymous(!isAnonymous)}
                 className="relative rounded-full transition-colors duration-200 flex-shrink-0"
                 style={{
                   width: 40,
                   height: 22,
-                  backgroundColor: isAnon ? "#0ea5e9" : "#e2e8f0",
+                  backgroundColor: isAnonymous ? "#0ea5e9" : "#e2e8f0",
                 }}
               >
                 <span
@@ -372,7 +372,7 @@ export default function ForoPage() {
                     height: 16,
                     top: 3,
                     left: 3,
-                    transform: isAnon ? "translateX(18px)" : "translateX(0)",
+                    transform: isAnonymous ? "translateX(18px)" : "translateX(0)",
                   }}
                 />
               </button>
@@ -380,10 +380,10 @@ export default function ForoPage() {
                 className="text-[9px] uppercase min-w-[40px] text-right"
                 style={{
                   fontFamily: "'JetBrains Mono', monospace",
-                  color: isAnon ? "#0ea5e9" : "#94a3b8",
+                  color: isAnonymous ? "#0ea5e9" : "#94a3b8",
                 }}
               >
-                {isAnon ? "Sí" : "No"}
+                {isAnonymous ? "Sí" : "No"}
               </span>
             </div>
 

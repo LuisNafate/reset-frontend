@@ -24,7 +24,7 @@ export async function createForoPost(data: CreateForoPostData): Promise<ForoPost
   const newPost: ForoPost = {
     id: `post_${Date.now()}`,
     title: data.title.trim() || "Sin título",
-    author: data.isAnon ? "Anónimo" : "Tú",
+    author: data.isAnonymous ? "Anónimo" : "Tú",
     timeAgo: "Ahora",
     tags: data.tags,
     tagVariants: data.tags.map((t) => FORO_TAG_VARIANTS[t] ?? "default"),
