@@ -4,6 +4,9 @@ import { authHeaders } from "./auth";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
 
+// In-memory store que arranca con los mocks y acepta nuevas entradas en la sesión
+const _store: JournalEntry[] = [...MOCK_JOURNAL_ENTRIES];
+
 /** Save a new journal entry */
 export async function saveJournalEntry(
   data: SaveJournalEntryData
@@ -13,11 +16,13 @@ export async function saveJournalEntry(
   await new Promise((r) => setTimeout(r, 400));
   const newEntry: JournalEntry = {
     id: `j${Date.now()}`,
+    title: data.title.trim() || "Sin título",
     mood: data.mood,
     notes: data.notes,
+    consumed: data.consumed,
     createdAt: new Date().toISOString(),
-    isShared: false,
   };
+  _store.unshift(newEntry); // orden cronológico inverso
   return newEntry;
   // --- END MOCK ---
 
@@ -31,15 +36,33 @@ export async function saveJournalEntry(
   // return res.json();
 }
 
-/** Get paginated journal entries */
+/** Get journal entries (reverse-chronological) */
 export async function getJournalEntries(): Promise<JournalEntry[]> {
   // --- MOCK ---
   await new Promise((r) => setTimeout(r, 300));
-  return MOCK_JOURNAL_ENTRIES;
+  return [..._store].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
   // --- END MOCK ---
 
   // REAL IMPLEMENTATION:
   // const res = await fetch(`${BASE_URL}/journal`, { headers: authHeaders() });
   // if (!res.ok) throw new Error("Error al obtener las entradas");
   // return res.json();
+}
+
+/** Delete a journal entry by id */
+export async function deleteJournalEntry(id: string): Promise<void> {
+  // --- MOCK ---
+  await new Promise((r) => setTimeout(r, 200));
+  const idx = _store.findIndex((e) => e.id === id);
+  if (idx !== -1) _store.splice(idx, 1);
+  // --- END MOCK ---
+
+  // REAL IMPLEMENTATION:
+  // const res = await fetch(`${BASE_URL}/journal/${id}`, {
+  //   method: "DELETE",
+  //   headers: authHeaders(),
+  // });
+  // if (!res.ok) throw new Error("Error al eliminar la entrada");
 }
