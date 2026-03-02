@@ -97,8 +97,10 @@ export interface ForoPost {
 }
 
 export interface CreateForoPostData {
+  title: string;
   content: string;
   isAnon: boolean;
+  tags: string[];
 }
 
 export interface ForoCategory {

@@ -17,3 +17,36 @@ export const MOOD_OPTIONS: Mood[] = [
   { id: "triste", label: "Triste" },
   { id: "directado", label: "Directado" },
 ];
+
+// Etiquetas disponibles para publicaciones del foro
+export const FORO_TAGS: string[] = [
+  "Alcohol",
+  "Drogas",
+  "Apuestas",
+  "Videojuegos",
+  "Celular",
+  "Sexo",
+  "Otros",
+  "Logros diarios",
+  "Relaciones",
+  "Ansiedad",
+  "Estrés",
+  "Felicidad",
+  "Tranquilo",
+];
+
+export const FORO_TAG_VARIANTS: Record<string, "default" | "blue" | "green" | "red" | "yellow"> = {
+  Alcohol: "red",
+  Drogas: "red",
+  Apuestas: "yellow",
+  Videojuegos: "blue",
+  Celular: "blue",
+  Sexo: "default",
+  Otros: "default",
+  "Logros diarios": "green",
+  Relaciones: "green",
+  Ansiedad: "yellow",
+  Estrés: "yellow",
+  Felicidad: "green",
+  Tranquilo: "green",
+};

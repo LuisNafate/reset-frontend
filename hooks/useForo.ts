@@ -8,6 +8,9 @@ export function useForo() {
   const [posts, setPosts] = useState<ForoPost[]>([]);
   const [categories, setCategories] = useState<ForoCategory[]>([]);
   const [postText, setPostText] = useState("");
+  const [postTitle, setPostTitle] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAnon, setIsAnon] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -23,13 +26,27 @@ export function useForo() {
       .finally(() => setIsLoading(false));
   }, []);
 
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  };
+
   const handlePublish = async () => {
     if (!postText.trim()) return;
     setIsSubmitting(true);
     try {
-      const newPost = await createForoPost({ content: postText, isAnon });
+      const newPost = await createForoPost({
+        title: postTitle,
+        content: postText,
+        isAnon,
+        tags: selectedTags,
+      });
       setPosts((prev) => [newPost, ...prev]);
       setPostText("");
+      setPostTitle("");
+      setSelectedTags([]);
+      setIsModalOpen(false);
     } catch {
       setError("No se pudo publicar. Intenta de nuevo.");
     } finally {
@@ -70,12 +87,19 @@ export function useForo() {
     posts,
     categories,
     postText,
+    postTitle,
+    selectedTags,
+    isModalOpen,
     isAnon,
     isLoading,
     isSubmitting,
     error,
     setPostText,
+    setPostTitle,
+    setSelectedTags,
+    setIsModalOpen,
     setIsAnon,
+    toggleTag,
     handlePublish,
     handleToggleLike,
     handleToggleBookmark,

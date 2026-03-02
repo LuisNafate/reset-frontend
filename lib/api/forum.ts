@@ -1,5 +1,6 @@
 import type { ForoPost, ForoCategory, CreateForoPostData } from "@/types";
 import { MOCK_FORO_POSTS, MOCK_FORO_CATEGORIES } from "@/lib/mock/data";
+import { FORO_TAG_VARIANTS } from "@/lib/constants";
 import { authHeaders } from "./auth";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
@@ -22,11 +23,11 @@ export async function createForoPost(data: CreateForoPostData): Promise<ForoPost
   await new Promise((r) => setTimeout(r, 400));
   const newPost: ForoPost = {
     id: `post_${Date.now()}`,
-    title: "Nueva publicación",
+    title: data.title.trim() || "Sin título",
     author: data.isAnon ? "Anónimo" : "Tú",
     timeAgo: "Ahora",
-    tags: [],
-    tagVariants: [],
+    tags: data.tags,
+    tagVariants: data.tags.map((t) => FORO_TAG_VARIANTS[t] ?? "default"),
     content: data.content,
     likes: 0,
     comments: 0,

@@ -2,18 +2,25 @@
 
 import Badge from "@/components/ui/Badge";
 import { useForo } from "@/hooks/useForo";
+import { FORO_TAGS } from "@/lib/constants";
 
 export default function ForoPage() {
   const {
     posts,
     categories,
     postText,
+    postTitle,
+    selectedTags,
+    isModalOpen,
     isAnon,
     isLoading,
     isSubmitting,
     error,
     setPostText,
+    setPostTitle,
+    setIsModalOpen,
     setIsAnon,
+    toggleTag,
     handlePublish,
     handleToggleLike,
     handleToggleBookmark,
@@ -47,7 +54,7 @@ export default function ForoPage() {
               </div>
             </div>
 
-            {/* Título + toggle anónimo: wrap en móvil */}
+            {/* Título + botón nuevo post */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-3 sm:gap-0">
               <h1
                 className="text-[44px] font-normal text-slate-800 leading-none"
@@ -56,69 +63,24 @@ export default function ForoPage() {
                 Foro Comunitario
               </h1>
 
-              {/* Anonymous toggle */}
-              <div className="flex items-center gap-2 mb-1">
-                <span
-                  className="text-[9px] tracking-[1px] uppercase text-slate-400"
-                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                >
-                  Publicar como anónimo
-                </span>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={isAnon}
-                  onClick={() => setIsAnon(!isAnon)}
-                  className="relative rounded-full transition-colors duration-200"
-                  style={{
-                    width: 40,
-                    height: 22,
-                    backgroundColor: isAnon ? "#0ea5e9" : "#e2e8f0",
-                  }}
-                >
-                  <span
-                    className="absolute rounded-full bg-white shadow-sm transition-transform duration-200"
-                    style={{
-                      width: 16,
-                      height: 16,
-                      top: 3,
-                      left: 3,
-                      transform: isAnon ? "translateX(18px)" : "translateX(0)",
-                    }}
-                  />
-                </button>
-              </div>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="flex items-center gap-2 h-[42px] px-6 bg-slate-800 hover:bg-slate-700 text-white rounded-xl transition-colors mb-1"
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 11,
+                  letterSpacing: "2px",
+                  textTransform: "uppercase",
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M12 4.5v15m7.5-7.5h-15" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                Nuevo post
+              </button>
             </div>
 
-            {/* Post form */}
-            <div className="mb-8">
-              <textarea
-                value={postText}
-                onChange={(e) => setPostText(e.target.value)}
-                placeholder="¿Qué tienes en mente hoy? Comparte con la comunidad..."
-                rows={3}
-                className="w-full bg-white border border-slate-200 rounded-lg p-4 text-slate-500 placeholder-slate-300 outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 resize-none transition-all mb-3"
-                style={{ fontFamily: "'Playfair Display', serif", fontSize: 14, fontStyle: "italic" }}
-              />
-              <div className="flex justify-end">
-                <button
-                  onClick={handlePublish}
-                  disabled={!postText.trim() || isSubmitting}
-                  className="flex items-center gap-2 h-[42px] px-6 bg-slate-800 hover:bg-slate-700 disabled:opacity-60 text-white rounded-xl transition-colors"
-                  style={{
-                    fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: 11,
-                    letterSpacing: "2px",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  Publicar
-                </button>
-              </div>
-            </div>
+
 
             {/* Posts */}
             <div className="flex flex-col gap-5">
@@ -283,6 +245,188 @@ export default function ForoPage() {
           </div>
         </div>
       </div>
+      {/* Modal de nuevo post */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          style={{ backgroundColor: "rgba(15,23,42,0.25)", backdropFilter: "blur(2px)" }}
+          onClick={(e) => { if (e.target === e.currentTarget) setIsModalOpen(false); }}
+        >
+          <div
+            className="bg-white border border-slate-100 rounded-sm p-8 w-full max-w-[600px] max-h-[90vh] overflow-y-auto"
+            style={{ boxShadow: "0 4px 32px rgba(0,0,0,0.10)" }}
+          >
+            {/* Modal header */}
+            <div className="flex items-center justify-between mb-6">
+              <p
+                className="text-[9px] tracking-[1.8px] uppercase text-slate-400"
+                style={{ fontFamily: "'JetBrains Mono', monospace" }}
+              >
+                Nueva Publicación
+              </p>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-slate-300 hover:text-slate-500 transition-colors"
+                aria-label="Cerrar"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Título del post */}
+            <div className="mb-4">
+              <p
+                className="text-[9px] tracking-[1px] uppercase text-slate-400 mb-2"
+                style={{ fontFamily: "'JetBrains Mono', monospace" }}
+              >
+                Título
+              </p>
+              <input
+                type="text"
+                value={postTitle}
+                onChange={(e) => setPostTitle(e.target.value)}
+                placeholder="Dale un título a tu publicación..."
+                className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-slate-700 placeholder-slate-300 outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 transition-all"
+                style={{ fontFamily: "'Playfair Display', serif", fontSize: 15, fontStyle: "italic" }}
+              />
+            </div>
+
+            {/* Contenido */}
+            <div className="mb-5">
+              <p
+                className="text-[9px] tracking-[1px] uppercase text-slate-400 mb-2"
+                style={{ fontFamily: "'JetBrains Mono', monospace" }}
+              >
+                Contenido
+              </p>
+              <textarea
+                value={postText}
+                onChange={(e) => setPostText(e.target.value)}
+                placeholder="¿Qué tienes en mente hoy? Comparte con la comunidad..."
+                rows={4}
+                className="w-full bg-white border border-slate-200 rounded-lg p-4 text-slate-500 placeholder-slate-300 outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 resize-none transition-all"
+                style={{ fontFamily: "'Playfair Display', serif", fontSize: 14, fontStyle: "italic" }}
+              />
+            </div>
+
+            {/* Etiquetas */}
+            <div className="mb-5">
+              <p
+                className="text-[9px] tracking-[1px] uppercase text-slate-400 mb-3"
+                style={{ fontFamily: "'JetBrains Mono', monospace" }}
+              >
+                Etiquetas
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {FORO_TAGS.map((tag) => {
+                  const active = selectedTags.includes(tag);
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => toggleTag(tag)}
+                      className="transition-all border rounded-full px-3 py-1"
+                      style={{
+                        fontFamily: "'JetBrains Mono', monospace",
+                        fontSize: 9,
+                        letterSpacing: "1px",
+                        textTransform: "uppercase",
+                        backgroundColor: active ? "#0f172a" : "#f8fafc",
+                        borderColor: active ? "#0f172a" : "#e2e8f0",
+                        color: active ? "#ffffff" : "#94a3b8",
+                      }}
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Toggle anónimo */}
+            <div className="flex items-center gap-3 mb-6 py-3 border-t border-b border-slate-100">
+              <span
+                className="text-[9px] tracking-[1px] uppercase text-slate-400 flex-1"
+                style={{ fontFamily: "'JetBrains Mono', monospace" }}
+              >
+                Publicar como anónimo
+              </span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={isAnon}
+                onClick={() => setIsAnon(!isAnon)}
+                className="relative rounded-full transition-colors duration-200 flex-shrink-0"
+                style={{
+                  width: 40,
+                  height: 22,
+                  backgroundColor: isAnon ? "#0ea5e9" : "#e2e8f0",
+                }}
+              >
+                <span
+                  className="absolute rounded-full bg-white shadow-sm transition-transform duration-200"
+                  style={{
+                    width: 16,
+                    height: 16,
+                    top: 3,
+                    left: 3,
+                    transform: isAnon ? "translateX(18px)" : "translateX(0)",
+                  }}
+                />
+              </button>
+              <span
+                className="text-[9px] uppercase min-w-[40px] text-right"
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  color: isAnon ? "#0ea5e9" : "#94a3b8",
+                }}
+              >
+                {isAnon ? "Sí" : "No"}
+              </span>
+            </div>
+
+            {/* Acciones */}
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="h-[42px] px-5 border border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700 rounded-xl transition-colors"
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 11,
+                  letterSpacing: "2px",
+                  textTransform: "uppercase",
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handlePublish}
+                disabled={!postText.trim() || isSubmitting}
+                className="flex items-center gap-2 h-[42px] px-6 bg-slate-800 hover:bg-slate-700 disabled:opacity-60 text-white rounded-xl transition-colors"
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 11,
+                  letterSpacing: "2px",
+                  textTransform: "uppercase",
+                }}
+              >
+                {isSubmitting ? (
+                  <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M12 3v3m0 12v3M3 12h3m12 0h3" strokeLinecap="round" />
+                  </svg>
+                ) : (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+                {isSubmitting ? "Publicando..." : "Publicar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
