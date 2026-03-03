@@ -125,10 +125,12 @@ const ADDICTION_ICONS: Record<AddictionTypeId, React.ReactNode> = {
 export default function RegisterPage() {
   const {
     form,
+    role,
     selectedAddiction,
     otherDescription,
     isLoading,
     error,
+    setRole,
     setSelectedAddiction,
     setOtherDescription,
     handleChange,
@@ -207,7 +209,84 @@ export default function RegisterPage() {
         </span>
       </Link>
       {/* Layout: columna única en móvil, 2 columnas en desktop (lg+) */}
-      <div className="w-full max-w-[920px] flex flex-col gap-8 items-stretch lg:flex-row lg:gap-8 lg:items-start">
+      <div className="w-full max-w-[920px] flex flex-col gap-6">
+
+        {/* ── Selector de perfil ──────────────────────────────────────────── */}
+        <div
+          className="bg-white rounded-2xl border border-slate-100 p-5"
+          style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}
+        >
+          <p
+            className="text-[9px] tracking-[2px] uppercase text-slate-400 mb-4"
+            style={{ fontFamily: "'JetBrains Mono', monospace" }}
+          >
+            ¿Cómo deseas registrarte?
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            {/* Opción: usuario en recuperación */}
+            <button
+              type="button"
+              onClick={() => setRole("user")}
+              className={`flex flex-col items-start gap-2 p-4 rounded-xl border transition-all ${
+                role === "user"
+                  ? "border-sky-400 bg-sky-50 shadow-[0_0_0_1px_#0ea5e9]"
+                  : "border-slate-100 bg-white hover:border-sky-200 hover:bg-slate-50"
+              }`}
+            >
+              <span className={role === "user" ? "text-sky-500" : "text-slate-400"}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+                  <circle cx="12" cy="8" r="4" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M4 20C4 17 7.582 15 12 15C16.418 15 20 17 20 20" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+              <div>
+                <p
+                  className="text-[11px] font-medium"
+                  style={{ fontFamily: "'Playfair Display', serif", color: role === "user" ? "#0ea5e9" : "#475569" }}
+                >
+                  En Recuperación
+                </p>
+                <p className="text-[9px] text-slate-400 mt-0.5" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                  Busco apoyo y guía
+                </p>
+              </div>
+            </button>
+
+            {/* Opción: padrino / mentor */}
+            <button
+              type="button"
+              onClick={() => setRole("companion")}
+              className={`flex flex-col items-start gap-2 p-4 rounded-xl border transition-all ${
+                role === "companion"
+                  ? "border-teal-400 bg-teal-50 shadow-[0_0_0_1px_#2dd4bf]"
+                  : "border-slate-100 bg-white hover:border-teal-200 hover:bg-slate-50"
+              }`}
+            >
+              <span className={role === "companion" ? "text-teal-500" : "text-slate-400"}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+                  <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="9" cy="7" r="4" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M23 21v-2a4 4 0 00-3-3.87" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M16 3.13a4 4 0 010 7.75" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+              <div>
+                <p
+                  className="text-[11px] font-medium"
+                  style={{ fontFamily: "'Playfair Display', serif", color: role === "companion" ? "#0d9488" : "#475569" }}
+                >
+                  Padrino / Mentor
+                </p>
+                <p className="text-[9px] text-slate-400 mt-0.5" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                  Quiero acompañar a otros
+                </p>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {/* ── Columnas principales ────────────────────────────────────────── */}
+        <div className="flex flex-col gap-8 items-stretch lg:flex-row lg:gap-8 lg:items-start">
         {/* Left branding + Step 1 */}
         <div className="flex-1 flex flex-col gap-6">
           {/* Branding */}
@@ -313,106 +392,205 @@ export default function RegisterPage() {
         {/* Step 2 Card — padding responsivo */}
         <div className="flex-1 bg-white rounded-2xl border border-slate-100 p-6 sm:p-8"
           style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
-          <p
-            className="text-[9px] tracking-[2px] uppercase text-sky-500 mb-3"
-            style={{ fontFamily: "'JetBrains Mono', monospace" }}
-          >
-            Paso 2: Elige tu Camino
-          </p>
-          <h2
-            className="text-[24px] italic text-slate-700 mb-6 leading-tight"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            ¿En qué área buscas renovarte?
-          </h2>
 
-          {/* Grid with ADDICTION_TYPES */}
-          <div className="grid grid-cols-3 gap-3 mb-5">
-            {ADDICTION_TYPES.map((type) => {
-              const isSelected = selectedAddiction === type.id;
-              return (
-                <button
-                  key={type.id}
-                  type="button"
-                  onClick={() => setSelectedAddiction(type.id as AddictionTypeId)}
-                  className={`flex flex-col items-center gap-2 py-4 px-2 rounded-xl border transition-all ${
-                    isSelected
-                      ? "border-sky-400 bg-sky-50 shadow-[0_0_0_1px_#0ea5e9]"
-                      : "border-slate-100 bg-white hover:border-sky-200 hover:bg-slate-50"
-                  }`}
-                >
-                  <span className={isSelected ? "text-sky-500" : "text-sky-400"}>
-                    {ADDICTION_ICONS[type.id]}
-                  </span>
-                  <span
-                    className="text-[9px] tracking-[1px] uppercase"
-                    style={{
-                      fontFamily: "'JetBrains Mono', monospace",
-                      color: isSelected ? "#0ea5e9" : "#94a3b8",
-                    }}
-                  >
-                    {type.label}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Other description field */}
-          {selectedAddiction === "otros" && (
-            <div className="mb-5">
-              <label
-                className="text-[9px] tracking-[1.5px] uppercase text-slate-400 block mb-2"
+          {role === "user" ? (
+            /* ── Flujo usuario en recuperación ─────────────────────────── */
+            <>
+              <p
+                className="text-[9px] tracking-[2px] uppercase text-sky-500 mb-3"
                 style={{ fontFamily: "'JetBrains Mono', monospace" }}
               >
-                Especifica tu área de renovación
-              </label>
-              <input
-                type="text"
-                value={otherDescription}
-                onChange={(e) => setOtherDescription(e.target.value)}
-                placeholder="Ej: Tabaquismo, Compras, etc."
-                className="w-full border-0 border-b border-slate-200 bg-transparent py-2 text-slate-500 placeholder-slate-400 outline-none focus:border-sky-400 transition-colors text-[12px] italic"
+                Paso 2: Elige tu Camino
+              </p>
+              <h2
+                className="text-[24px] italic text-slate-700 mb-6 leading-tight"
                 style={{ fontFamily: "'Playfair Display', serif" }}
-              />
-            </div>
+              >
+                ¿En qué área buscas renovarte?
+              </h2>
+
+              {/* Grid with ADDICTION_TYPES */}
+              <div className="grid grid-cols-3 gap-3 mb-5">
+                {ADDICTION_TYPES.map((type) => {
+                  const isSelected = selectedAddiction === type.id;
+                  return (
+                    <button
+                      key={type.id}
+                      type="button"
+                      onClick={() => setSelectedAddiction(type.id as AddictionTypeId)}
+                      className={`flex flex-col items-center gap-2 py-4 px-2 rounded-xl border transition-all ${
+                        isSelected
+                          ? "border-sky-400 bg-sky-50 shadow-[0_0_0_1px_#0ea5e9]"
+                          : "border-slate-100 bg-white hover:border-sky-200 hover:bg-slate-50"
+                      }`}
+                    >
+                      <span className={isSelected ? "text-sky-500" : "text-sky-400"}>
+                        {ADDICTION_ICONS[type.id]}
+                      </span>
+                      <span
+                        className="text-[9px] tracking-[1px] uppercase"
+                        style={{
+                          fontFamily: "'JetBrains Mono', monospace",
+                          color: isSelected ? "#0ea5e9" : "#94a3b8",
+                        }}
+                      >
+                        {type.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Other description field */}
+              {selectedAddiction === "otros" && (
+                <div className="mb-5">
+                  <label
+                    className="text-[9px] tracking-[1.5px] uppercase text-slate-400 block mb-2"
+                    style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                  >
+                    Especifica tu área de renovación
+                  </label>
+                  <input
+                    type="text"
+                    value={otherDescription}
+                    onChange={(e) => setOtherDescription(e.target.value)}
+                    placeholder="Ej: Tabaquismo, Compras, etc."
+                    className="w-full border-0 border-b border-slate-200 bg-transparent py-2 text-slate-500 placeholder-slate-400 outline-none focus:border-sky-400 transition-colors text-[12px] italic"
+                    style={{ fontFamily: "'Playfair Display', serif" }}
+                  />
+                </div>
+              )}
+
+              {/* Error */}
+              {error && (
+                <p className="text-[11px] text-red-400 mb-3" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                  {error}
+                </p>
+              )}
+
+              {/* Submit */}
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={isLoading}
+                className="w-full h-[52px] bg-slate-800 hover:bg-slate-700 disabled:opacity-60 text-white rounded-xl flex items-center justify-center gap-3 mb-4 transition-colors"
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 12,
+                  letterSpacing: "2px",
+                  textTransform: "uppercase",
+                }}
+              >
+                Crear Cuenta
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+
+              <p
+                className="text-[9px] text-slate-400 text-center"
+                style={{ fontFamily: "'JetBrains Mono', monospace" }}
+              >
+                Al registrarte, aceptas nuestros{" "}
+                <a href="#" className="text-sky-500 uppercase tracking-[0.5px] hover:underline">
+                  Términos de Sanación
+                </a>
+              </p>
+            </>
+          ) : (
+            /* ── Flujo padrino / mentor ─────────────────────────────────── */
+            <>
+              <p
+                className="text-[9px] tracking-[2px] uppercase text-teal-500 mb-3"
+                style={{ fontFamily: "'JetBrains Mono', monospace" }}
+              >
+                Paso 2: Tu Rol
+              </p>
+              <h2
+                className="text-[24px] italic text-slate-700 mb-2 leading-tight"
+                style={{ fontFamily: "'Playfair Display', serif" }}
+              >
+                Bienvenido, Padrino
+              </h2>
+              <p
+                className="text-[13px] italic text-slate-500 mb-6 leading-relaxed"
+                style={{ fontFamily: "'Playfair Display', serif" }}
+              >
+                Tu experiencia y compromiso serán un faro de esperanza para quienes caminan hacia la recuperación.
+              </p>
+
+              {/* Responsabilidades */}
+              <div className="flex flex-col gap-3 mb-6">
+                {[
+                  {
+                    icon: "M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z",
+                    text: "Acompaña a usuarios en su proceso de sanación",
+                  },
+                  {
+                    icon: "M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z",
+                    text: "Comparte mensajes de motivación y experiencia",
+                  },
+                  {
+                    icon: "M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z",
+                    text: "Revisa el progreso de tus padrinados de forma segura",
+                  },
+                ].map(({ icon, text }, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <span className="mt-0.5 shrink-0 text-teal-400">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d={icon} strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </span>
+                    <p
+                      className="text-[11px] text-slate-500 leading-relaxed"
+                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                    >
+                      {text}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Error */}
+              {error && (
+                <p className="text-[11px] text-red-400 mb-3" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                  {error}
+                </p>
+              )}
+
+              {/* Submit */}
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={isLoading}
+                className="w-full h-[52px] disabled:opacity-60 text-white rounded-xl flex items-center justify-center gap-3 mb-4 transition-all hover:brightness-110"
+                style={{
+                  background: "linear-gradient(135deg, #0d9488 0%, #0891b2 100%)",
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 12,
+                  letterSpacing: "2px",
+                  textTransform: "uppercase",
+                  boxShadow: "0 4px 15px rgba(13,148,136,0.25)",
+                }}
+              >
+                Crear Cuenta como Padrino
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+
+              <p
+                className="text-[9px] text-slate-400 text-center"
+                style={{ fontFamily: "'JetBrains Mono', monospace" }}
+              >
+                Al registrarte, aceptas nuestros{" "}
+                <a href="#" className="text-teal-500 uppercase tracking-[0.5px] hover:underline">
+                  Términos de Sanación
+                </a>
+              </p>
+            </>
           )}
-
-          {/* Error */}
-          {error && (
-            <p className="text-[11px] text-red-400 mb-3" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-              {error}
-            </p>
-          )}
-
-          {/* Submit */}
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={isLoading}
-            className="w-full h-[52px] bg-slate-800 hover:bg-slate-700 disabled:opacity-60 text-white rounded-xl flex items-center justify-center gap-3 mb-4 transition-colors"
-            style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: 12,
-              letterSpacing: "2px",
-              textTransform: "uppercase",
-            }}
-          >
-            Crear Cuenta
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-
-          <p
-            className="text-[9px] text-slate-400 text-center"
-            style={{ fontFamily: "'JetBrains Mono', monospace" }}
-          >
-            Al registrarte, aceptas nuestros{" "}
-            <a href="#" className="text-sky-500 uppercase tracking-[0.5px] hover:underline">
-              Términos de Sanación
-            </a>
-          </p>
+        </div>
         </div>
       </div>
 

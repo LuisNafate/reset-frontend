@@ -11,6 +11,7 @@ export interface RegisterData {
   password: string;
   addictionType: string;
   otherDescription?: string;
+  role?: "user" | "companion";
 }
 
 export interface AuthResponse {

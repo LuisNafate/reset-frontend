@@ -31,9 +31,9 @@ export async function login(credentials: LoginCredentials): Promise<AuthResponse
  */
 export async function register(data: RegisterData): Promise<AuthResponse> {
   // --- MOCK ---
-  void data;
   await new Promise((r) => setTimeout(r, 500));
-  return { token: "mock-token-abc123", user: MOCK_USER };
+  const user = data.role === "companion" ? MOCK_COMPANION_USER : MOCK_USER;
+  return { token: "mock-token-abc123", user };
   // --- END MOCK ---
 
   // REAL IMPLEMENTATION:
