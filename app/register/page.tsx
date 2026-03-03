@@ -5,6 +5,68 @@ import { useRegister } from "@/hooks/useRegister";
 import { ADDICTION_TYPES } from "@/lib/constants";
 import type { AddictionTypeId } from "@/types";
 
+/* ─── Fondo decorativo: engranes + formas geométricas ──────────────────── */
+function Gear({ size = 200, teeth = 12, color = "currentColor" }: { size?: number; teeth?: number; color?: string }) {
+  const R = size / 2;
+  const r = R * 0.72;
+  const rh = R * 0.22;
+  const toothW = (2 * Math.PI * r) / teeth * 0.38;
+  const pts: string[] = [];
+  for (let i = 0; i < teeth; i++) {
+    const a0 = ((i * 2 * Math.PI) / teeth) - toothW / r / 2;
+    const a1 = ((i * 2 * Math.PI) / teeth) + toothW / r / 2;
+    const a2 = (((i + 0.5) * 2 * Math.PI) / teeth) - toothW / r / 2;
+    const a3 = (((i + 0.5) * 2 * Math.PI) / teeth) + toothW / r / 2;
+    const c = Math.cos, s = Math.sin;
+    pts.push(`${R + r * c(a0)},${R + r * s(a0)}`);
+    pts.push(`${R + R * c(a0)},${R + R * s(a0)}`);
+    pts.push(`${R + R * c(a1)},${R + R * s(a1)}`);
+    pts.push(`${R + r * c(a1)},${R + r * s(a1)}`);
+    pts.push(`${R + r * c(a2)},${R + r * s(a2)}`);
+    pts.push(`${R + r * c(a3)},${R + r * s(a3)}`);
+  }
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none" aria-hidden="true">
+      <polygon points={pts.join(" ")} fill={color} />
+      <circle cx={R} cy={R} r={rh} fill="white" />
+      {[0, 60, 120].map((deg) => {
+        const rad = (deg * Math.PI) / 180;
+        return (
+          <line key={deg}
+            x1={R + rh * Math.cos(rad)} y1={R + rh * Math.sin(rad)}
+            x2={R + r * 0.6 * Math.cos(rad)} y2={R + r * 0.6 * Math.sin(rad)}
+            stroke={color} strokeWidth={1.5} opacity={0.5}
+          />
+        );
+      })}
+    </svg>
+  );
+}
+
+function Hexagon({ size = 60, color = "currentColor" }: { size?: number; color?: string }) {
+  const s = size / 2;
+  const h = s * Math.sqrt(3) / 2;
+  const points = [
+    [s, 0], [s + h, s / 2], [s + h, 3 * s / 2],
+    [s, 2 * s], [s - h, 3 * s / 2], [s - h, s / 2],
+  ].map(([x, y]) => `${x},${y}`).join(" ");
+  return (
+    <svg width={size + s} height={size * 2} viewBox={`0 0 ${size + s} ${size * 2}`} fill="none" aria-hidden="true">
+      <polygon points={points} stroke={color} strokeWidth={1.5} fill="none" />
+    </svg>
+  );
+}
+
+function Diamond({ size = 40, color = "currentColor" }: { size?: number; color?: string }) {
+  const h = size / 2;
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none" aria-hidden="true">
+      <polygon points={`${h},2 ${size - 2},${h} ${h},${size - 2} 2,${h}`} stroke={color} strokeWidth={1} fill="none" />
+      <polygon points={`${h},${h * 0.6} ${h * 1.4},${h} ${h},${h * 1.4} ${h * 0.6},${h}`} stroke={color} strokeWidth={0.8} fill="none" opacity={0.5} />
+    </svg>
+  );
+}
+
 // SVG icons are purely visual — they stay in the component
 const ADDICTION_ICONS: Record<AddictionTypeId, React.ReactNode> = {
   alcohol: (
@@ -76,9 +138,57 @@ export default function RegisterPage() {
 
   return (
     <div
-      className="min-h-screen w-full flex items-start lg:items-center justify-center p-4 sm:p-6 pb-20 sm:pb-20"
-      style={{ background: "#eef2f7" }}
+      className="min-h-screen w-full flex items-start lg:items-center justify-center p-4 sm:p-6 pb-20 sm:pb-20 relative overflow-hidden"
+      style={{ background: "linear-gradient(135deg, #f0f4f8 0%, #e8eef4 100%)" }}
     >
+      {/* ── Engrane grande — inferior derecha ────────────────────────────── */}
+      <div
+        className="absolute pointer-events-none select-none animate-spin-gear hidden sm:block"
+        style={{ bottom: "-10%", right: "-5%", opacity: 0.07, color: "#1a365d" }}
+        aria-hidden="true"
+      >
+        <Gear size={340} teeth={16} color="currentColor" />
+      </div>
+
+      {/* ── Engrane mediano — superior izquierda ─────────────────────────── */}
+      <div
+        className="absolute pointer-events-none select-none animate-spin-gear-reverse hidden sm:block"
+        style={{ top: "-8%", left: "-4%", opacity: 0.055, color: "#0ea5e9" }}
+        aria-hidden="true"
+      >
+        <Gear size={230} teeth={12} color="currentColor" />
+      </div>
+
+      {/* ── Formas geométricas flotantes ─────────────────────────────────── */}
+      <div
+        className="absolute pointer-events-none select-none animate-drift-1 hidden md:block"
+        style={{ top: "16%", right: "8%", color: "rgba(14,165,233,0.25)" }}
+        aria-hidden="true"
+      >
+        <Hexagon size={52} color="currentColor" />
+      </div>
+      <div
+        className="absolute pointer-events-none select-none animate-drift-2 hidden md:block"
+        style={{ bottom: "20%", left: "7%", color: "rgba(26,54,93,0.18)" }}
+        aria-hidden="true"
+      >
+        <Diamond size={44} color="currentColor" />
+      </div>
+      <div
+        className="absolute pointer-events-none select-none animate-drift-3 hidden lg:block"
+        style={{ top: "56%", right: "13%", color: "rgba(13,148,136,0.22)" }}
+        aria-hidden="true"
+      >
+        <Hexagon size={34} color="currentColor" />
+      </div>
+      <div
+        className="absolute pointer-events-none select-none animate-drift-1 hidden lg:block"
+        style={{ top: "28%", left: "11%", color: "rgba(14,165,233,0.18)", animationDelay: "-5s" }}
+        aria-hidden="true"
+      >
+        <Diamond size={30} color="currentColor" />
+      </div>
+
       {/* ─── Botón Volver — visible en móvil y desktop ─────────────────────────
           En Capacitor Android este flujo se activa también con el botón físico Back */}
       <Link
