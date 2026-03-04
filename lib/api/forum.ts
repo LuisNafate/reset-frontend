@@ -1,75 +1,96 @@
-import type { ForoPost, ForoCategory, CreateForoPostData } from "@/types";
-import { MOCK_FORO_POSTS, MOCK_FORO_CATEGORIES } from "@/lib/mock/data";
-import { FORO_TAG_VARIANTS } from "@/lib/constants";
-import { authHeaders } from "./auth";
+// lib/api/forum.ts
+// Foro comunitario — posts, reacciones y comentarios.
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
+import { apiRequest } from './client';
+import type { ForoPost, ForoCategory, CreateForoPostData } from '@/types';
 
-export async function getForoPosts(): Promise<ForoPost[]> {
-  // --- MOCK ---
-  void authHeaders;
-  await new Promise((r) => setTimeout(r, 300));
-  return MOCK_FORO_POSTS;
-  // --- END MOCK ---
+// ─── Helpers de normalización ────────────────────────────────────────────────
 
-  // REAL IMPLEMENTATION:
-  // const res = await fetch(`${BASE_URL}/forum/posts`, { headers: authHeaders() });
-  // if (!res.ok) throw new Error("Error al obtener los posts");
-  // return res.json();
-}
-
-export async function createForoPost(data: CreateForoPostData): Promise<ForoPost> {
-  // --- MOCK ---
-  await new Promise((r) => setTimeout(r, 400));
-  const newPost: ForoPost = {
-    id: `post_${Date.now()}`,
-    title: data.title.trim() || "Sin título",
-    author: data.isAnonymous ? "Anónimo" : "Tú",
-    timeAgo: "Ahora",
-    tags: data.tags,
-    tagVariants: data.tags.map((t) => FORO_TAG_VARIANTS[t] ?? "default"),
-    content: data.content,
-    likes: 0,
-    comments: 0,
-    liked: false,
-    bookmarked: false,
+/** Convierte un post raw de la API al tipo ForoPost del UI. */
+function normalizePost(raw: any): ForoPost {
+  return {
+    id: raw.id ?? raw._id ?? String(Date.now()),
+    title: raw.title ?? '',
+    author: raw.is_anonymous
+      ? 'Anónimo'
+      : (raw.user?.name ?? raw.author ?? 'Usuario'),
+    timeAgo: raw.createdAt
+      ? new Date(raw.createdAt).toLocaleDateString('es')
+      : 'Reciente',
+    tags: raw.tags ?? [],
+    tagVariants: (raw.tags ?? []).map(() => 'default' as const),
+    content: raw.content ?? '',
+    likes: raw.likes_count ?? raw.likes ?? 0,
+    comments: raw.comments_count ?? raw.comments ?? 0,
+    liked: raw.liked ?? false,
+    bookmarked: raw.bookmarked ?? false,
   };
-  return newPost;
-  // --- END MOCK ---
-
-  // REAL IMPLEMENTATION:
-  // const res = await fetch(`${BASE_URL}/forum/posts`, {
-  //   method: "POST",
-  //   headers: authHeaders(),
-  //   body: JSON.stringify(data),
-  // });
-  // if (!res.ok) throw new Error("Error al publicar");
-  // return res.json();
 }
 
-export async function toggleLikePost(postId: string): Promise<{ liked: boolean; likes: number }> {
-  // --- MOCK ---
-  await new Promise((r) => setTimeout(r, 200));
-  return { liked: true, likes: 1 }; // page optimistically updates state
-  // --- END MOCK ---
+// ─── Funciones ───────────────────────────────────────────────────────────────
 
-  // REAL IMPLEMENTATION:
-  // const res = await fetch(`${BASE_URL}/forum/posts/${postId}/like`, {
-  //   method: "POST",
-  //   headers: authHeaders(),
-  // });
-  // if (!res.ok) throw new Error("Error al reaccionar");
-  // return res.json();
+/** Obtiene posts paginados del foro. */
+export async function getForoPosts(
+  page = 1,
+  limit = 10
+): Promise<ForoPost[]> {
+  const res: any = await apiRequest(
+    `/forum/posts?page=${page}&limit=${limit}`
+  );
+  const list: any[] = res?.data ?? res ?? [];
+  return Array.isArray(list) ? list.map(normalizePost) : [];
 }
 
+/**
+ * Publica un nuevo post en el foro.
+ * El hook actualiza la lista localmente tras llamar esta función.
+ */
+export async function createForoPost(
+  data: CreateForoPostData
+): Promise<ForoPost> {
+  const res: any = await apiRequest('/forum/posts', {
+    method: 'POST',
+    body: JSON.stringify({
+      title: data.title,
+      content: data.content,
+      is_anonymous: data.isAnonymous,
+    }),
+  });
+  return normalizePost(res?.data ?? res);
+}
+
+/** Reacciona (like) o quita la reacción de un post. */
+export async function toggleLikePost(
+  postId: string
+): Promise<{ liked: boolean; likes: number }> {
+  const res: any = await apiRequest(
+    `/forum/posts/${postId}/react`,
+    { method: 'POST' }
+  );
+  return { liked: res?.liked ?? true, likes: res?.likes ?? 0 };
+}
+
+/** Comenta en un post. */
+export async function commentPost(
+  postId: string,
+  content: string,
+  is_anonymous = false
+): Promise<any> {
+  return apiRequest(`/forum/posts/${postId}/comments`, {
+    method: 'POST',
+    body: JSON.stringify({ content, is_anonymous }),
+  });
+}
+
+/** Elimina un post (solo autor o admin). */
+export async function deletePost(postId: string): Promise<void> {
+  await apiRequest(`/forum/posts/${postId}`, { method: 'DELETE' });
+}
+
+/**
+ * No existe endpoint de categorías en la API — devuelve lista vacía
+ * para mantener compatibilidad con el hook existente sin romper la UI.
+ */
 export async function getForoCategories(): Promise<ForoCategory[]> {
-  // --- MOCK ---
-  await new Promise((r) => setTimeout(r, 200));
-  return MOCK_FORO_CATEGORIES;
-  // --- END MOCK ---
-
-  // REAL IMPLEMENTATION:
-  // const res = await fetch(`${BASE_URL}/forum/categories`, { headers: authHeaders() });
-  // if (!res.ok) throw new Error("Error al obtener categorías");
-  // return res.json();
+  return [];
 }

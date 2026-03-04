@@ -1,107 +1,115 @@
-import type { CompanionProgress, CompanionProfile, SupportedUser, Message } from "@/types";
-import {
-  MOCK_COMPANION_PROGRESS,
-  MOCK_COMPANION_PROFILE,
-  MOCK_SUPPORTED_USERS,
-  MOCK_MESSAGES,
-  MOCK_MESSAGE_LIBRARY,
-} from "@/lib/mock/data";
-import { authHeaders } from "./auth";
-import type { MessageLibraryItem } from "@/types";
+// lib/api/companion.ts
+// Funciones del módulo acompañante (padrino).
+// Usa el cliente HTTP centralizado (lib/api/client.ts).
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
+import { apiRequest } from './client';
+import type {
+  CompanionProgress,
+  CompanionProfile,
+  SupportedUser,
+  Message,
+  MessageLibraryItem,
+} from '@/types';
+
+// ─── Progreso ────────────────────────────────────────────────────────────────
 
 export async function getCompanionProgress(): Promise<CompanionProgress> {
-  // --- MOCK ---
-  void authHeaders;
-  await new Promise((r) => setTimeout(r, 300));
-  return MOCK_COMPANION_PROGRESS;
-  // --- END MOCK ---
-
-  // REAL IMPLEMENTATION:
-  // const res = await fetch(`${BASE_URL}/companion/progress`, { headers: authHeaders() });
-  // if (!res.ok) throw new Error("Error al obtener el progreso");
-  // return res.json();
+  const res: any = await apiRequest('/streak');
+  const data = res?.data ?? res;
+  return {
+    sobrietyDays: data?.currentStreak ?? 0,
+    plantStage: data?.plantStage ?? 'Brote',
+    notesThisWeek: data?.notesThisWeek ?? 0,
+    messagesReceived: data?.messagesReceived ?? 0,
+    consistency: data?.consistency ?? 0,
+    lastActiveAt: data?.lastActiveAt ?? new Date().toISOString(),
+    recentActivity: data?.recentActivity ?? [],
+  };
 }
 
-export async function getMessages(): Promise<Message[]> {
-  // --- MOCK ---
-  await new Promise((r) => setTimeout(r, 200));
-  return MOCK_MESSAGES;
-  // --- END MOCK ---
+// ─── Mensajes ────────────────────────────────────────────────────────────────
 
-  // REAL IMPLEMENTATION:
-  // const res = await fetch(`${BASE_URL}/companion/messages`, { headers: authHeaders() });
-  // if (!res.ok) throw new Error("Error al obtener los mensajes");
-  // return res.json();
+export async function getMessages(): Promise<Message[]> {
+  const res: any = await apiRequest('/messages');
+  const list: any[] = res?.data ?? res ?? [];
+  return Array.isArray(list)
+    ? list.map((m: any) => ({
+        id: m.id ?? m._id,
+        text: m.text ?? m.content ?? '',
+        time: m.createdAt
+          ? new Date(m.createdAt).toLocaleTimeString('es', {
+              hour: '2-digit',
+              minute: '2-digit',
+            })
+          : '',
+        fromMe: m.fromMe ?? false,
+      }))
+    : [];
 }
 
 export async function sendMessage(text: string): Promise<Message> {
-  // --- MOCK ---
-  await new Promise((r) => setTimeout(r, 300));
+  const res: any = await apiRequest('/messages', {
+    method: 'POST',
+    body: JSON.stringify({ text }),
+  });
+  const data = res?.data ?? res;
   return {
-    id: `m${Date.now()}`,
-    text,
-    time: new Date().toLocaleTimeString("es", { hour: "2-digit", minute: "2-digit" }),
+    id: data?.id ?? data?._id ?? `m${Date.now()}`,
+    text: data?.text ?? text,
+    time: data?.createdAt
+      ? new Date(data.createdAt).toLocaleTimeString('es', {
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      : new Date().toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' }),
     fromMe: true,
   };
-  // --- END MOCK ---
-
-  // REAL IMPLEMENTATION:
-  // const res = await fetch(`${BASE_URL}/companion/messages`, {
-  //   method: "POST",
-  //   headers: authHeaders(),
-  //   body: JSON.stringify({ text }),
-  // });
-  // if (!res.ok) throw new Error("Error al enviar el mensaje");
-  // return res.json();
 }
 
 export async function getMessageLibrary(): Promise<MessageLibraryItem[]> {
-  // --- MOCK ---
-  await new Promise((r) => setTimeout(r, 100));
-  return MOCK_MESSAGE_LIBRARY;
-  // --- END MOCK ---
-
-  // REAL IMPLEMENTATION:
-  // const res = await fetch(`${BASE_URL}/companion/library`, { headers: authHeaders() });
-  // return res.json();
+  const res: any = await apiRequest('/messages/library').catch(() => []);
+  const list: any[] = res?.data ?? res ?? [];
+  return Array.isArray(list)
+    ? list.map((item: any) => ({
+        id: item.id ?? item._id ?? String(Date.now()),
+        text: item.text ?? '',
+      }))
+    : [];
 }
 
-export async function getCompanionProfile(): Promise<CompanionProfile> {
-  // --- MOCK ---
-  await new Promise((r) => setTimeout(r, 200));
-  return MOCK_COMPANION_PROFILE;
-  // --- END MOCK ---
+// ─── Perfil del acompañante ──────────────────────────────────────────────────
 
-  // REAL IMPLEMENTATION:
-  // const res = await fetch(`${BASE_URL}/companion/profile`, { headers: authHeaders() });
-  // if (!res.ok) throw new Error("Error al obtener el perfil");
-  // return res.json();
+export async function getCompanionProfile(): Promise<CompanionProfile> {
+  const res: any = await apiRequest('/profile');
+  const data = res?.data ?? res;
+  return {
+    name: data?.name ?? '',
+    email: data?.email ?? '',
+    phone: data?.phone ?? '',
+    emailAlerts: data?.emailAlerts ?? false,
+    smsAlerts: data?.smsAlerts ?? false,
+  };
 }
 
 export async function updateCompanionProfile(data: CompanionProfile): Promise<void> {
-  // --- MOCK ---
-  void data;
-  await new Promise((r) => setTimeout(r, 400));
-  // --- END MOCK ---
-
-  // REAL IMPLEMENTATION:
-  // const res = await fetch(`${BASE_URL}/companion/profile`, {
-  //   method: "PUT",
-  //   headers: authHeaders(),
-  //   body: JSON.stringify(data),
-  // });
-  // if (!res.ok) throw new Error("Error al guardar");
+  await apiRequest('/profile', {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
 }
 
-export async function getSupportedUsers(): Promise<SupportedUser[]> {
-  // --- MOCK ---
-  await new Promise((r) => setTimeout(r, 200));
-  return MOCK_SUPPORTED_USERS;
-  // --- END MOCK ---
+// ─── Usuarios apoyados ───────────────────────────────────────────────────────
 
-  // REAL IMPLEMENTATION:
-  // const res = await fetch(`${BASE_URL}/companion/users`, { headers: authHeaders() });
-  // return res.json();
+export async function getSupportedUsers(): Promise<SupportedUser[]> {
+  const res: any = await apiRequest('/sponsorships/my-godchildren');
+  const list: any[] = res?.data ?? res ?? [];
+  return Array.isArray(list)
+    ? list.map((u: any) => ({
+        id: u.id ?? u._id ?? String(Date.now()),
+        displayName: u.name ?? u.displayName ?? 'Usuario',
+        addictionType: u.addictionName ?? u.addictionType ?? '',
+        sobrietyDays: u.sobrietyDays ?? 0,
+        status: u.status === 'Inactivo' ? 'Inactivo' : 'Activo',
+      }))
+    : [];
 }

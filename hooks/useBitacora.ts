@@ -1,29 +1,78 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { saveJournalEntry, getJournalEntries, deleteJournalEntry } from "@/lib/api/journal";
+import { createLog, getLogs } from "@/lib/api/tracking";
 import type { JournalEntry, MoodId } from "@/types";
 
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+const MOOD_TO_NUMBER: Record<MoodId, number> = {
+  feliz: 9,
+  calmado: 7,
+  ansioso: 4,
+  triste: 3,
+  directado: 6,
+};
+
+const NUMBER_TO_MOOD: Array<[number, MoodId]> = [
+  [9, "feliz"],
+  [7, "calmado"],
+  [4, "ansioso"],
+  [3, "triste"],
+  [6, "directado"],
+];
+
+function closestMood(value: number): MoodId {
+  return NUMBER_TO_MOOD.reduce((best, [n, id]) =>
+    Math.abs(n - value) < Math.abs(best[0] - value) ? [n, id] : best
+  )[1];
+}
+
+/** Convierte un registro diario de la API al formato JournalEntry del UI. */
+function normalizeEntry(raw: any): JournalEntry {
+  return {
+    id: raw.id ?? raw._id ?? String(Date.now()),
+    title: raw.log_date ?? "",
+    mood: raw.emotional_state ? closestMood(raw.emotional_state) : "calmado",
+    notes: raw.notes ?? "",
+    consumed: raw.consumed ?? false,
+    createdAt: raw.createdAt ?? raw.log_date ?? new Date().toISOString(),
+  };
+}
+
+// ─── Hook ───────────────────────────────────────────────────────────────────
+
 export function useBitacora() {
-  // ── Lista de entradas ────────────────────────────────────────────────────
+  // ── Lista de entradas ────────────────────────────────────────────────────────────
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [isLoadingEntries, setIsLoadingEntries] = useState(true);
 
-  // ── Formulario nueva entrada ─────────────────────────────────────────────
+  // ── Formulario nueva entrada ─────────────────────────────────────────────────────
   const [title, setTitle] = useState("");
   const [selectedMood, setSelectedMood] = useState<MoodId>("calmado");
   const [notes, setNotes] = useState("");
   const [consumed, setConsumed] = useState(false);
 
-  // ── Estado general ───────────────────────────────────────────────────────
+  // ── Estado general ───────────────────────────────────────────────────────────────
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
-  // Cargar entradas al montar (orden cronológico inverso garantizado en API)
+  // Cargar entradas al montar
   useEffect(() => {
-    getJournalEntries()
-      .then(setEntries)
+    getLogs(30)
+      .then((res: any) => {
+        const data: any[] = res?.data ?? res ?? [];
+        setEntries(
+          Array.isArray(data)
+            ? data.map(normalizeEntry).sort(
+                (a, b) =>
+                  new Date(b.createdAt).getTime() -
+                  new Date(a.createdAt).getTime()
+              )
+            : []
+        );
+      })
       .catch(() => setError("Error al cargar las entradas"))
       .finally(() => setIsLoadingEntries(false));
   }, []);
@@ -37,10 +86,25 @@ export function useBitacora() {
     setError(null);
     setSaved(false);
     try {
-      const newEntry = await saveJournalEntry({ title, mood: selectedMood, notes, consumed });
-      // Insertar al principio para mantener orden inverso sin recargar
-      setEntries((prev) => [newEntry, ...prev]);
+      await createLog({
+        log_date: new Date().toISOString().split("T")[0],
+        consumed,
+        craving_level: 5,
+        emotional_state: MOOD_TO_NUMBER[selectedMood],
+      });
       setSaved(true);
+      // Recargar entradas desde la API
+      const res: any = await getLogs(30);
+      const data: any[] = res?.data ?? res ?? [];
+      setEntries(
+        Array.isArray(data)
+          ? data.map(normalizeEntry).sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+            )
+          : []
+      );
       setTitle("");
       setNotes("");
       setConsumed(false);
@@ -52,15 +116,9 @@ export function useBitacora() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    // Optimistic update
-    setEntries((prev) => prev.filter((e) => e.id !== id));
-    try {
-      await deleteJournalEntry(id);
-    } catch {
-      // Revertir si falla
-      getJournalEntries().then(setEntries);
-    }
+  // La API de tracking no expone endpoint DELETE por log — se omite
+  const handleDelete = (_id: string) => {
+    setEntries((prev) => prev.filter((e) => e.id !== _id));
   };
 
   return {

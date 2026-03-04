@@ -1,68 +1,51 @@
-import type { JournalEntry, SaveJournalEntryData } from "@/types";
-import { MOCK_JOURNAL_ENTRIES } from "@/lib/mock/data";
-import { authHeaders } from "./auth";
+// lib/api/journal.ts
+// Este módulo ha sido reemplazado por lib/api/tracking.ts.
+// Se conserva para retrocompatibilidad como alias liviano.
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
+import { apiRequest } from './client';
+import type { JournalEntry, SaveJournalEntryData } from '@/types';
 
-// In-memory store que arranca con los mocks y acepta nuevas entradas en la sesión
-const _store: JournalEntry[] = [...MOCK_JOURNAL_ENTRIES];
-
-/** Save a new journal entry */
+/** @deprecated Usar tracking.ts (createLog / getLogs) */
 export async function saveJournalEntry(
   data: SaveJournalEntryData
 ): Promise<JournalEntry> {
-  // --- MOCK ---
-  void authHeaders;
-  await new Promise((r) => setTimeout(r, 400));
-  const newEntry: JournalEntry = {
-    id: `j${Date.now()}`,
-    title: data.title.trim() || "Sin título",
+  const res: any = await apiRequest('/tracking/logs', {
+    method: 'POST',
+    body: JSON.stringify({
+      log_date: new Date().toISOString().split('T')[0],
+      consumed: data.consumed,
+      craving_level: data.cravingLevel ?? 5,
+      emotional_state: 5,
+    }),
+  });
+  const raw = res?.data ?? res;
+  return {
+    id: raw.id ?? raw._id ?? String(Date.now()),
+    title: data.title,
     mood: data.mood,
     notes: data.notes,
     consumed: data.consumed,
-    createdAt: new Date().toISOString(),
+    createdAt: raw.createdAt ?? new Date().toISOString(),
   };
-  _store.unshift(newEntry); // orden cronológico inverso
-  return newEntry;
-  // --- END MOCK ---
-
-  // REAL IMPLEMENTATION:
-  // const res = await fetch(`${BASE_URL}/journal`, {
-  //   method: "POST",
-  //   headers: authHeaders(),
-  //   body: JSON.stringify(data),
-  // });
-  // if (!res.ok) throw new Error("Error al guardar la entrada");
-  // return res.json();
 }
 
-/** Get journal entries (reverse-chronological) */
+/** @deprecated Usar tracking.ts (getLogs) */
 export async function getJournalEntries(): Promise<JournalEntry[]> {
-  // --- MOCK ---
-  await new Promise((r) => setTimeout(r, 300));
-  return [..._store].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
-  // --- END MOCK ---
-
-  // REAL IMPLEMENTATION:
-  // const res = await fetch(`${BASE_URL}/journal`, { headers: authHeaders() });
-  // if (!res.ok) throw new Error("Error al obtener las entradas");
-  // return res.json();
+  const res: any = await apiRequest('/tracking/logs?limit=30');
+  const list: any[] = res?.data ?? res ?? [];
+  return Array.isArray(list)
+    ? list.map((raw: any) => ({
+        id: raw.id ?? raw._id ?? String(Date.now()),
+        title: raw.log_date ?? '',
+        mood: 'calmado' as const,
+        notes: '',
+        consumed: raw.consumed ?? false,
+        createdAt: raw.createdAt ?? raw.log_date ?? new Date().toISOString(),
+      }))
+    : [];
 }
 
-/** Delete a journal entry by id */
-export async function deleteJournalEntry(id: string): Promise<void> {
-  // --- MOCK ---
-  await new Promise((r) => setTimeout(r, 200));
-  const idx = _store.findIndex((e) => e.id === id);
-  if (idx !== -1) _store.splice(idx, 1);
-  // --- END MOCK ---
-
-  // REAL IMPLEMENTATION:
-  // const res = await fetch(`${BASE_URL}/journal/${id}`, {
-  //   method: "DELETE",
-  //   headers: authHeaders(),
-  // });
-  // if (!res.ok) throw new Error("Error al eliminar la entrada");
+/** @deprecated La API de tracking no expone DELETE por log. */
+export async function deleteJournalEntry(_id: string): Promise<void> {
+  void _id;
 }

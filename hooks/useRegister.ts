@@ -53,18 +53,23 @@ export function useRegister() {
     setIsLoading(true);
     setError(null);
     try {
-      const { token } = await register({
-        ...form,
-        addictionType:
-          role === "companion"
-            ? ""
-            : selectedAddiction === "otros"
-            ? otherDescription
-            : selectedAddiction,
-        role,
+      const apiRole = role === "companion" ? "PADRINO" : "ADICTO";
+      const addictionName =
+        role === "companion"
+          ? undefined
+          : selectedAddiction === "otros"
+          ? otherDescription
+          : selectedAddiction;
+
+      await register({
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        role: apiRole,
+        addictionName,
+        classification: role === "user" ? "Sustancia" : undefined,
       });
-      localStorage.setItem("token", token);
-      router.push(role === "companion" ? "/acompanante" : "/dashboard");
+      router.push("/login");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al crear la cuenta");
     } finally {

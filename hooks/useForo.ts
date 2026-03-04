@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getForoPosts, createForoPost, toggleLikePost, getForoCategories } from "@/lib/api/forum";
+import {
+  getForoPosts,
+  createForoPost,
+  toggleLikePost,
+  getForoCategories,
+} from "@/lib/api/forum";
 import type { ForoPost, ForoCategory } from "@/types";
 
 export function useForo() {
@@ -17,7 +22,7 @@ export function useForo() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([getForoPosts(), getForoCategories()])
+    Promise.all([getForoPosts(1, 10), getForoCategories()])
       .then(([p, c]) => {
         setPosts(p);
         setCategories(c);
@@ -36,13 +41,15 @@ export function useForo() {
     if (!postText.trim()) return;
     setIsSubmitting(true);
     try {
-      const newPost = await createForoPost({
+      await createForoPost({
         title: postTitle,
         content: postText,
         isAnonymous,
         tags: selectedTags,
       });
-      setPosts((prev) => [newPost, ...prev]);
+      // Recargar lista desde la API
+      const refreshed = await getForoPosts(1, 10);
+      setPosts(refreshed);
       setPostText("");
       setPostTitle("");
       setSelectedTags([]);
@@ -66,7 +73,7 @@ export function useForo() {
     try {
       await toggleLikePost(id);
     } catch {
-      // Revert on error
+      // Revertir si falla
       setPosts((prev) =>
         prev.map((p) =>
           p.id === id

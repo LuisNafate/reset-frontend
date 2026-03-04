@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { login } from "@/lib/api/auth";
-import type { LoginCredentials } from "@/types";
+import { useAuth } from "@/context/AuthContext";
 
 export function useLogin() {
   const router = useRouter();
-  const [form, setForm] = useState<LoginCredentials>({ email: "", password: "" });
+  const { saveAuth } = useAuth();
+  const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -22,12 +23,15 @@ export function useLogin() {
     setIsLoading(true);
     setError(null);
     try {
-      const { token, user } = await login(form);
-      localStorage.setItem("token", token);
-      localStorage.setItem("role", user.role);
-      router.push(user.role === "companion" ? "/acompanante" : "/dashboard");
+      const { accessToken, user } = await login({
+        email: form.email,
+        password: form.password,
+      });
+      saveAuth(accessToken, user);
+      // Redirigir según rol del backend
+      router.push(user.role === "PADRINO" ? "/acompanante" : "/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al iniciar sesión");
+      setError(err instanceof Error ? err.message : "Credenciales incorrectas");
     } finally {
       setIsLoading(false);
     }
