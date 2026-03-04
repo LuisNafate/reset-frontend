@@ -2,24 +2,42 @@
 
 import { useState, useEffect } from "react";
 import { createLog, getLogs } from "@/lib/api/tracking";
+import { useAuth } from "@/context/AuthContext";
+import {
+  getMoodLabel,
+  getMoodColor,
+  getCravingColor,
+  getSliderTrack,
+} from "@/lib/bitacora-helpers";
 import type { JournalEntry, MoodId } from "@/types";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
+/** Valor numérico (1-10) que representa cada estado de ánimo para la API. */
 const MOOD_TO_NUMBER: Record<MoodId, number> = {
-  feliz: 9,
-  calmado: 7,
-  ansioso: 4,
-  triste: 3,
-  motivado: 6,
+  feliz:       9,
+  motivado:    8,
+  agradecido:  8,
+  esperanzado: 7,
+  calmado:     7,
+  confundido:  5,
+  ansioso:     4,
+  agotado:     3,
+  triste:      3,
+  enojado:     2,
 };
 
 const NUMBER_TO_MOOD: Array<[number, MoodId]> = [
   [9, "feliz"],
+  [8, "motivado"],
+  [8, "agradecido"],
+  [7, "esperanzado"],
   [7, "calmado"],
+  [5, "confundido"],
   [4, "ansioso"],
+  [3, "agotado"],
   [3, "triste"],
-  [6, "motivado"],
+  [2, "enojado"],
 ];
 
 function closestMood(value: number): MoodId {
@@ -51,15 +69,17 @@ function normalizeEntry(raw: any): JournalEntry {
 // ─── Hook ───────────────────────────────────────────────────────────────────
 
 export function useBitacora() {
+  const { user } = useAuth();
   // ── Lista de entradas ────────────────────────────────────────────────────────────
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [isLoadingEntries, setIsLoadingEntries] = useState(true);
 
   // ── Formulario nueva entrada ─────────────────────────────────────────────────────
   const [title, setTitle] = useState("");
-  const [selectedMood, setSelectedMood] = useState<MoodId>("calmado");
+  const [moodLevel, setMoodLevel] = useState(5);           // 1-10: desanimado → muy animado
   const [notes, setNotes] = useState("");
   const [consumed, setConsumed] = useState(false);
+  const [cravingLevel, setCravingLevel] = useState(5);     // 1-10, el usuario lo elige
 
   // ── Estado general ───────────────────────────────────────────────────────────────
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -68,7 +88,7 @@ export function useBitacora() {
 
   // Cargar entradas al montar
   useEffect(() => {
-    getLogs(30)
+    getLogs(30, user?.id)
       .then((res: any) => {
         const data: any[] = res?.data ?? res ?? [];
         setEntries(
@@ -97,12 +117,13 @@ export function useBitacora() {
       await createLog({
         log_date: new Date().toISOString().split("T")[0],
         consumed,
-        craving_level: 5,
-        emotional_state: MOOD_TO_NUMBER[selectedMood],
+        craving_level: cravingLevel,
+        emotional_state: moodLevel,
       });
       setSaved(true);
+      setError(null);
       // Recargar entradas desde la API
-      const res: any = await getLogs(30);
+      const res: any = await getLogs(30, user?.id);
       const data: any[] = res?.data ?? res ?? [];
       setEntries(
         Array.isArray(data)
@@ -116,6 +137,8 @@ export function useBitacora() {
       setTitle("");
       setNotes("");
       setConsumed(false);
+      setMoodLevel(5);
+      setCravingLevel(5);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al guardar la nota");
@@ -130,20 +153,31 @@ export function useBitacora() {
   };
 
   return {
+    // Lista
     entries,
     isLoadingEntries,
+    // Formulario
     title,
-    selectedMood,
+    moodLevel,
+    setMoodLevel,
+    cravingLevel,
+    setCravingLevel,
     notes,
     consumed,
+    // Estado
     isSubmitting,
     error,
     saved,
     setTitle,
-    setSelectedMood,
     setNotes,
     setConsumed,
     handleSave,
     handleDelete,
+    // Valores derivados — el componente los usa directamente sin calcular nada
+    moodLabel:   getMoodLabel(moodLevel),
+    moodColor:   getMoodColor(moodLevel),
+    moodTrack:   getSliderTrack(moodLevel, getMoodColor(moodLevel)),
+    cravingColor: getCravingColor(cravingLevel),
+    cravingTrack: getSliderTrack(cravingLevel, getCravingColor(cravingLevel)),
   };
 }
