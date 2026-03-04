@@ -23,7 +23,7 @@ export function useConfiguracion() {
           Array.isArray(list)
             ? list.map((c: any) => ({
                 id: c.id ?? c._id ?? String(Date.now()),
-                name: c.contact_name ?? c.name ?? "",
+                name: c.contactName ?? c.contact_name ?? c.name ?? "",
                 email: c.email ?? "",
               }))
             : []
@@ -78,7 +78,7 @@ export function useConfiguracion() {
         Array.isArray(list)
           ? list.map((c: any) => ({
               id: c.id ?? c._id ?? String(Date.now()),
-              name: c.contact_name ?? c.name ?? "",
+              name: c.contactName ?? c.contact_name ?? c.name ?? "",
               email: c.email ?? "",
             }))
           : []

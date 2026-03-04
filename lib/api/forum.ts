@@ -8,20 +8,22 @@ import type { ForoPost, ForoCategory, CreateForoPostData } from '@/types';
 
 /** Convierte un post raw de la API al tipo ForoPost del UI. */
 function normalizePost(raw: any): ForoPost {
+  // La API devuelve: authorName, isAnonymous, reactionUps, commentCount
+  const isAnon = raw.isAnonymous ?? raw.is_anonymous ?? false;
   return {
     id: raw.id ?? raw._id ?? String(Date.now()),
     title: raw.title ?? '',
-    author: raw.is_anonymous
+    author: isAnon
       ? 'Anónimo'
-      : (raw.user?.name ?? raw.author ?? 'Usuario'),
+      : (raw.authorName ?? raw.user?.name ?? raw.author ?? 'Usuario'),
     timeAgo: raw.createdAt
       ? new Date(raw.createdAt).toLocaleDateString('es')
       : 'Reciente',
     tags: raw.tags ?? [],
     tagVariants: (raw.tags ?? []).map(() => 'default' as const),
     content: raw.content ?? '',
-    likes: raw.likes_count ?? raw.likes ?? 0,
-    comments: raw.comments_count ?? raw.comments ?? 0,
+    likes: raw.reactionUps ?? raw.likes_count ?? raw.likes ?? 0,
+    comments: raw.commentCount ?? raw.comments_count ?? raw.comments ?? 0,
     liked: raw.liked ?? false,
     bookmarked: raw.bookmarked ?? false,
   };

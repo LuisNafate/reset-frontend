@@ -28,15 +28,23 @@ function closestMood(value: number): MoodId {
   )[1];
 }
 
-/** Convierte un registro diario de la API al formato JournalEntry del UI. */
+/** Convierte un registro diario de la API al formato JournalEntry del UI.
+ * La API devuelve: logDate (ISO), cravingLevelId (UUID), emotionalStateId (UUID).
+ * Como los IDs son opacos, el mood se deja en 'calmado' por defecto si no viene como número.
+ */
 function normalizeEntry(raw: any): JournalEntry {
+  // Soporta tanto el campo legácy (log_date) como el real de la API (logDate)
+  const dateStr = raw.logDate ?? raw.log_date ?? "";
   return {
     id: raw.id ?? raw._id ?? String(Date.now()),
-    title: raw.log_date ?? "",
-    mood: raw.emotional_state ? closestMood(raw.emotional_state) : "calmado",
+    title: dateStr ? dateStr.split('T')[0] : "",
+    // emotional_state viene como número en /tracking/statistics pero como UUID en /tracking/logs
+    mood: typeof raw.emotional_state === 'number'
+      ? closestMood(raw.emotional_state)
+      : "calmado",
     notes: raw.notes ?? "",
     consumed: raw.consumed ?? false,
-    createdAt: raw.createdAt ?? raw.log_date ?? new Date().toISOString(),
+    createdAt: raw.createdAt ?? dateStr ?? new Date().toISOString(),
   };
 }
 

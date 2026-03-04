@@ -5,20 +5,21 @@
 import { apiRequest } from './client';
 import type { SupportPeer, ProfileUpdateData } from '@/types';
 
+/**
+ * El endpoint /profile no existe en la API actual.
+ * Los datos del perfil se obtienen desde el contexto de Auth (login).
+ * Esta función devuelve un objeto vacío para mantener compatibilidad.
+ */
 export async function getProfile(): Promise<{ username: string; addictionType: string }> {
-  const res: any = await apiRequest('/profile');
-  const data = res?.data ?? res;
-  return {
-    username: data?.name ?? data?.username ?? '',
-    addictionType: data?.addictionName ?? data?.addictionType ?? '',
-  };
+  return { username: '', addictionType: '' };
 }
 
-export async function updateProfile(data: ProfileUpdateData): Promise<void> {
-  await apiRequest('/profile', {
-    method: 'PATCH',
-    body: JSON.stringify(data),
-  });
+/**
+ * El endpoint PATCH /profile no existe en la API actual.
+ * No-op hasta que el backend lo implemente.
+ */
+export async function updateProfile(_data: ProfileUpdateData): Promise<void> {
+  void _data;
 }
 
 /** @deprecated Usar emergency.ts → getContacts() */

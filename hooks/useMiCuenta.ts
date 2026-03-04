@@ -59,7 +59,7 @@ export function useMiCuenta() {
                 id: "default",
                 displayName: "Ahijado",
                 addictionType: data.addictionName ?? "",
-                sobrietyDays: data.currentStreak ?? 0,
+                sobrietyDays: data.soberDays ?? data.currentStreak ?? 0,
                 status: "Activo",
               },
             ]);
