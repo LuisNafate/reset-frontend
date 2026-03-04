@@ -2,90 +2,38 @@
 
 import React from "react";
 import { useBitacora } from "@/hooks/useBitacora";
-import { MOOD_OPTIONS } from "@/lib/constants";
-import type { MoodId } from "@/types";
-
-// ─── Iconos SVG de estado de ánimo ───────────────────────────────────────────
-const MOOD_ICONS: Record<string, React.ReactNode> = {
-  feliz: (
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3">
-      <circle cx="12" cy="12" r="10" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M8.5 13.5s1 2 3.5 2 3.5-2 3.5-2" strokeLinecap="round" strokeLinejoin="round"/>
-      <circle cx="9" cy="9.5" r="1.2" fill="currentColor"/>
-      <circle cx="15" cy="9.5" r="1.2" fill="currentColor"/>
-    </svg>
-  ),
-  calmado: (
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3">
-      <circle cx="12" cy="12" r="10" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M9 15h6" strokeLinecap="round" strokeLinejoin="round"/>
-      <circle cx="9" cy="9.5" r="1.2" fill="currentColor"/>
-      <circle cx="15" cy="9.5" r="1.2" fill="currentColor"/>
-    </svg>
-  ),
-  ansioso: (
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3">
-      <circle cx="12" cy="12" r="10" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M8.5 15.5s1-1 3.5-1 3.5 1 3.5 1" strokeLinecap="round" strokeLinejoin="round"/>
-      <circle cx="9" cy="9.5" r="1" fill="none" stroke="currentColor"/>
-      <circle cx="15" cy="9.5" r="1" fill="none" stroke="currentColor"/>
-    </svg>
-  ),
-  triste: (
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3">
-      <circle cx="12" cy="12" r="10" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M8.5 16s1-2 3.5-2 3.5 2 3.5 2" strokeLinecap="round" strokeLinejoin="round"/>
-      <circle cx="9" cy="9.5" r="1.2" fill="currentColor"/>
-      <circle cx="15" cy="9.5" r="1.2" fill="currentColor"/>
-    </svg>
-  ),
-  motivado: (
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3">
-      <circle cx="12" cy="12" r="10" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M9 12h6M12 9l3 3-3 3" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  ),
-};
-
-// Colores por estado de ánimo
-const MOOD_COLORS: Record<MoodId, { text: string; bg: string; border: string }> = {
-  feliz:      { text: "#16a34a", bg: "#f0fdf4", border: "#bbf7d0" },
-  calmado:    { text: "#0ea5e9", bg: "#f0f9ff", border: "#bae6fd" },
-  ansioso:    { text: "#d97706", bg: "#fffbeb", border: "#fde68a" },
-  triste:     { text: "#6366f1", bg: "#eef2ff", border: "#c7d2fe" },
-  motivado:  { text: "#64748b", bg: "#f8fafc", border: "#e2e8f0" },
-};
-
-// Formatear fecha
-function formatDate(iso: string): { date: string; time: string } {
-  const d = new Date(iso);
-  return {
-    date: d.toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" }),
-    time: d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }),
-  };
-}
+import { MOOD_ICONS, MOOD_COLORS, formatDate, getMoodDisplayLabel } from "@/lib/bitacora-helpers";
+import BitacoraEntryModal from "@/components/features/dashboard/BitacoraEntryModal";
+import type { JournalEntry, MoodId } from "@/types";
 
 export default function BitacoraPage() {
   const {
     entries,
     isLoadingEntries,
     title,
-    selectedMood,
+    moodLevel,
+    setMoodLevel,
+    moodLabel,
+    moodColor,
+    moodTrack,
+    cravingLevel,
+    setCravingLevel,
+    cravingColor,
+    cravingTrack,
     notes,
     consumed,
     isSubmitting,
     error,
     saved,
     setTitle,
-    setSelectedMood,
     setNotes,
     setConsumed,
     handleSave,
     handleDelete,
   } = useBitacora();
 
-  // ── Entrada seleccionada para ver detalle ──────────────────────────────────
-  const [selectedEntry, setSelectedEntry] = React.useState<import("@/types").JournalEntry | null>(null);
+  // ── Entrada seleccionada para ver detalle ─────────────────────────────
+  const [selectedEntry, setSelectedEntry] = React.useState<JournalEntry | null>(null);
 
   const entry = selectedEntry;
 
@@ -132,39 +80,64 @@ export default function BitacoraPage() {
           </div>
 
           <div className="p-6">
-            {/* Selector de estado de ánimo */}
-            <p
-              className="text-[9px] tracking-[1px] uppercase text-slate-400 mb-3"
-              style={{ fontFamily: "'JetBrains Mono', monospace" }}
-            >
-              Estado Emocional
-            </p>
-            <div className="grid grid-cols-5 gap-2 mb-5">
-              {MOOD_OPTIONS.map((mood) => {
-                const active = selectedMood === mood.id;
-                const colors = MOOD_COLORS[mood.id as MoodId];
-                return (
-                  <button
-                    key={mood.id}
-                    type="button"
-                    onClick={() => setSelectedMood(mood.id)}
-                    className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border transition-all"
-                    style={
-                      active
-                        ? { backgroundColor: colors.bg, borderColor: colors.border, color: colors.text }
-                        : { backgroundColor: "#ffffff", borderColor: "#f1f5f9", color: "#94a3b8" }
-                    }
-                  >
-                    {MOOD_ICONS[mood.id]}
-                    <span
-                      className="text-[8px] tracking-[-0.3px] uppercase"
-                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                    >
-                      {mood.label}
-                    </span>
-                  </button>
-                );
-              })}
+            {/* ── Slider: Estado de Ánimo ── */}
+            <div className="mb-5">
+              <div className="flex items-center justify-between mb-2">
+                <p
+                  className="text-[9px] tracking-[1px] uppercase text-slate-400"
+                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                >
+                  Estado de Ánimo
+                </p>
+                <span
+                  className="text-[11px] tabular-nums"
+                  style={{ fontFamily: "'JetBrains Mono', monospace", color: moodColor }}
+                >
+                  {moodLabel} · <span className="text-slate-300">{moodLevel}/10</span>
+                </span>
+              </div>
+              <input
+                type="range"
+                min={1} max={10} step={1}
+                value={moodLevel}
+                onChange={(e) => setMoodLevel(Number(e.target.value))}
+                className="w-full h-1.5 rounded-full cursor-pointer appearance-none"
+                style={{ background: moodTrack, accentColor: moodColor }}
+              />
+              <div className="flex justify-between mt-1.5">
+                <span className="text-[8px] text-slate-300" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Desanimado</span>
+                <span className="text-[8px] text-slate-300" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Muy animado</span>
+              </div>
+            </div>
+
+            {/* ── Slider: Nivel de Craving ── */}
+            <div className="mb-5">
+              <div className="flex items-center justify-between mb-2">
+                <p
+                  className="text-[9px] tracking-[1px] uppercase text-slate-400"
+                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                >
+                  Nivel de Craving
+                </p>
+                <span
+                  className="text-[13px] tabular-nums"
+                  style={{ fontFamily: "'JetBrains Mono', monospace", color: cravingColor }}
+                >
+                  {cravingLevel}<span className="text-[9px] text-slate-300">/10</span>
+                </span>
+              </div>
+              <input
+                type="range"
+                min={1} max={10} step={1}
+                value={cravingLevel}
+                onChange={(e) => setCravingLevel(Number(e.target.value))}
+                className="w-full h-1.5 rounded-full cursor-pointer appearance-none"
+                style={{ background: cravingTrack, accentColor: cravingColor }}
+              />
+              <div className="flex justify-between mt-1.5">
+                <span className="text-[8px] text-slate-300" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Sin deseo</span>
+                <span className="text-[8px] text-slate-300" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Muy intenso</span>
+              </div>
             </div>
 
             {/* Título */}
@@ -314,8 +287,8 @@ export default function BitacoraPage() {
           <div className="flex flex-col gap-3">
             {entries.map((entry) => {
               const { date, time } = formatDate(entry.createdAt);
-              const colors = MOOD_COLORS[entry.mood];
-              const moodLabel = MOOD_OPTIONS.find((m) => m.id === entry.mood)?.label ?? entry.mood;
+              const colors = MOOD_COLORS[entry.mood as MoodId];
+              const entryMoodLabel = getMoodDisplayLabel(entry.mood as MoodId);
               return (
                 <div
                   key={entry.id}
@@ -332,13 +305,13 @@ export default function BitacoraPage() {
                         style={{ backgroundColor: colors.bg, border: `1px solid ${colors.border}`, color: colors.text }}
                       >
                         <span style={{ color: colors.text, display: "flex", transform: "scale(0.7)", transformOrigin: "center" }}>
-                          {MOOD_ICONS[entry.mood]}
+                          {MOOD_ICONS[entry.mood as MoodId]}
                         </span>
                         <span
                           className="text-[8px] uppercase tracking-[0.5px]"
                           style={{ fontFamily: "'JetBrains Mono', monospace", color: colors.text }}
                         >
-                          {moodLabel}
+                          {entryMoodLabel}
                         </span>
                       </div>
 
@@ -415,123 +388,12 @@ export default function BitacoraPage() {
 
     {/* ─── Modal detalle de entrada ───────────────────────────────────────── */}
     {entry && (
-      <EntryModal
+      <BitacoraEntryModal
         entry={entry}
         onClose={() => setSelectedEntry(null)}
         onDelete={(id) => { handleDelete(id); setSelectedEntry(null); }}
       />
     )}
   </>
-  );
-}
-
-// ── Componente separado para tipar correctamente ────────────────────────────────
-
-import type { JournalEntry } from "@/types";
-
-function EntryModal({
-  entry,
-  onClose,
-  onDelete,
-}: {
-  entry: JournalEntry;
-  onClose: () => void;
-  onDelete: (id: string) => void;
-}) {
-  const colors = MOOD_COLORS[entry.mood];
-  const moodLabel = MOOD_OPTIONS.find((m) => m.id === entry.mood)?.label ?? entry.mood;
-  const { date, time } = formatDate(entry.createdAt);
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(15,23,42,0.5)", backdropFilter: "blur(4px)" }}
-      onClick={onClose}
-    >
-      <div
-        className="bg-white w-full max-w-lg rounded-sm overflow-hidden"
-        style={{ boxShadow: "0 20px 60px -10px rgba(0,0,0,0.15)" }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header del modal */}
-        <div
-          className="px-6 py-4 flex items-center justify-between border-b"
-          style={{ backgroundColor: colors.bg, borderColor: colors.border }}
-        >
-          <div className="flex items-center gap-2">
-            <div
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full"
-              style={{ backgroundColor: "#fff", border: `1px solid ${colors.border}`, color: colors.text }}
-            >
-              <span style={{ display: "flex", transform: "scale(0.7)", transformOrigin: "center" }}>
-                {MOOD_ICONS[entry.mood]}
-              </span>
-              <span
-                className="text-[8px] uppercase tracking-[0.5px]"
-                style={{ fontFamily: "'JetBrains Mono', monospace", color: colors.text }}
-              >
-                {moodLabel}
-              </span>
-            </div>
-            {entry.consumed && (
-              <span
-                className="text-[8px] uppercase tracking-[0.5px] px-2 py-0.5 rounded-full"
-                style={{ fontFamily: "'JetBrains Mono', monospace", backgroundColor: "#fef2f2", border: "1px solid #fecaca", color: "#ef4444" }}
-              >
-                Consumo registrado
-              </span>
-            )}
-          </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-700 transition-colors" aria-label="Cerrar">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-        </div>
-
-        {/* Cuerpo del modal */}
-        <div className="px-6 py-5">
-          <p
-            className="text-[9px] uppercase text-slate-400 mb-3"
-            style={{ fontFamily: "'JetBrains Mono', monospace" }}
-          >
-            {date} · {time}
-          </p>
-          <h2
-            className="text-[22px] italic text-slate-800 leading-snug mb-4"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            {entry.title || "Sin título"}
-          </h2>
-          <div
-            className="text-[14px] text-slate-600 leading-[1.9] whitespace-pre-wrap max-h-72 overflow-y-auto pr-1"
-            style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}
-          >
-            {entry.notes}
-          </div>
-        </div>
-
-        {/* Footer del modal */}
-        <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between">
-          <button
-            onClick={() => onDelete(entry.id)}
-            className="flex items-center gap-1.5 text-slate-300 hover:text-red-400 transition-colors text-[10px] uppercase tracking-[1px]"
-            style={{ fontFamily: "'JetBrains Mono', monospace" }}
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            Eliminar
-          </button>
-          <button
-            onClick={onClose}
-            className="h-9 px-5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors text-[10px] uppercase tracking-[1.5px]"
-            style={{ fontFamily: "'JetBrains Mono', monospace" }}
-          >
-            Cerrar
-          </button>
-        </div>
-      </div>
-    </div>
   );
 }

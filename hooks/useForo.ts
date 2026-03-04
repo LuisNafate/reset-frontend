@@ -19,10 +19,35 @@ export function useForo() {
   const router = useRouter();
   const { user } = useAuth();
 
-  // Rastreo de posts que el usuario likeó en esta sesión
+  // Rastreo de posts que el usuario liké — persiste en localStorage por userId
   const likedByMe = useRef<Set<string>>(new Set());
   // Rastreo de posts/comentarios reportados en esta sesión (feedback local)
   const reportedPosts = useRef<Set<string>>(new Set());
+
+  // Clave de localStorage: una por usuario para no mezclar sesiones
+  const storageKey = user?.id ? `foro_liked_${user.id}` : null;
+
+  // Inicializar el ref desde localStorage cuando se conoce el userId
+  useEffect(() => {
+    if (!storageKey) return;
+    try {
+      const stored = localStorage.getItem(storageKey);
+      if (stored) {
+        const ids: string[] = JSON.parse(stored);
+        likedByMe.current = new Set(ids);
+        // Re-aplicar estado liked a los posts ya cargados
+        setPosts((prev) => prev.map((p) => ({ ...p, liked: likedByMe.current.has(p.id) })));
+      }
+    } catch { /* localStorage no disponible */ }
+  }, [storageKey]);
+
+  /** Persiste el set actual en localStorage. */
+  const persistLikes = () => {
+    if (!storageKey) return;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify([...likedByMe.current]));
+    } catch { /* cuota excedida u otro error — ignorar */ }
+  };
 
   // ── Estado: lista de posts ──────────────────────────────────────────────────
   const [posts, setPosts] = useState<ForoPost[]>([]);
@@ -110,7 +135,9 @@ export function useForo() {
 
   const handleToggleLike = async (id: string) => {
     const wasLiked = likedByMe.current.has(id);
+    // Actualizar ref local de likes propios
     wasLiked ? likedByMe.current.delete(id) : likedByMe.current.add(id);
+    // Actualización optimista: ±1 exacto sin refetch del servidor
     setPosts((prev) =>
       prev.map((p) =>
         p.id === id
@@ -119,10 +146,12 @@ export function useForo() {
       )
     );
     try {
+      // Solo notificamos al servidor; NO recargamos la lista para evitar
+      // que el backend (que siempre suma) sobreescriba el conteo local.
       await toggleLikePost(id);
-      const refreshed = await getForoPosts(1, 10);
-      setPosts(applyLikedState(refreshed));
+      persistLikes();
     } catch {
+      // Revertir si falla
       wasLiked ? likedByMe.current.add(id) : likedByMe.current.delete(id);
       setPosts((prev) =>
         prev.map((p) =>

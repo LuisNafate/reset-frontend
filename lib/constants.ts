@@ -11,11 +11,16 @@ export const ADDICTION_TYPES: AddictionType[] = [
 ];
 
 export const MOOD_OPTIONS: Mood[] = [
-  { id: "feliz", label: "Feliz" },
-  { id: "calmado", label: "Calmado" },
-  { id: "ansioso", label: "Ansioso" },
-  { id: "triste", label: "Triste" },
-  { id: "motivado", label: "Motivado" },
+  { id: "feliz",       label: "Feliz" },
+  { id: "calmado",     label: "Calmado" },
+  { id: "motivado",    label: "Motivado" },
+  { id: "esperanzado", label: "Esperanzado" },
+  { id: "agradecido",  label: "Agradecido" },
+  { id: "ansioso",     label: "Ansioso" },
+  { id: "confundido",  label: "Confundido" },
+  { id: "agotado",     label: "Agotado" },
+  { id: "triste",      label: "Triste" },
+  { id: "enojado",     label: "Enojado" },
 ];
 
 // Etiquetas disponibles para publicaciones del foro
