@@ -81,7 +81,7 @@ export default function CompanionSidebar({ isOpen = false, onClose }: CompanionS
       style={{ boxShadow: "1px 0 0 0 #f1f5f9" }}
     >
       {/* Logo — nombre real del acompañante */}
-      <div className="px-8 pt-8 pb-6 border-b border-slate-100 flex items-start justify-between">
+      <div className="px-8 sidebar-safe-top pb-6 border-b border-slate-100 flex items-start justify-between">
         <div className="min-w-0 flex-1">
           <p
             className="text-[9px] tracking-[1.8px] uppercase text-teal-500 mb-1"

@@ -42,6 +42,20 @@ body {
   font-family: var(--font-jetbrains), 'Courier New', monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* ── Capacitor / móvil ──────────────────────────────────────────────────
+   * overscroll-behavior-y: none  → elimina el "rebote" de scroll en iOS que
+   *   se siente extraño dentro de un WebView nativo. Sin efecto en web.
+   *
+   * -webkit-tap-highlight-color: transparent → quita el rectángulo azul/gris
+   *   que aparece al tocar elementos en Android. Ya no es necesario en apps.
+   *
+   * touch-action: pan-y → deja el scroll vertical libre pero evita gestos
+   *   horizontales accidentales que podrían interferir con la navegación.
+   * ─────────────────────────────────────────────────────────────────────── */
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: pan-y;
 }
 
 /* Typography helpers */
@@ -51,6 +65,53 @@ body {
 
 .font-jetbrains {
   font-family: var(--font-jetbrains), 'Courier New', monospace;
+}
+
+/* ── Capacitor / Safe Areas ──────────────────────────────────────────────────
+ * env(safe-area-inset-*) devuelve los píxeles del notch/dynamic-island/home-
+ * bar del dispositivo. SOLO funciona si el viewport tiene viewport-fit=cover
+ * (configurado en el Viewport export de app/layout.tsx).
+ *
+ * USO:
+ *   <div className="safe-top-padding"> → empuja el contenido bajo el notch
+ *   Los dashboards layouts añaden padding-top al header sticky usando .safe-top-bar
+ * ──────────────────────────────────────────────────────────────────────────── */
+:root {
+  --safe-inset-top:    env(safe-area-inset-top,    0px);
+  --safe-inset-right:  env(safe-area-inset-right,  0px);
+  --safe-inset-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-inset-left:   env(safe-area-inset-left,   0px);
+}
+
+/*
+ * Clases de utilidad para padding seguro.
+ * Se usan en los layouts de la app (dashboard y acompañante).
+ */
+.safe-top-padding    { padding-top:    var(--safe-inset-top);    }
+.safe-bottom-padding { padding-bottom: var(--safe-inset-bottom); }
+.safe-left-padding   { padding-left:   var(--safe-inset-left);   }
+.safe-right-padding  { padding-right:  var(--safe-inset-right);  }
+
+/*
+ * Para barras superiores fijas (sticky headers):
+ * Suma el safe area al height base de la barra para que no quede
+ * bajo el notch. La barra "cresa" hacia arriba, no hacia abajo.
+ */
+.safe-top-bar {
+  padding-top: var(--safe-inset-top);
+}
+
+/*
+ * Para el encabezado del sidebar (fixed, empieza en top-0).
+ * Reemplaza pt-8 (2rem) añadiendo el safe-area encima del padding normal.
+ */
+.sidebar-safe-top {
+  padding-top: calc(var(--safe-inset-top) + 2rem);
+}
+
+/* Bottom safe area — para botones o navbars que estén pegados al fondo */
+.safe-bottom-bar {
+  padding-bottom: calc(var(--safe-inset-bottom) + 0.5rem);
 }
 
 /* Toggle switch */

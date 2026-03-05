@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Configuración de seguridad de red — ReSet (desarrollo).
+  Permite conexiones HTTP al servidor de la API (IP fija del backend).
+  No es necesario HTTPS para esta build de desarrollo/pruebas.
+-->
+<network-security-config>
+  <domain-config cleartextTrafficPermitted="true">
+    <domain includeSubdomains="false">64.23.248.243</domain>
+  </domain-config>
+</network-security-config>
