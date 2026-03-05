@@ -36,7 +36,7 @@ export default function MensajesPage() {
           className="text-[9px] tracking-[1.5px] uppercase text-slate-400 mb-6"
           style={{ fontFamily: "'JetBrains Mono', monospace" }}
         >
-          Conversación privada con tu ahijado
+          Mensajes de aliento para quien acompañas
         </p>
 
         {/* Aviso si mensajería no está disponible */}

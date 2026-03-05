@@ -4,6 +4,17 @@ import React from "react";
 import Link from "next/link";
 import { useMonitoreo } from "@/hooks/useMonitoreo";
 
+// Técnica del día para acompañante — rota por día de semana
+const TIPS_PADRINO = [
+  { nombre: "Escucha Activa", hint: "Escucha sin interrumpir ni ofrecer soluciones de inmediato. Estar presente ya es mucho." },
+  { nombre: "Preguntas Abiertas", hint: "¿Cómo estás llevando esta semana? crea más conversación que ¿Estás bien? Prueba con ¿Qué?." },
+  { nombre: "Identificar Límites", hint: "¿Qué sí puedes ofrecer y qué no? Définelo con claridad para acompañar de forma sostenible." },
+  { nombre: "Apoyo vs Habilitación", hint: "Pregunta: ¿esta acción ayuda a crecer a la persona o la protege de sus propias consecuencias?" },
+  { nombre: "Check-in Personal", hint: "¿Cómo te sientes tú hoy? ¿Tienes energía suficiente para acompañar? Tu bienestar importa igual." },
+  { nombre: "Comunicación No Violenta", hint: "Observación + sentimiento + necesidad + petición. Las peticiones conectan; las exigencias separan." },
+  { nombre: "Protocolo de Crisis", hint: "Mantén la calma. Sin sermones. Pregunta directa: ¿Estás seguro ahora mismo? Tu calma es su primer apoyo." },
+];
+
 // ─── SVGs de estado emocional ─────────────────────────────────────────────────
 
 const MOOD_SVG: Record<string, React.ReactNode> = {
@@ -78,6 +89,7 @@ function formatRelativeDate(isoDate: string): string {
 
 export default function MonitoreoPage() {
   const { isLoading, godchildFound, godchild, stats, recentLogs } = useMonitoreo();
+  const tipP = TIPS_PADRINO[new Date().getDay() % TIPS_PADRINO.length];
 
   // ── Estado de carga ──────────────────────────────────────────────────────────
   if (isLoading) {
@@ -244,7 +256,7 @@ export default function MonitoreoPage() {
           className="text-[9px] tracking-[1.5px] uppercase text-slate-400 mb-10"
           style={{ fontFamily: "'JetBrains Mono', monospace" }}
         >
-          Oasis de Sobriedad — Monitoreo Activo
+          ReSet — Monitoreo Activo
         </p>
 
         {/* Tarjeta de progreso principal */}
@@ -369,6 +381,33 @@ export default function MonitoreoPage() {
               </div>
             ))
           )}
+        </div>
+
+        {/* Técnica del día para acompañante */}
+        <div className="border border-teal-100 bg-white rounded-sm p-6 mb-6 flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="flex-shrink-0 w-9 h-9 rounded-full bg-teal-50 border border-teal-100 flex items-center justify-center">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0d9488" strokeWidth="1.5">
+              <path d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[8px] tracking-[1.5px] uppercase text-teal-500 mb-0.5" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+              Técnica del día
+            </p>
+            <p className="text-[16px] font-normal text-slate-800 leading-tight mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
+              {tipP.nombre}
+            </p>
+            <p className="text-[11px] italic text-slate-400 leading-relaxed" style={{ fontFamily: "'Playfair Display', serif" }}>
+              {tipP.hint}
+            </p>
+          </div>
+          <Link
+            href="/acompanante/tecnicas"
+            className="flex-shrink-0 h-9 px-4 border border-teal-200 hover:bg-teal-50 text-teal-600 flex items-center transition-colors rounded-sm"
+            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: "1.5px", textTransform: "uppercase" }}
+          >
+            Ver todas →
+          </Link>
         </div>
 
         {/* Protocolo de emergencia */}

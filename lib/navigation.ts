@@ -35,9 +35,11 @@ export const PARENT_ROUTES: Record<string, string> = {
   "/dashboard/bitacora":       "/dashboard",
   "/dashboard/foro":           "/dashboard",
   "/dashboard/configuracion":  "/dashboard",
+  "/dashboard/tecnicas":       "/dashboard",
   "/acompanante/historial":    "/acompanante",
   "/acompanante/mensajes":     "/acompanante",
   "/acompanante/cuenta":       "/acompanante",
+  "/acompanante/tecnicas":     "/acompanante",
 };
 
 /** Títulos legibles por ruta, para la barra superior móvil. */
@@ -48,10 +50,12 @@ export const ROUTE_LABELS: Record<string, string> = {
   "/dashboard/bitacora":       "Bitácora",
   "/dashboard/foro":           "Foro",
   "/dashboard/configuracion":  "Configuración",
+  "/dashboard/tecnicas":       "Técnicas",
   "/acompanante":              "Monitoreo",
   "/acompanante/historial":    "Historial",
   "/acompanante/mensajes":     "Mensajes",
   "/acompanante/cuenta":       "Mi Cuenta",
+  "/acompanante/tecnicas":     "Técnicas",
 };
 
 /** Devuelve true si la ruta es raíz (no debe navegar hacia atrás). */

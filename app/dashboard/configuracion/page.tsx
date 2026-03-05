@@ -43,7 +43,7 @@ export default function ConfiguracionPage() {
           className="text-[9px] tracking-[2px] uppercase italic text-slate-400 mb-2"
           style={{ fontFamily: "'JetBrains Mono', monospace" }}
         >
-          — Ajustes del Oasis —
+          — Ajustes de ReSet —
         </p>
         <h1
           className="text-[44px] font-normal text-slate-800 leading-none mb-1"

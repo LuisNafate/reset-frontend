@@ -1,11 +1,24 @@
 "use client";
 
+import Link from "next/link";
 import { useDashboard } from "@/hooks/useDashboard";
 import { useSession } from "@/hooks/useSession";
+
+// Técnica del día — rota según el día de la semana
+const TIPS_DIARIOS = [
+  { nombre: "Respiración 4-7-8", hint: "Inhala 4 seg, retén 7, exhala 8. Repite 3 veces para calmar el sistema nervioso." },
+  { nombre: "Regla de los 15 Minutos", hint: "Cuando sientas un craving, espera solo 15 minutos. El impulso suele pasar solo." },
+  { nombre: "Grounding 5-4-3-2-1", hint: "Nombra 5 cosas que ves, 4 que tocas, 3 que escuchas, 2 que hueles, 1 que saboreas." },
+  { nombre: "Diario de Gratitud", hint: "Anota 3 cosas pequeñas que agradeces hoy. Cambia el foco del cerebro hacia lo positivo." },
+  { nombre: "Hábito Ancla", hint: "Ata un nuevo hábito a uno que ya tienes. Después del café → escribe una línea en tu bitácora." },
+  { nombre: "HALT – Revisa tu Estado", hint: "¿Estás Hambriento, Ansioso, Solo o Cansado? Identifica el origen antes de reaccionar." },
+  { nombre: "Carta a tu Yo Futuro", hint: "Escribe 3 líneas desde tu yo de dentro de un año. ¿Qué te diría ese tú al que de hoy?" },
+];
 
 export default function InicioPage() {
   const { progress, lastNote, isLoading } = useDashboard();
   const { user, abbreviateName, todayLabel } = useSession();
+  const tip = TIPS_DIARIOS[new Date().getDay() % TIPS_DIARIOS.length];
 
   const sobrietyDays = progress?.sobrietyDays ?? 0;
   const plantStage   = progress?.plantStage ?? "Semilla";
@@ -36,7 +49,7 @@ export default function InicioPage() {
             className="text-[12px] font-bold uppercase text-[rgba(26,54,93,0.6)]"
             style={{ fontFamily: "'JetBrains Mono', monospace", letterSpacing: "-0.3px" }}
           >
-            {firstName ? `Hola, ${firstName}` : "Mi Oasis"}
+            {firstName ? `Hola, ${firstName}` : "Mi ReSet"}
           </p>
         </div>
       </header>
@@ -109,7 +122,7 @@ export default function InicioPage() {
                   className="uppercase text-[#1a365d] mb-8"
                   style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: "4.8px" }}
                 >
-                  Progreso del OASIS
+                  Mi Progreso
                 </p>
 
                 {/* Counter — días de racha reales */}
@@ -138,7 +151,8 @@ export default function InicioPage() {
                 </div>
 
                 {/* CTA Button — altura responsiva */}
-                <button
+                <Link
+                  href="/dashboard/bitacora"
                   className="flex items-center gap-3 justify-center h-[52px] sm:h-[68px] w-full bg-[#3b82f6] hover:bg-blue-400 text-white transition-colors mb-8"
                   style={{
                     fontFamily: "'JetBrains Mono', monospace",
@@ -157,7 +171,7 @@ export default function InicioPage() {
                     <rect x="10.5" y="12.5" width="3" height="3" rx="0.5" fill="white"/>
                   </svg>
                   Completar Encuesta Diaria
-                </button>
+                </Link>
 
                 {/* Quote */}
                 <p
@@ -222,7 +236,7 @@ export default function InicioPage() {
           </div>
 
           {/* ── Comunidad ── */}
-          <div className="relative pt-[15px]">
+          <Link href="/dashboard/foro" className="block relative pt-[15px] group">
             <div className="absolute left-1/2 -translate-x-1/2 top-0 z-20 pointer-events-none">
               <div
                 className="w-[70px] h-[29px] bg-[rgba(186,230,253,0.4)]"
@@ -230,7 +244,7 @@ export default function InicioPage() {
               />
             </div>
             <div
-              className="bg-[#f8fafc] border border-[#cbd5e1] relative flex items-center"
+              className="bg-[#f8fafc] border border-[#cbd5e1] group-hover:border-[#93c5fd] relative flex items-center transition-colors"
               style={{
                 boxShadow: "8px 8px 0px 0px rgba(26,54,93,0.05)",
                 backdropFilter: "blur(2px)",
@@ -253,12 +267,12 @@ export default function InicioPage() {
                     className="font-bold text-[#1a365d]"
                     style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 16 }}
                   >
-                    12 nuevas respuestas
+                    Ver el Foro →
                   </p>
                 </div>
               </div>
             </div>
-          </div>
+          </Link>
 
           {/* ── Próximo Hito ── */}
           <div className="relative pt-[15px]">
@@ -307,6 +321,61 @@ export default function InicioPage() {
           </div>
 
         </div>
+
+        {/* ── Técnica del día ── */}
+        <div className="mt-6 relative pt-[15px]">
+          {/* Tape */}
+          <div className="absolute left-[10%] top-0 z-20 pointer-events-none">
+            <div
+              className="w-[70px] h-[29px] bg-[rgba(186,230,253,0.4)]"
+              style={{ backdropFilter: "blur(0.5px)", transform: "rotate(-1deg)" }}
+            />
+          </div>
+          <div
+            className="bg-[#f8fafc] border border-[#cbd5e1] relative"
+            style={{ boxShadow: "8px 8px 0px 0px rgba(26,54,93,0.05)" }}
+          >
+            <div className="absolute inset-[12px] border border-[#e2e8f0] pointer-events-none" />
+            <div className="relative z-10 p-6 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+              {/* Ícono */}
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#eff6ff] border border-[rgba(59,130,246,0.15)] flex items-center justify-center">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="1.5">
+                  <path d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              {/* Texto */}
+              <div className="flex-1 min-w-0">
+                <p
+                  className="text-[8px] tracking-[1.5px] uppercase text-[rgba(60,107,174,0.6)] mb-1"
+                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                >
+                  Técnica del día
+                </p>
+                <p
+                  className="text-[17px] font-normal text-[#1a365d] leading-tight mb-1.5"
+                  style={{ fontFamily: "'Playfair Display', serif" }}
+                >
+                  {tip.nombre}
+                </p>
+                <p
+                  className="text-[12px] italic text-[rgba(26,54,93,0.55)] leading-relaxed"
+                  style={{ fontFamily: "'Playfair Display', serif" }}
+                >
+                  {tip.hint}
+                </p>
+              </div>
+              {/* Enlace */}
+              <Link
+                href="/dashboard/tecnicas"
+                className="flex-shrink-0 h-9 px-5 bg-white border border-[rgba(59,130,246,0.3)] hover:bg-[#eff6ff] text-[#3b82f6] flex items-center transition-colors"
+                style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: "1.5px", textTransform: "uppercase" }}
+              >
+                Ver todas →
+              </Link>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );

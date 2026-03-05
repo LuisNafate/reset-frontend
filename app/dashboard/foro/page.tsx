@@ -55,7 +55,7 @@ export default function ForoPage() {
           className="text-[9px] tracking-[1.8px] uppercase text-slate-400 mb-2"
           style={{ fontFamily: "'JetBrains Mono', monospace" }}
         >
-          Comunidad Oasis
+          Comunidad ReSet
         </p>
 
         {/* Grid: columna única en móvil, 2 columnas en lg+ */}
