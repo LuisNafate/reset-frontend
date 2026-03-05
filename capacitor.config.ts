@@ -41,10 +41,10 @@ const config: CapacitorConfig = {
   },
 
   android: {
-    // Mantener false en producción.
-    // Para probar con una API HTTP local, solo es necesario el
-    // network_security_config.xml (no esta bandera global)
-    allowMixedContent: false,
+    // true = MIXED_CONTENT_ALWAYS_ALLOW en el WebView.
+    // Necesario porque el webDir se sirve como https://localhost pero la API
+    // es HTTP puro. En producción cambiar la API a HTTPS y poner esto en false.
+    allowMixedContent: true,
     backgroundColor: "#f8fafc",
   },
 
