@@ -5,7 +5,7 @@
 // No existen endpoints de mensajería ni perfil específicos del padrino.
 
 import { apiRequest } from './client';
-import type { CompanionProgress } from '@/types';
+import type { CompanionProgress, SupportedUser } from '@/types';
 
 // ─── Progreso ────────────────────────────────────────────────────────────────
 

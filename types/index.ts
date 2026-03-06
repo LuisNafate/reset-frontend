@@ -152,6 +152,14 @@ export interface ProfileUpdateData {
 
 // ─── Companion ───────────────────────────────────────────────────────────────
 
+export interface SupportedUser {
+  id: string;
+  displayName: string;
+  addictionType: string;
+  sobrietyDays: number;
+  status: 'Activo' | 'Inactivo';
+}
+
 export interface CompanionActivity {
   mood: string;
   moodEmoji: string;
