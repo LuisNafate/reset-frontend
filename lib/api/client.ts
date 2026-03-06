@@ -2,7 +2,15 @@
 // Cliente HTTP centralizado — gestiona base URL, token JWT y errores.
 // El token se guarda en memoria (nunca en localStorage).
 
-const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api/v1';
+const BASE = process.env.NEXT_PUBLIC_API_URL;
+
+if (!BASE) {
+  console.warn('⚠️ NEXT_PUBLIC_API_URL no está definida. Usando fallback localhost:3000');
+}
+
+const API_BASE = BASE ?? 'http://localhost:3000/api/v1';
+
+console.log(`🔗 API Base configurada en: ${API_BASE}`);
 
 let authToken: string | null = null;
 
@@ -27,7 +35,7 @@ export async function apiRequest<T>(
     headers['Authorization'] = `Bearer ${authToken}`;
   }
 
-  const res = await fetch(`${BASE}${path}`, { ...options, headers });
+  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
