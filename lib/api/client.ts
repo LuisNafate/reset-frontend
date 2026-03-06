@@ -4,11 +4,17 @@
 
 const BASE = process.env.NEXT_PUBLIC_API_URL;
 
-if (!BASE) {
-  console.warn('⚠️ NEXT_PUBLIC_API_URL no está definida. Usando fallback localhost:3000');
-}
+const API_BASE =
+  BASE ??
+  (process.env.NODE_ENV === 'production'
+    ? 'http://64.23.248.243:80/api/v1'
+    : 'http://localhost:3000/api/v1');
 
-const API_BASE = BASE ?? 'http://localhost:3000/api/v1';
+if (!BASE) {
+  console.warn(
+    `⚠️ NEXT_PUBLIC_API_URL no está definida. Usando fallback: ${API_BASE}`
+  );
+}
 
 console.log(`🔗 API Base configurada en: ${API_BASE}`);
 
