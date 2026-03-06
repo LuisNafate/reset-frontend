@@ -10,7 +10,6 @@ if (!process.env.NEXT_PUBLIC_API_URL) {
     );
 }
 
-console.log(`🔗 API Base configurada en: ${API_BASE}`);
 
 let authToken: string | null = null;
 
