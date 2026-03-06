@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { isNativePlatform } from "@/lib/platform";
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -826,15 +826,20 @@ function Footer() {
 ───────────────────────────────────────────────────────────────────────────── */
 export default function LandingPage() {
   const router = useRouter();
+  useRevealOnScroll();
 
-  // En móvil (Capacitor) no tiene sentido mostrar la landing: ir directo al login
+  // En plataforma nativa (Android/iOS) redirigir al login directamente.
+  // En web se muestra la landing page normal sin cambios.
   useEffect(() => {
     if (isNativePlatform()) {
       router.replace("/login");
     }
   }, [router]);
 
-  useRevealOnScroll();
+  // Mientras se espera la redirección en móvil, no renderizar nada
+  if (typeof window !== "undefined" && isNativePlatform()) {
+    return null;
+  }
 
   return (
     <>
