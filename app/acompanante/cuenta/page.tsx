@@ -25,7 +25,7 @@ export default function MiCuentaPage() {
   if (isLoading) {
     return (
       <div className="min-h-full flex items-center justify-center">
-        <p className="text-slate-400 dark:text-slate-500 text-[11px]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Cargando perfil...</p>
+        <p className="rs-text-caption text-[11px]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Cargando perfil...</p>
       </div>
     );
   }
@@ -36,26 +36,26 @@ export default function MiCuentaPage() {
       <div className="max-w-2xl mx-auto px-4 sm:px-10 py-8 sm:py-12">
         {/* Header */}
         <p
-          className="text-[11px] tracking-[2px] uppercase italic text-slate-400 dark:text-slate-500 mb-2"
+          className="text-[11px] tracking-[2px] uppercase italic rs-text-caption mb-2"
           style={{ fontFamily: "'JetBrains Mono', monospace" }}
         >
           — Perfil de Acompañante —
         </p>
         <h1
-          className="text-[44px] font-normal text-slate-800 dark:text-slate-100 leading-none mb-1"
+          className="text-[44px] font-normal rs-text-heading leading-none mb-1"
           style={{ fontFamily: "'Playfair Display', serif" }}
         >
           Mi Cuenta y Alertas
         </h1>
         <p
-          className="text-[11px] tracking-[1.5px] uppercase text-slate-400 dark:text-slate-500 mb-10"
+          className="text-[11px] tracking-[1.5px] uppercase rs-text-caption mb-10"
           style={{ fontFamily: "'JetBrains Mono', monospace" }}
         >
           Gestiona tu perfil y preferencias de notificación
         </p>
 
         {/* Profile form */}
-        <div className="border border-slate-200 dark:border-slate-700/40 bg-white dark:bg-[#0d1f35] rounded-sm p-8 mb-6">
+        <div className="border border-[var(--ui-border)] bg-[var(--surface-card)] rounded-sm p-8 mb-6">
           <div className="flex items-center gap-2 mb-6">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0d9488" strokeWidth="1.5">
               <path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" strokeLinecap="round" strokeLinejoin="round"/>
@@ -76,7 +76,7 @@ export default function MiCuentaPage() {
             ] as const).map(({ label, field, value, type }) => (
               <div key={label} className="flex flex-col gap-1.5">
                 <label
-                  className="text-[11px] tracking-[1.5px] uppercase text-slate-400 dark:text-slate-500"
+                  className="text-[11px] tracking-[1.5px] uppercase rs-text-caption"
                   style={{ fontFamily: "'JetBrains Mono', monospace" }}
                 >
                   {label}
@@ -85,7 +85,7 @@ export default function MiCuentaPage() {
                   type={type}
                   value={value}
                   onChange={(e) => handleChange(field, e.target.value)}
-                  className="h-[44px] border border-slate-200 dark:border-slate-700/40 bg-white dark:bg-[#070f1a] rounded-sm px-4 text-slate-700 dark:text-slate-200 outline-none focus:border-teal-300 focus:ring-1 focus:ring-teal-100 transition-all"
+                  className="h-[44px] border border-[var(--ui-border)] bg-[var(--surface-input)] rounded-sm px-4 rs-text-body outline-none focus:border-teal-300 focus:ring-1 focus:ring-teal-100 transition-all"
                   style={{ fontFamily: "'Playfair Display', serif", fontSize: 14, fontStyle: "italic" }}
                 />
               </div>
@@ -169,7 +169,7 @@ export default function MiCuentaPage() {
         </div>
 
         {/* Usuarios que apoyo */}
-        <div className="border border-slate-200 dark:border-slate-700/40 bg-white dark:bg-[#0d1f35] rounded-sm p-8 mb-6">
+        <div className="border border-[var(--ui-border)] bg-[var(--surface-card)] rounded-sm p-8 mb-6">
           <div className="flex items-center gap-2 mb-5">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0d9488" strokeWidth="1.5">
               <path d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" strokeLinecap="round" strokeLinejoin="round"/>
@@ -193,10 +193,10 @@ export default function MiCuentaPage() {
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1" className="mb-1">
                 <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              <p className="text-[13px] italic text-slate-400 dark:text-slate-500" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <p className="text-[13px] italic rs-text-caption" style={{ fontFamily: "'Playfair Display', serif" }}>
                 Aún no tienes un ahijado activo.
               </p>
-              <p className="text-[10px] tracking-[0.5px] text-slate-400/80 dark:text-slate-600 max-w-xs" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+              <p className="text-[10px] tracking-[0.5px] rs-text-caption max-w-xs" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                 Comparte tu código de padrino para que alguien solicite tu apoyo.
               </p>
             </div>
@@ -213,13 +213,13 @@ export default function MiCuentaPage() {
                 </div>
                 <div className="flex-1">
                   <p
-                    className="text-[15px] italic text-slate-700 dark:text-slate-200"
+                    className="text-[15px] italic rs-text-body"
                     style={{ fontFamily: "'Playfair Display', serif" }}
                   >
                     {supportedUser.displayName}
                   </p>
                   <p
-                    className="text-[11px] text-slate-400 dark:text-slate-500"
+                    className="text-[11px] rs-text-caption"
                     style={{ fontFamily: "'JetBrains Mono', monospace" }}
                   >
                     Adicción: {supportedUser.addictionType} — {supportedUser.sobrietyDays} días de recuperación
@@ -249,7 +249,7 @@ export default function MiCuentaPage() {
         </div>
 
         {/* Alert preferences */}
-        <div className="border border-slate-200 dark:border-slate-700/40 bg-white dark:bg-[#0d1f35] rounded-sm p-8 mb-6">
+        <div className="border border-[var(--ui-border)] bg-[var(--surface-card)] rounded-sm p-8 mb-6">
           <div className="flex items-center gap-2 mb-5">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0d9488" strokeWidth="1.5">
               <path d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" strokeLinecap="round" strokeLinejoin="round"/>
@@ -263,7 +263,7 @@ export default function MiCuentaPage() {
           </div>
 
           <p
-            className="text-[11px] italic text-slate-400 dark:text-slate-500 mb-5 leading-relaxed"
+            className="text-[11px] italic rs-text-caption mb-5 leading-relaxed"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Elige cómo quieres recibir notificaciones cuando tu ahijado active el protocolo de emergencia.
@@ -276,13 +276,13 @@ export default function MiCuentaPage() {
             <div key={label} className="flex items-center gap-4 py-4 border-t border-slate-50 dark:border-slate-700/20">
               <div className="flex-1">
                 <p
-                  className="text-[11px] tracking-[1.5px] uppercase text-slate-600 dark:text-slate-300 mb-0.5"
+                  className="text-[11px] tracking-[1.5px] uppercase rs-text-muted mb-0.5"
                   style={{ fontFamily: "'JetBrains Mono', monospace" }}
                 >
                   {label}
                 </p>
                 <p
-                  className="text-[11px] text-slate-400 dark:text-slate-500"
+                  className="text-[11px] rs-text-caption"
                   style={{ fontFamily: "'JetBrains Mono', monospace" }}
                 >
                   {sub}
@@ -296,7 +296,7 @@ export default function MiCuentaPage() {
         {/* Footer */}
         <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-700/30">
           <p
-            className="text-[11px] tracking-[0.9px] uppercase text-slate-400 dark:text-slate-500 italic"
+            className="text-[11px] tracking-[0.9px] uppercase rs-text-caption italic"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
             Oasis de Sobriedad — Gestión de Privacidad

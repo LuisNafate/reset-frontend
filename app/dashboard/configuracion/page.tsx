@@ -55,26 +55,26 @@ export default function ConfiguracionPage() {
       <div className="max-w-2xl mx-auto px-4 sm:px-10 py-8 sm:py-12">
         {/* Header */}
         <p
-          className="text-[11px] tracking-[2px] uppercase italic text-slate-400 dark:text-slate-300 mb-2"
+          className="text-[11px] tracking-[2px] uppercase italic rs-text-caption mb-2"
           style={{ fontFamily: "'JetBrains Mono', monospace" }}
         >
           — Ajustes de ReSet —
         </p>
         <h1
-          className="text-[44px] font-normal text-slate-800 dark:text-slate-100 leading-none mb-1"
+          className="text-[44px] font-normal rs-text-heading leading-none mb-1"
           style={{ fontFamily: "'Playfair Display', serif" }}
         >
           Perfil y Apoyo
         </h1>
         <p
-          className="text-[11px] tracking-[1.5px] uppercase text-slate-400 dark:text-slate-300 mb-10"
+          className="text-[11px] tracking-[1.5px] uppercase rs-text-caption mb-10"
           style={{ fontFamily: "'JetBrains Mono', monospace" }}
         >
           Gestiona tu red de seguridad
         </p>
 
         {/* Mi Perfil Section */}
-        <div className="border border-slate-200 dark:border-slate-700/40 rounded-sm bg-white dark:bg-[#0d1f35] mb-6 p-8">
+        <div className="border border-[var(--ui-border)] rounded-sm bg-[var(--surface-card)] mb-6 p-8">
           <div className="flex items-center gap-2 mb-6">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="1.5">
               <path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" strokeLinecap="round" strokeLinejoin="round"/>
@@ -92,7 +92,7 @@ export default function ConfiguracionPage() {
             {/* Username */}
             <div className="flex flex-col gap-1.5">
               <label
-                className="text-[11px] tracking-[1.5px] uppercase text-slate-400 dark:text-slate-300"
+                className="text-[11px] tracking-[1.5px] uppercase rs-text-caption"
                 style={{ fontFamily: "'JetBrains Mono', monospace" }}
               >
                 Nombre de Usuario
@@ -102,7 +102,7 @@ export default function ConfiguracionPage() {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full h-[44px] border border-slate-200 dark:border-slate-700/40 bg-white dark:bg-[#070f1a] rounded-sm px-4 text-slate-700 dark:text-slate-200 outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 transition-all"
+                  className="w-full h-[44px] border border-[var(--ui-border)] bg-[var(--surface-input)] rounded-sm px-4 rs-text-body outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 transition-all"
                   style={{ fontFamily: "'Playfair Display', serif", fontSize: 15, fontStyle: "italic" }}
                 />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -116,7 +116,7 @@ export default function ConfiguracionPage() {
             {/* Addiction type */}
             <div className="flex flex-col gap-1.5">
               <label
-                className="text-[11px] tracking-[1.5px] uppercase text-slate-400 dark:text-slate-300"
+                className="text-[11px] tracking-[1.5px] uppercase rs-text-caption"
                 style={{ fontFamily: "'JetBrains Mono', monospace" }}
               >
                 Tipo de Adicción
@@ -125,7 +125,7 @@ export default function ConfiguracionPage() {
                 <select
                   value={addictionType}
                   onChange={(e) => setAddictionType(e.target.value)}
-                  className="w-full h-[44px] border border-slate-200 dark:border-slate-700/40 bg-white dark:bg-[#070f1a] rounded-sm px-4 text-slate-700 dark:text-slate-200 outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 transition-all appearance-none cursor-pointer"
+                  className="w-full h-[44px] border border-[var(--ui-border)] bg-[var(--surface-input)] rounded-sm px-4 rs-text-body outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 transition-all appearance-none cursor-pointer"
                   style={{ fontFamily: "'Playfair Display', serif", fontSize: 14, fontStyle: "italic" }}
                 >
                   {ADDICTION_TYPES.map((t) => (
@@ -165,7 +165,7 @@ export default function ConfiguracionPage() {
         </div>
 
         {/* ── Padrino de Apoyo ── */}
-        <div className="border border-slate-200 dark:border-slate-700/40 rounded-sm bg-white dark:bg-[#0d1f35] mb-6 p-8">
+        <div className="border border-[var(--ui-border)] rounded-sm bg-[var(--surface-card)] mb-6 p-8">
           <div className="flex items-center gap-2 mb-6">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="1.5">
               <path d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" strokeLinecap="round" strokeLinejoin="round"/>
@@ -182,7 +182,7 @@ export default function ConfiguracionPage() {
           {sponsorshipState.status === 'NONE' && (
             <>
               <p
-                className="text-[11px] italic text-slate-400 dark:text-slate-300 mb-5 leading-relaxed"
+                className="text-[11px] italic rs-text-caption mb-5 leading-relaxed"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
                 Tu padrino te compartirá un código de 8 caracteres. Ingrésalo aquí para enviarle una solicitud de apadrinamiento.
@@ -190,7 +190,7 @@ export default function ConfiguracionPage() {
               <div className="flex gap-3 items-end">
                 <div className="flex-1 flex flex-col gap-1.5">
                   <label
-                    className="text-[11px] tracking-[1.5px] uppercase text-slate-400 dark:text-slate-300"
+                    className="text-[11px] tracking-[1.5px] uppercase rs-text-caption"
                     style={{ fontFamily: "'JetBrains Mono', monospace" }}
                   >
                     Código del Padrino
@@ -201,7 +201,7 @@ export default function ConfiguracionPage() {
                     onChange={(e) => setSponsorCode(e.target.value.toUpperCase())}
                     maxLength={10}
                     placeholder="XXXXXXXX"
-                    className="h-[44px] border border-slate-200 dark:border-slate-700/40 bg-white dark:bg-[#070f1a] rounded-sm px-4 text-slate-700 dark:text-slate-200 outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 transition-all tracking-[4px] text-center"
+                    className="h-[44px] border border-[var(--ui-border)] bg-[var(--surface-input)] rounded-sm px-4 rs-text-body outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 transition-all tracking-[4px] text-center"
                     style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 15 }}
                     onKeyDown={(e) => e.key === 'Enter' && handleRequestSponsorship()}
                   />
@@ -231,7 +231,7 @@ export default function ConfiguracionPage() {
                 <p className="text-[11px] tracking-[1.5px] uppercase text-sky-600 dark:text-sky-400 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                   Solicitud enviada
                 </p>
-                <p className="text-[12px] italic text-slate-500 dark:text-slate-400" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <p className="text-[12px] italic rs-text-caption" style={{ fontFamily: "'Playfair Display', serif" }}>
                   Esperando a que tu padrino acepte la solicitud. Te notificaremos cuando lo haga.
                 </p>
               </div>
@@ -247,7 +247,7 @@ export default function ConfiguracionPage() {
                 </svg>
                 <div>
                   <p className="text-[11px] tracking-[1.5px] uppercase text-teal-600 dark:text-teal-400 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Apadrinamiento activo</p>
-                  <p className="text-[12px] italic text-slate-500 dark:text-slate-400" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  <p className="text-[12px] italic rs-text-caption" style={{ fontFamily: "'Playfair Display', serif" }}>
                     Tu padrino puede ver tu progreso y te acompañará en tu recuperación.
                   </p>
                 </div>
@@ -268,7 +268,7 @@ export default function ConfiguracionPage() {
         </div>
 
         {/* Pares de Apoyo */}
-        <div className="border border-slate-200 dark:border-slate-700/40 rounded-sm bg-white dark:bg-[#0d1f35] mb-6 p-8">
+        <div className="border border-[var(--ui-border)] rounded-sm bg-[var(--surface-card)] mb-6 p-8">
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="1.5">
@@ -304,33 +304,33 @@ export default function ConfiguracionPage() {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] tracking-[1px] uppercase text-slate-400 dark:text-slate-300" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Nombre *</label>
+                  <label className="text-[11px] tracking-[1px] uppercase rs-text-caption" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Nombre *</label>
                   <input
                     type="text"
                     value={peerName}
                     onChange={(e) => setPeerName(e.target.value)}
                     placeholder="Ej: María González"
-                    className="h-[40px] border border-slate-200 dark:border-slate-700/40 bg-white dark:bg-[#070f1a] rounded-sm px-3 text-slate-700 dark:text-slate-200 text-[13px] outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 transition-all"
+                    className="h-[40px] border border-[var(--ui-border)] bg-[var(--surface-input)] rounded-sm px-3 rs-text-body text-[13px] outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 transition-all"
                     style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] tracking-[1px] uppercase text-slate-400 dark:text-slate-300" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Teléfono *</label>
+                  <label className="text-[11px] tracking-[1px] uppercase rs-text-caption" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Teléfono *</label>
                   <input
                     type="tel"
                     value={peerPhone}
                     onChange={(e) => setPeerPhone(e.target.value)}
                     placeholder="+52 55 1234 5678"
-                    className="h-[40px] border border-slate-200 dark:border-slate-700/40 bg-white dark:bg-[#070f1a] rounded-sm px-3 text-slate-700 dark:text-slate-200 text-[13px] outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 transition-all"
+                    className="h-[40px] border border-[var(--ui-border)] bg-[var(--surface-input)] rounded-sm px-3 rs-text-body text-[13px] outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 transition-all"
                     style={{ fontFamily: "'JetBrains Mono', monospace" }}
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] tracking-[1px] uppercase text-slate-400 dark:text-slate-300" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Relación *</label>
+                  <label className="text-[11px] tracking-[1px] uppercase rs-text-caption" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Relación *</label>
                   <select
                     value={peerRelationship}
                     onChange={(e) => setPeerRelationship(e.target.value)}
-                    className="h-[40px] border border-slate-200 dark:border-slate-700/40 bg-white dark:bg-[#070f1a] rounded-sm px-3 text-slate-700 dark:text-slate-200 text-[13px] outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 transition-all"
+                    className="h-[40px] border border-[var(--ui-border)] bg-[var(--surface-input)] rounded-sm px-3 rs-text-body text-[13px] outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 transition-all"
                     style={{ fontFamily: "'JetBrains Mono', monospace" }}
                   >
                     <option value="">Selecciona una relación…</option>
@@ -342,13 +342,13 @@ export default function ConfiguracionPage() {
                   </select>
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] tracking-[1px] uppercase text-slate-400 dark:text-slate-300" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Correo (opcional)</label>
+                  <label className="text-[11px] tracking-[1px] uppercase rs-text-caption" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Correo (opcional)</label>
                   <input
                     type="email"
                     value={peerEmail}
                     onChange={(e) => setPeerEmail(e.target.value)}
                     placeholder="correo@ejemplo.com"
-                    className="h-[40px] border border-slate-200 dark:border-slate-700/40 bg-white dark:bg-[#070f1a] rounded-sm px-3 text-slate-700 dark:text-slate-200 text-[13px] outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 transition-all"
+                    className="h-[40px] border border-[var(--ui-border)] bg-[var(--surface-input)] rounded-sm px-3 rs-text-body text-[13px] outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 transition-all"
                     style={{ fontFamily: "'JetBrains Mono', monospace" }}
                   />
                 </div>
@@ -361,7 +361,7 @@ export default function ConfiguracionPage() {
               <div className="flex gap-2 justify-end">
                 <button
                   onClick={() => { setShowAddPeer(false); setPeerName(""); setPeerPhone(""); setPeerRelationship(""); setPeerEmail(""); }}
-                  className="h-[36px] px-4 border border-slate-200 dark:border-slate-700/40 text-slate-400 dark:text-slate-300 hover:text-slate-600 rounded-sm text-[11px] tracking-[1px] uppercase transition-colors"
+                  className="h-[36px] px-4 border border-[var(--ui-border)] rs-text-caption hover:text-slate-600 rounded-sm text-[11px] tracking-[1px] uppercase transition-colors"
                   style={{ fontFamily: "'JetBrains Mono', monospace" }}
                 >
                   Cancelar
@@ -387,7 +387,7 @@ export default function ConfiguracionPage() {
           )}
 
           <p
-            className="text-[11px] italic text-slate-400 dark:text-slate-300 mb-5 leading-relaxed"
+            className="text-[11px] italic rs-text-caption mb-5 leading-relaxed"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Estas son las personas que recibirán una alerta si decides activar tu &apos;Raíz de Emergencia&apos;.
@@ -396,14 +396,14 @@ export default function ConfiguracionPage() {
           {/* Cabecera de tabla — ocultar columna email en móvil */}
           <div className="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_1fr_auto] gap-4 pb-2 mb-1">
             <p
-              className="text-[11px] tracking-[1px] uppercase text-slate-300 dark:text-slate-400"
+              className="text-[11px] tracking-[1px] uppercase rs-text-caption"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               Nombre
             </p>
             {/* Columna email oculta en móvil */}
             <p
-              className="hidden sm:block text-[11px] tracking-[1px] uppercase text-slate-300 dark:text-slate-400"
+              className="hidden sm:block text-[11px] tracking-[1px] uppercase rs-text-caption"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               Correo Electrónico
@@ -416,14 +416,14 @@ export default function ConfiguracionPage() {
               className="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_1fr_auto] gap-4 py-3 border-t border-slate-50 dark:border-slate-700/20 items-center"
             >
               <p
-                className="text-[14px] italic text-slate-700 dark:text-slate-200"
+                className="text-[14px] italic rs-text-body"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
                 {peer.name}
               </p>
               {/* Email oculto en móvil */}
               <p
-                className="hidden sm:block text-[11px] text-slate-400 dark:text-slate-300"
+                className="hidden sm:block text-[11px] rs-text-caption"
                 style={{ fontFamily: "'JetBrains Mono', monospace" }}
               >
                 {peer.email}
@@ -453,7 +453,7 @@ export default function ConfiguracionPage() {
                   Notificaciones de Emergencia
                 </p>
                 <p
-                  className="text-[11px] text-slate-400 dark:text-slate-300"
+                  className="text-[11px] rs-text-caption"
                   style={{ fontFamily: "'JetBrains Mono', monospace" }}
                 >
                   Enviar alerta automática a mis pares al presionar el botón de pánico.
@@ -471,18 +471,18 @@ export default function ConfiguracionPage() {
         {/* Footer responsivo */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 pt-4 border-t border-slate-100 dark:border-slate-700/30">
           <p
-            className="text-[11px] tracking-[0.9px] uppercase text-slate-400 dark:text-slate-300 italic"
+            className="text-[11px] tracking-[0.9px] uppercase rs-text-caption italic"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
             Oasis de Sobriedad — Gestión de Privacidad
           </p>
           <div className="flex items-center gap-4">
-              <button className="text-slate-300 dark:text-slate-400 hover:text-slate-500 transition-colors">
+              <button className="rs-text-caption hover:text-slate-500 transition-colors">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
-              <button className="text-slate-300 dark:text-slate-400 hover:text-slate-500 transition-colors">
+              <button className="rs-text-caption hover:text-slate-500 transition-colors">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>

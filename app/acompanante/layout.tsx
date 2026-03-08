@@ -33,13 +33,13 @@ export default function AcompananteLayout({
       {/* main: sin margen en móvil, con margen en md+ */}
       <main className="flex-1 md:ml-72 overflow-auto bg-[var(--surface-main)] flex flex-col">
         {/* Barra superior móvil — oculta en desktop */}
-        <div className="sticky top-0 z-10 flex items-end gap-3 px-4 min-h-14 pb-3 bg-white dark:bg-[#0f1e2e] border-b border-teal-50 dark:border-teal-900/20 md:hidden shrink-0 safe-top-bar">
+        <div className="sticky top-0 z-10 flex items-end gap-3 px-4 min-h-14 pb-3 bg-[var(--surface-card)] border-b border-teal-50 dark:border-teal-900/20 md:hidden shrink-0 safe-top-bar">
           {/* En sub-páginas: botón Atrás. En raíz: botón hamburguesa */}
           {!isRoot ? (
             <button
               type="button"
               onClick={handleBack}
-              className="text-slate-500 hover:text-slate-700 transition-colors p-1 -ml-1"
+              className="text-slate-500 hover:rs-text-body transition-colors p-1 -ml-1"
               aria-label="Volver a la pantalla anterior"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -50,7 +50,7 @@ export default function AcompananteLayout({
             <button
               type="button"
               onClick={() => setSidebarOpen(true)}
-              className="text-slate-500 hover:text-slate-700 transition-colors p-1"
+              className="text-slate-500 hover:rs-text-body transition-colors p-1"
               aria-label="Abrir menú de navegación"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -61,7 +61,7 @@ export default function AcompananteLayout({
 
           {/* Título de la página actual */}
           <span
-            className="flex-1 text-[16px] font-normal text-slate-700 dark:text-slate-200"
+            className="flex-1 text-[16px] font-normal rs-text-body"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             {pageLabel}

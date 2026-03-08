@@ -234,7 +234,7 @@ export default function RegisterPage() {
                   : "border-slate-100 bg-white hover:border-sky-200 hover:bg-slate-50"
               }`}
             >
-              <span className={role === "user" ? "text-sky-500" : "text-slate-400"}>
+              <span className={role === "user" ? "text-sky-500" : "rs-text-caption"}>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
                   <circle cx="12" cy="8" r="4" strokeLinecap="round" strokeLinejoin="round" />
                   <path d="M4 20C4 17 7.582 15 12 15C16.418 15 20 17 20 20" strokeLinecap="round" strokeLinejoin="round" />
@@ -263,7 +263,7 @@ export default function RegisterPage() {
                   : "border-slate-100 bg-white hover:border-teal-200 hover:bg-slate-50"
               }`}
             >
-              <span className={role === "companion" ? "text-teal-500" : "text-slate-400"}>
+              <span className={role === "companion" ? "text-teal-500" : "rs-text-caption"}>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
                   <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" strokeLinecap="round" strokeLinejoin="round" />
                   <circle cx="9" cy="7" r="4" strokeLinecap="round" strokeLinejoin="round" />
@@ -463,7 +463,7 @@ export default function RegisterPage() {
                             : "border-slate-100 bg-white hover:border-sky-200 hover:bg-slate-50"
                         }`}
                       >
-                        <span className={addictionClassification === "conductual" ? "text-sky-500" : "text-slate-400"}>
+                        <span className={addictionClassification === "conductual" ? "text-sky-500" : "rs-text-caption"}>
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
                             <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
@@ -478,7 +478,7 @@ export default function RegisterPage() {
                           >
                             Conductual
                           </p>
-                          <p className="text-[11px] text-slate-400 mt-0.5" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                          <p className="text-[11px] rs-text-caption mt-0.5" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                             Compras, juegos, etc.
                           </p>
                         </div>
@@ -493,7 +493,7 @@ export default function RegisterPage() {
                             : "border-slate-100 bg-white hover:border-sky-200 hover:bg-slate-50"
                         }`}
                       >
-                        <span className={addictionClassification === "sustancia" ? "text-sky-500" : "text-slate-400"}>
+                        <span className={addictionClassification === "sustancia" ? "text-sky-500" : "rs-text-caption"}>
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
                             <path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
@@ -508,7 +508,7 @@ export default function RegisterPage() {
                           >
                             De Sustancia
                           </p>
-                          <p className="text-[11px] text-slate-400 mt-0.5" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                          <p className="text-[11px] rs-text-caption mt-0.5" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                             Tabaco, cafeína, etc.
                           </p>
                         </div>
@@ -529,7 +529,7 @@ export default function RegisterPage() {
                       value={otherDescription}
                       onChange={(e) => setOtherDescription(e.target.value)}
                       placeholder="Ej: Tabaquismo, Compras, etc."
-                      className="w-full border-0 border-b border-slate-200 bg-transparent py-2 text-slate-500 placeholder-slate-400 outline-none focus:border-sky-400 transition-colors text-[12px] italic"
+                      className="w-full border-0 border-b border-[var(--ui-border)] bg-transparent py-2 text-slate-500 placeholder-slate-400 outline-none focus:border-sky-400 transition-colors text-[12px] italic"
                       style={{ fontFamily: "'Playfair Display', serif" }}
                     />
                   </div>
@@ -617,7 +617,7 @@ export default function RegisterPage() {
                       </svg>
                     </span>
                     <p
-                      className="text-[11px] text-slate-500 leading-relaxed"
+                      className="text-[11px] rs-text-muted leading-relaxed"
                       style={{ fontFamily: "'JetBrains Mono', monospace" }}
                     >
                       {text}

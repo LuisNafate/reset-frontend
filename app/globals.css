@@ -349,6 +349,93 @@ select:focus {
 .rs-border        { border-color: var(--ui-border); }
 .rs-border-subtle { border-color: var(--ui-border-subtle); }
 
+/* ── Tarjeta de contenido — fondo + borde adaptativos ──────────────────────
+ * Reemplaza: bg-white dark:bg-[#0d1f35] border-slate-200 dark:border-slate-700/40
+ * USO: <div className="rs-card rounded-sm border p-8">
+ * ─────────────────────────────────────────────────────────────────────────── */
+.rs-card {
+  background-color: var(--surface-card);
+  border-color: var(--ui-border);
+}
+
+/* ── Campo de entrada — background + borde + texto con tema ────────────────── */
+.rs-input-field {
+  background-color: var(--surface-input);
+  border: 1px solid var(--ui-border);
+  color: var(--ui-text-body);
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.25s;
+}
+.rs-input-field::placeholder {
+  color: var(--ui-text-caption);
+}
+.rs-input-field:focus {
+  outline: none;
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 15%, transparent) !important;
+}
+
+/* ── Etiquetas de formulario — uppercase monospace sobre inputs ──────────────
+ * Reemplaza: text-[11px] tracking-[1.5px] uppercase text-slate-400 dark:text-slate-300
+ * + style={{ fontFamily: "'JetBrains Mono', monospace" }}
+ * USO: <label className="rs-form-label">
+ * ─────────────────────────────────────────────────────────────────────────── */
+.rs-form-label {
+  display: block;
+  color: var(--ui-text-muted);
+  font-family: var(--font-jetbrains), 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ── Tag de sección — pequeña etiqueta italic encima de títulos de página ────
+ * Reemplaza: text-[11px] tracking-[2px] uppercase italic text-slate-400 dark:text-slate-300
+ * + style={{ fontFamily: "'JetBrains Mono', monospace" }}
+ * USO: <p className="rs-page-tag italic mb-2">— Ajustes de ReSet —</p>
+ * ─────────────────────────────────────────────────────────────────────────── */
+.rs-page-tag {
+  color: var(--ui-text-caption);
+  font-family: var(--font-jetbrains), 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ── Subtítulo de página — línea de descripción bajo el heading ──────────────
+ * Reemplaza: text-[11px] tracking-[1.5px] uppercase text-slate-400 dark:text-slate-300
+ * USO: <p className="rs-page-subtitle mb-10">Gestiona tu red de seguridad</p>
+ * ─────────────────────────────────────────────────────────────────────────── */
+.rs-page-subtitle {
+  color: var(--ui-text-muted);
+  font-family: var(--font-jetbrains), 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── Heading de página — título principal con Playfair ───────────────────────
+ * Reemplaza: text-[42px] font-normal text-slate-800 dark:text-slate-100
+ * + style={{ fontFamily: "'Playfair Display', serif" }}
+ * USO: <h1 className="rs-page-heading leading-none mb-2">Bitácora Diaria</h1>
+ * ─────────────────────────────────────────────────────────────────────────── */
+.rs-page-heading {
+  color: var(--ui-text-heading);
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  line-height: 1;
+  font-weight: 400;
+}
+
+/* ── Cuerpo de texto de tarjeta — párrafos con buen contraste ───────────────
+ * Reemplaza: text-slate-700 dark:text-slate-200 (legible en ambos modos)
+ * USO: <p className="rs-card-body">...</p>
+ * ─────────────────────────────────────────────────────────────────────────── */
+.rs-card-body {
+  color: var(--ui-text-body);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 /* ── Dark mode: overrides globales de layout ─────────────────────────────────
  * Aplicados con selectores específicos para no interferir con utilidades
  * de Tailwind en el código de los componentes.

@@ -115,7 +115,7 @@ export default function InicioPage() {
 
                 {/* Stage label — etapa real según la racha */}
                 <div
-                  className="relative z-10 mt-10 bg-white dark:bg-[#0f1d2d] border border-[rgba(59,130,246,0.2)] dark:border-[rgba(59,130,246,0.15)] h-10 px-8 flex items-center"
+                  className="relative z-10 mt-10 bg-[var(--surface-card)] border border-[rgba(59,130,246,0.2)] dark:border-[rgba(59,130,246,0.15)] h-10 px-8 flex items-center"
                   style={{ boxShadow: "0px 1px 2px 0px rgba(0,0,0,0.05)" }}
                 >
                   <span
@@ -380,7 +380,7 @@ export default function InicioPage() {
               {/* Enlace */}
               <Link
                 href="/dashboard/tecnicas"
-                className="shrink-0 h-9 px-5 bg-white dark:bg-[#0d1f35] border border-[rgba(59,130,246,0.3)] dark:border-sky-900/40 hover:bg-[#eff6ff] dark:hover:bg-sky-900/20 text-[#3b82f6] dark:text-sky-400 flex items-center transition-colors"
+                className="shrink-0 h-9 px-5 bg-[var(--surface-card)] border border-[rgba(59,130,246,0.3)] dark:border-sky-900/40 hover:bg-[#eff6ff] dark:hover:bg-sky-900/20 text-[#3b82f6] dark:text-sky-400 flex items-center transition-colors"
                 style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase" }}
               >
                 Ver todas →
