@@ -30,6 +30,8 @@ export interface AuthUser {
   name: string;
   email: string;
   role: 'ADICTO' | 'PADRINO';
+  /** Código de 8 caracteres del padrino — solo presente si role = 'PADRINO' */
+  sponsorCode?: string | null;
 }
 
 interface AuthCtx {

@@ -285,7 +285,7 @@ export default function ConfiguracionPage() {
                   disabled={isAddingPeer || !peerName.trim() || !peerPhone.trim() || !peerRelationship.trim()}
                   onClick={async () => {
                     setIsAddingPeer(true);
-                    await handleAddPeer({ name: peerName.trim(), phone_number: peerPhone.trim(), relationship: peerRelationship.trim(), email: peerEmail.trim() || undefined });
+                    await handleAddPeer({ contactName: peerName.trim(), phone: peerPhone.trim(), relationship: peerRelationship.trim(), email: peerEmail.trim() || undefined });
                     setIsAddingPeer(false);
                     setShowAddPeer(false);
                     setPeerName(""); setPeerPhone(""); setPeerRelationship(""); setPeerEmail("");

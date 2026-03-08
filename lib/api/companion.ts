@@ -1,24 +1,22 @@
 // lib/api/companion.ts
 // Funciones del módulo acompañante (padrino).
-// Los únicos endpoints disponibles son los compartidos con el paciente:
-// /streak/active y /tracking/stats/me y /tracking/logs
-// No existen endpoints de mensajería ni perfil específicos del padrino.
+// Usa /streak (racha del padrino) y /sponsorships/godchild/profile para ver al ahijado.
 
-import { apiRequest } from './client';
+import { getStreak } from './streak';
+import { getGodchildProfile } from './sponsorship';
 import type { CompanionProgress, SupportedUser } from '@/types';
 
 // ─── Progreso ────────────────────────────────────────────────────────────────
 
 export async function getCompanionProgress(): Promise<CompanionProgress> {
-  const res: any = await apiRequest('/streak/active');
-  const data = res?.data ?? res;
+  const streak = await getStreak();
   return {
-    sobrietyDays: data?.day_counter ?? data?.currentStreak ?? 0,
-    plantStage: data?.plantStage ?? 'Brote',
+    sobrietyDays: streak?.dayCounter ?? 0,
+    plantStage: 'Brote',
     notesThisWeek: 0,
     messagesReceived: 0,
     consistency: 0,
-    lastActiveAt: data?.lastActiveAt ?? new Date().toISOString(),
+    lastActiveAt: streak?.lastLogDate ?? new Date().toISOString(),
     recentActivity: [],
   };
 }
@@ -26,15 +24,20 @@ export async function getCompanionProgress(): Promise<CompanionProgress> {
 // ─── Usuarios apoyados ───────────────────────────────────────────────────────
 
 export async function getSupportedUsers(): Promise<SupportedUser[]> {
-  const res: any = await apiRequest('/sponsorships/my-godchildren');
-  const list: any[] = res?.data ?? res ?? [];
-  return Array.isArray(list)
-    ? list.map((u: any) => ({
-        id: u.id ?? u._id ?? String(Date.now()),
-        displayName: u.name ?? u.displayName ?? 'Usuario',
-        addictionType: u.addictionName ?? u.addictionType ?? '',
-        sobrietyDays: u.sobrietyDays ?? 0,
-        status: u.status === 'Inactivo' ? 'Inactivo' : 'Activo',
-      }))
-    : [];
+  try {
+    const data = await getGodchildProfile();
+    return [
+      {
+        id: data.godchild.id,
+        displayName: data.godchild.name,
+        addictionType: data.godchild.addiction?.custom_name ?? '',
+        sobrietyDays: data.statistics.dayCounter,
+        status: data.sponsorship.status === 'ACTIVE' ? 'Activo' : 'Inactivo',
+      },
+    ];
+  } catch {
+    // Sin ahijado activo
+    return [];
+  }
 }
+

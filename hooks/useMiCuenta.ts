@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { terminateSponsor } from "@/lib/api/sponsorship";
+import { getGodchildProfile } from "@/lib/api/sponsorship";
 import { useAuth } from "@/context/AuthContext";
 import type { CompanionProfile, SupportedUser } from "@/types";
 
@@ -30,8 +30,31 @@ export function useMiCuenta() {
         email: user.email,
       }));
     }
-    // El endpoint de ahijados no está disponible en la API actual
-    setIsLoading(false);
+
+    // Solo los PADRINO tienen ahijados. Evitar llamada innecesaria para ADICTO.
+    if (user?.role !== 'PADRINO') {
+      setIsLoading(false);
+      return;
+    }
+
+    getGodchildProfile()
+      .then((data) => {
+        const g = data.godchild;
+        setSupportedUsers([
+          {
+            id: g.id,
+            displayName: g.name,
+            addictionType: g.addiction?.custom_name ?? '',
+            sobrietyDays: data.statistics.dayCounter,
+            status: data.sponsorship.status === 'ACTIVE' ? 'Activo' : 'Inactivo',
+          },
+        ]);
+      })
+      .catch(() => {
+        // Sin ahijado activo — no es un error que el usuario deba ver en esta pantalla
+        setSupportedUsers([]);
+      })
+      .finally(() => setIsLoading(false));
   }, [user]);
 
   const handleChange = (field: keyof CompanionProfile, value: string | boolean) => {
@@ -66,3 +89,4 @@ export function useMiCuenta() {
     handleSave,
   };
 }
+

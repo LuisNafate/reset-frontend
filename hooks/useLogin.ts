@@ -25,7 +25,7 @@ export function useLogin() {
     try {
       const { accessToken, user } = await login({
         email: form.email,
-        password: form.password,
+        passwordHash: form.password,
       });
       saveAuth(accessToken, user);
       router.push(user.role === "PADRINO" ? "/acompanante" : "/dashboard");

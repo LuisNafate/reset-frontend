@@ -80,7 +80,7 @@ export default function UserSidebar({ isOpen = false, onClose }: UserSidebarProp
     setShowEmergencyConfirm(false);
     setEmergencyState("sending");
     try {
-      await triggerAlert("Usuario presionó Raíz de Emergencia");
+      await triggerAlert({ resolutionNotes: "Usuario presionó Raíz de Emergencia" });
       setEmergencyState("sent");
       setTimeout(() => setEmergencyState("idle"), 5000);
     } catch {

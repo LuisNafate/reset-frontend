@@ -1,50 +1,67 @@
 // lib/api/tracking.ts
 // Tracking / Bitácora — registros diarios de consumo, craving y estado emocional.
+// Contrato exacto según documentación API v1.
 
 import { apiRequest } from './client';
 
-// ─── Tipos ───────────────────────────────────────────────────────────────────
+// ─── Tipos de petición ───────────────────────────────────────────────────────
 
-export interface DailyLog {
-  log_date: string;            // 'YYYY-MM-DD'
+/**
+ * Payload para crear un registro diario.
+ * cravingLevelLevel y emotionalStateLevel son números directos 1-10,
+ * NO son UUIDs de catálogos.
+ */
+export interface CreateDailyLogPayload {
   consumed: boolean;
-  craving_level_id: string;    // UUID de /catalogs/craving-levels
-  emotional_state_id: string;  // UUID de /catalogs/emotional-states
-  notes?: string;
+  /** Nivel de ansiedad/craving. Rango 1-10. */
+  cravingLevelLevel: number;
+  /** Nivel de estado emocional. Rango 1-10. */
+  emotionalStateLevel: number;
   triggers?: string;
+  notes?: string;
 }
 
-/** Entrada del catálogo de niveles (craving o estado emocional). */
-export interface CatalogLevel {
-  id: string;    // UUID
-  level: number; // 1-10
-  label: string;
-  description?: string;
+// ─── Tipos de respuesta ──────────────────────────────────────────────────────
+
+export interface DailyLogResponse {
+  id: string;
+  userId: string;
+  logDate: string;      // 'YYYY-MM-DD'
+  consumed: boolean;
+  triggers: string;
+  notes: string;
+  cravingLevel?: { level: number; label: string };
+  emotionalState?: { level: number; label: string };
 }
 
-// ─── Catálogos ───────────────────────────────────────────────────────────────
-
-/** Obtiene todos los niveles de craving disponibles (1-10). */
-export const getCravingLevels = (): Promise<CatalogLevel[]> =>
-  apiRequest<CatalogLevel[]>('/catalogs/craving-levels');
-
-/** Obtiene todos los estados emocionales disponibles (1-10). */
-export const getEmotionalStates = (): Promise<CatalogLevel[]> =>
-  apiRequest<CatalogLevel[]>('/catalogs/emotional-states');
+export interface TrackingStatisticsResponse {
+  user_id: string;
+  total_logs: number;
+  avg_craving: number;
+  avg_emotion: number;
+  total_relapses: number;
+  day_counter: number;
+  streak_status: string;
+}
 
 // ─── Funciones ───────────────────────────────────────────────────────────────
 
 /** Crea un nuevo registro diario. */
-export const createLog = (data: DailyLog) =>
-  apiRequest('/tracking/logs', {
+export const createLog = (data: CreateDailyLogPayload): Promise<DailyLogResponse> =>
+  apiRequest<DailyLogResponse>('/tracking/logs', {
     method: 'POST',
     body: JSON.stringify(data),
   });
 
-/** Obtiene los últimos `limit` registros del usuario autenticado. */
-export const getLogs = (limit = 30): Promise<any> =>
-  apiRequest(`/tracking/logs?limit=${limit}`);
+/**
+ * Obtiene los últimos registros del usuario autenticado.
+ * @param page Página (1-based). Default 1.
+ * @param limit Cantidad de registros por página. Default 30.
+ */
+export const getLogs = (limit = 30, page = 1): Promise<DailyLogResponse[]> =>
+  apiRequest<DailyLogResponse[]>(`/tracking/logs?page=${page}&limit=${limit}`);
 
 /** Devuelve las estadísticas consolidadas del usuario autenticado. */
-export const getStatistics = (): Promise<any> =>
-  apiRequest('/tracking/stats/me');
+export const getStatistics = (): Promise<TrackingStatisticsResponse> =>
+  apiRequest<TrackingStatisticsResponse>('/tracking/statistics');
+

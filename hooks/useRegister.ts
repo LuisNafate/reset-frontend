@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { register } from "@/lib/api/auth";
+import { ADDICTION_TYPES } from "@/lib/constants";
 import type { AddictionTypeId } from "@/types";
 
 interface RegisterFormStep1 {
@@ -58,15 +59,27 @@ export function useRegister() {
     setIsLoading(true);
     setError(null);
     try {
-      // El backend acepta 'patient' | 'sponsor' — addictionName y classification
-      // no forman parte del DTO y serían rechazados (forbidNonWhitelisted: true)
-      const apiRole = role === "companion" ? "sponsor" : "patient";
+      // Determinar el nombre legible de la adicción para el backend
+      const addictionLabel =
+        selectedAddiction === "otros"
+          ? otherDescription.trim()
+          : ADDICTION_TYPES.find((a) => a.id === selectedAddiction)?.label ?? selectedAddiction;
+
+      // Mapear clasificación al formato del contrato
+      const classificationLabel =
+        addictionClassification === "conductual"
+          ? "Conductual"
+          : addictionClassification === "sustancia"
+          ? "Sustancias"
+          : undefined;
 
       await register({
         name: form.name,
         email: form.email,
-        password: form.password,
-        role: apiRole,
+        passwordHash: form.password,
+        role: role === "companion" ? "PADRINO" : "ADICTO",
+        ...(role === "user" && addictionLabel ? { addictionName: addictionLabel } : {}),
+        ...(role === "user" && classificationLabel ? { classification: classificationLabel } : {}),
       });
       router.push("/login");
     } catch (err) {
@@ -95,3 +108,4 @@ export function useRegister() {
     handleSubmit,
   };
 }
+

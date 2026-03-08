@@ -32,8 +32,9 @@ export function useConfiguracion() {
           Array.isArray(list)
             ? list.map((c: any) => ({
                 id: c.id ?? c._id ?? String(Date.now()),
-                name: c.name ?? c.contactName ?? c.contact_name ?? "",
-                email: c.email ?? "",
+                // La API devuelve contactName (camelCase) según contrato
+                name: c.contactName ?? c.name ?? '',
+                email: c.email ?? '',
               }))
             : []
         );
@@ -70,18 +71,18 @@ export function useConfiguracion() {
    * Añade un nuevo contacto de emergencia (par de apoyo).
    */
   const handleAddPeer = async (data: {
-    name: string;
-    phone_number: string;
+    contactName: string;
+    phone?: string;
     relationship: string;
     email?: string;
   }) => {
     try {
       await addContact({
-        name: data.name,
-        phone_number: data.phone_number,
+        contactName: data.contactName,
         relationship: data.relationship,
         email: data.email,
-        priority_level: 1,
+        phone: data.phone,
+        priorityOrder: 1,
       });
       // Recargar lista
       const res: any = await getContacts();
@@ -90,8 +91,8 @@ export function useConfiguracion() {
         Array.isArray(list)
           ? list.map((c: any) => ({
               id: c.id ?? c._id ?? String(Date.now()),
-              name: c.name ?? c.contactName ?? c.contact_name ?? "",
-              email: c.email ?? "",
+              name: c.contactName ?? c.name ?? '',
+              email: c.email ?? '',
             }))
           : []
       );

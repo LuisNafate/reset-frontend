@@ -15,7 +15,7 @@ export interface RegisterData {
 }
 
 export interface AuthResponse {
-  token: string;
+  accessToken: string;
   user: User;
 }
 
@@ -25,9 +25,11 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  addictionType: string;
-  createdAt: string;
   role: "ADICTO" | "PADRINO";
+  sponsorCode?: string | null;
+  createdAt: string;
+  /** @deprecated Solo disponible en mocks — la API no devuelve addictionType */
+  addictionType?: string;
 }
 
 // ─── Dashboard / Progress ────────────────────────────────────────────────────
@@ -201,12 +203,4 @@ export interface CompanionProfile {
   phone: string;
   emailAlerts: boolean;
   smsAlerts: boolean;
-}
-
-export interface SupportedUser {
-  id: string;
-  displayName: string;
-  addictionType: string;
-  sobrietyDays: number;
-  status: "Activo" | "Inactivo";
 }

@@ -1,20 +1,22 @@
 // lib/api/streak.ts
-// Rachas — consulta de la racha activa y el historial de mejores rachas.
+// Rachas — consulta de la racha activa del usuario autenticado.
+// Contrato exacto según documentación API v1.
 
 import { apiRequest } from './client';
 
+// ─── Tipo de respuesta ────────────────────────────────────────────────────────
+
+export interface StreakResponse {
+  id: string;
+  status: string;       // "ACTIVE" | "BROKEN"
+  dayCounter: number;   // Días consecutivos limpios
+  startedAt: string;    // ISO date
+  lastLogDate: string;  // ISO date
+}
+
+// ─── Funciones ───────────────────────────────────────────────────────────────
+
 /** Devuelve la racha activa del usuario autenticado. */
-export const getStreak = (): Promise<any> => apiRequest('/streak/active');
+export const getStreak = (): Promise<StreakResponse> =>
+  apiRequest<StreakResponse>('/streak');
 
-/** Devuelve el ranking de mejores rachas del usuario. */
-export const getBestStreaks = (): Promise<any> => apiRequest('/streak/best');
-
-/**
- * Crea una nueva racha inicial para el usuario.
- * @param userAddictionId UUID de la relación usuario-adición.
- */
-export const createStreak = (userAddictionId: string): Promise<any> =>
-  apiRequest('/streak', {
-    method: 'POST',
-    body: JSON.stringify({ user_addiction_id: userAddictionId }),
-  });

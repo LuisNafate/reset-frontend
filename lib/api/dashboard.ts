@@ -1,36 +1,33 @@
 // lib/api/dashboard.ts
-// Progreso del usuario — racha y estadísticas.
+// Progreso del usuario — racha activa y estadísticas.
 
 import { apiRequest } from './client';
+import { getStreak } from './streak';
+import { getStatistics } from './tracking';
 import type { UserProgress } from '@/types';
 
 /** Devuelve el progreso de sobriedad del usuario autenticado.
- * La API puede devolver soberDays (tracking/statistics) o currentStreak (streak).
+ * Combina /streak (dayCounter) con /tracking/statistics como fallback.
  */
 export async function getProgress(): Promise<UserProgress> {
-  // Intentar /streak/active primero; si falla, usar /tracking/stats/me
-  const res: any = await apiRequest('/streak/active');
-  const streakData = res?.data ?? res;
-
   let days = 0;
-  if (streakData && typeof streakData === 'object') {
-    days = streakData.day_counter ?? streakData.currentStreak ?? streakData.soberDays ?? 0;
-  }
 
-  if (days === 0) {
+  try {
+    const streak = await getStreak();
+    // La API devuelve dayCounter (camelCase), no day_counter
+    days = streak?.dayCounter ?? 0;
+  } catch {
+    // Si el streak falla (ej: no hay racha activa), caer a estadísticas
     try {
-      const stats: any = await apiRequest('/tracking/stats/me');
-      const sd = stats?.data ?? stats;
-      days = sd?.day_counter ?? sd?.soberDays ?? sd?.currentStreak ?? 0;
-    } catch { /* ignorar */ }
+      const stats = await getStatistics();
+      days = stats?.day_counter ?? 0;
+    } catch { /* seguir con 0 */ }
   }
 
   return {
     sobrietyDays: days,
     plantStage: getStageName(days),
     consecutiveDays: days,
-    lastNote: streakData?.lastNote,
-    nextMilestone: streakData?.nextMilestone,
   };
 }
 
@@ -43,3 +40,4 @@ function getStageName(
   if (days >= 30) return 'Brote';
   return 'Semilla';
 }
+

@@ -59,8 +59,7 @@ export function useDashboard() {
 
         // Última nota del log más reciente
         if (logsRes.status === "fulfilled") {
-          const res: any = logsRes.value;
-          const list: any[] = res?.data ?? res ?? [];
+          const list = logsRes.value;
           if (Array.isArray(list) && list.length > 0) {
             const latest = list[0];
             if (latest?.notes) setLastNote(latest.notes);
