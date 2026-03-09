@@ -16,7 +16,7 @@ export async function getCompanionProgress(): Promise<CompanionProgress> {
     notesThisWeek: 0,
     messagesReceived: 0,
     consistency: 0,
-    lastActiveAt: streak?.lastLogDate ?? new Date().toISOString(),
+    lastActiveAt: streak?.lastLogDate ?? new Date().toISOString(), // last_log_date del adicto, no updated_at de la racha
     recentActivity: [],
   };
 }

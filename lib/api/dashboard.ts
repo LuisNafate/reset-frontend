@@ -1,32 +1,15 @@
 // lib/api/dashboard.ts
 // Progreso del usuario — racha activa y estadísticas.
 
-import { apiRequest } from './client';
 import { getStreak } from './streak';
-import { getStatistics } from './tracking';
 import type { UserProgress } from '@/types';
 
 /** Devuelve el progreso de sobriedad del usuario autenticado.
- * Prioriza /tracking/statistics (calculado en vivo desde los logs) sobre
- * /streak (depende de un trigger DB que puede no estar activo).
+ * Usa GET /streak → currentStreak como fuente principal del contador de días.
  */
 export async function getProgress(): Promise<UserProgress> {
-  let days = 0;
-
-  // Intentar las dos fuentes en paralelo para mayor velocidad
-  const [statsResult, streakResult] = await Promise.allSettled([
-    getStatistics(),
-    getStreak(),
-  ]);
-
-  if (statsResult.status === 'fulfilled' && (statsResult.value?.dayCounter ?? 0) > 0) {
-    // fn_get_user_stats calcula los días directamente desde daily_logs — no depende del trigger
-    days = statsResult.value.dayCounter;
-  } else if (streakResult.status === 'fulfilled') {
-    days = streakResult.value?.currentStreak ?? 0;
-  } else if (statsResult.status === 'fulfilled') {
-    days = statsResult.value?.dayCounter ?? 0;
-  }
+  const streak = await getStreak();
+  const days = streak?.currentStreak ?? 0;
 
   return {
     sobrietyDays: days,
