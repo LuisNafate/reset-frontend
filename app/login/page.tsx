@@ -240,12 +240,12 @@ export default function LoginPage() {
                   <label className="text-[12px] tracking-[1.2px] uppercase font-jetbrains" style={{ color: 'var(--ui-text-muted)' }}>
                     Contraseña
                   </label>
-                  <a
-                    href="#"
+                  <Link
+                    href="/forgot-password"
                     className="text-[11px] tracking-wide uppercase font-jetbrains text-sky-500 hover:text-sky-400 transition-colors"
                   >
                     ¿Olvidaste tu contraseña?
-                  </a>
+                  </Link>
                 </div>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--ui-text-caption)' }}>

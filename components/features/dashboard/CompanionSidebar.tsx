@@ -83,7 +83,7 @@ export default function CompanionSidebar({ isOpen = false, onClose }: CompanionS
       style={{ boxShadow: "1px 0 0 0 #f1f5f9" }}
     >
       {/* Logo — nombre real del acompañante */}
-      <div className="px-8 sidebar-safe-top pb-6 border-b border-slate-100 flex items-start justify-between">
+      <div className="px-8 sidebar-safe-top pb-6 border-b border-slate-100 dark:border-slate-800/60 flex items-start justify-between">
         <div className="min-w-0 flex-1">
           <p
             className="text-[11px] tracking-[1.8px] uppercase text-teal-500 mb-1"
@@ -209,8 +209,8 @@ export default function CompanionSidebar({ isOpen = false, onClose }: CompanionS
       </div>
 
       {/* Companion Identity Footer */}
-      <div className="p-4 border-t border-teal-50">
-        <div className="px-4 py-3 rounded-lg bg-teal-50">
+      <div className="p-4 border-t border-teal-50 dark:border-teal-900/30">
+        <div className="px-4 py-3 rounded-lg bg-teal-50 dark:bg-teal-900/20">
           <p
             className="text-[11px] tracking-[1.5px] uppercase text-teal-500 mb-0.5"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
@@ -218,7 +218,7 @@ export default function CompanionSidebar({ isOpen = false, onClose }: CompanionS
             Tu Rol
           </p>
           <p
-            className="text-[11px] text-teal-700 font-medium"
+            className="text-[11px] text-teal-700 dark:text-teal-300 font-medium"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Par de Apoyo Principal

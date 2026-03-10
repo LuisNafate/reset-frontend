@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Toggle from "@/components/ui/Toggle";
 import { useMiCuenta } from "@/hooks/useMiCuenta";
 import { useSession } from "@/hooks/useSession";
@@ -21,6 +22,7 @@ export default function MiCuentaPage() {
     handleTerminateSponsorship,
   } = useMiCuenta();
   const { logout } = useSession();
+  const [showTerminateConfirm, setShowTerminateConfirm] = useState(false);
 
   if (isLoading) {
     return (
@@ -233,14 +235,41 @@ export default function MiCuentaPage() {
                     {supportedUser.status}
                   </span>
                   {activeSponsorshipId && (
-                    <button
-                      type="button"
-                      onClick={handleTerminateSponsorship}
-                      className="text-[10px] tracking-[1px] uppercase text-red-400 hover:text-red-500 transition-colors"
-                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                    >
-                      Terminar
-                    </button>
+                    showTerminateConfirm ? (
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="text-[10px] tracking-[0.5px] rs-text-caption"
+                          style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                        >
+                          ¿Terminar?
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => { handleTerminateSponsorship(); setShowTerminateConfirm(false); }}
+                          className="text-[10px] tracking-[1px] uppercase text-white bg-red-500 hover:bg-red-600 px-2 py-0.5 rounded transition-colors"
+                          style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                        >
+                          Sí
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setShowTerminateConfirm(false)}
+                          className="text-[10px] tracking-[1px] uppercase rs-text-muted hover:rs-text-body transition-colors"
+                          style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                        >
+                          No
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setShowTerminateConfirm(true)}
+                        className="text-[10px] tracking-[1px] uppercase text-red-400 hover:text-red-500 transition-colors"
+                        style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                      >
+                        Terminar
+                      </button>
+                    )
                   )}
                 </div>
               </div>

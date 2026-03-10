@@ -10,13 +10,17 @@ interface RegisterFormStep1 {
   name: string;
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
 export function useRegister() {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
   const [role, setRole] = useState<"user" | "companion">("user");
-  const [form, setForm] = useState<RegisterFormStep1>({ name: "", email: "", password: "" });
+  const [form, setForm] = useState<RegisterFormStep1>({ name: "", email: "", password: "", confirmPassword: "" });
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
+  const [profilePhotoPreview, setProfilePhotoPreview] = useState<string | null>(null);
   const [selectedAddiction, setSelectedAddiction] = useState<AddictionTypeId | "">("");
   const [otherDescription, setOtherDescription] = useState("");
   const [addictionClassification, setAddictionClassification] = useState<"conductual" | "sustancia" | "">("")
@@ -26,6 +30,18 @@ export function useRegister() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setError(null);
+  };
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    setProfilePhoto(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => setProfilePhotoPreview(ev.target?.result as string ?? null);
+      reader.readAsDataURL(file);
+    } else {
+      setProfilePhotoPreview(null);
+    }
   };
 
   const handleNextStep = () => {
@@ -47,6 +63,10 @@ export function useRegister() {
     }
     if (form.password.length < 6) {
       setError('La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+    if (form.password !== form.confirmPassword) {
+      setError('Las contraseñas no coinciden.');
       return;
     }
     setStep(2);
@@ -119,6 +139,11 @@ export function useRegister() {
     setSelectedAddiction,
     setOtherDescription,
     setAddictionClassification,
+    showConfirmPassword,
+    setShowConfirmPassword,
+    profilePhoto,
+    profilePhotoPreview,
+    handlePhotoChange,
     handleChange,
     handleNextStep,
     handleSubmit,

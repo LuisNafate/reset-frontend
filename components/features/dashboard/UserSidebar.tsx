@@ -195,7 +195,7 @@ export default function UserSidebar({ isOpen = false, onClose }: UserSidebarProp
           // Confirmación inline — evita cierres accidentales
           <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-4">
             <p
-              className="text-[11px] tracking-[1px] uppercase text-slate-600 mb-1"
+              className="text-[11px] tracking-[1px] uppercase text-slate-600 dark:text-slate-300 mb-1"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               ¿Cerrar sesión?
@@ -218,7 +218,7 @@ export default function UserSidebar({ isOpen = false, onClose }: UserSidebarProp
               <button
                 type="button"
                 onClick={() => setShowLogoutConfirm(false)}
-                className="flex-1 h-8.5 border border-slate-200 text-slate-500 hover:bg-slate-100 rounded-md transition-colors"
+                className="flex-1 h-8.5 border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-md transition-colors"
                 style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase" }}
               >
                 Cancelar
@@ -231,14 +231,14 @@ export default function UserSidebar({ isOpen = false, onClose }: UserSidebarProp
       {/* ── Emergency Footer ─────────────────────────────────────────────── */}
       <div className="p-4 border-t border-red-50 dark:border-red-900/20">
         {emergencyState === "sent" && (
-          <div className="mb-2 px-4 py-2 rounded-lg bg-teal-50 border border-teal-100">
+          <div className="mb-2 px-4 py-2 rounded-lg bg-teal-50 dark:bg-teal-900/20 border border-teal-100 dark:border-teal-800/40">
             <p className="text-[11px] tracking-[1px] uppercase text-teal-600" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
               ✓ Alerta enviada a tus contactos
             </p>
           </div>
         )}
         {emergencyState === "error" && (
-          <div className="mb-2 px-4 py-2 rounded-lg bg-red-50 border border-red-100">
+          <div className="mb-2 px-4 py-2 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/40">
             <p className="text-[11px] tracking-[1px] uppercase text-red-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
               Error al enviar. Llama al 911.
             </p>
@@ -247,7 +247,7 @@ export default function UserSidebar({ isOpen = false, onClose }: UserSidebarProp
 
         {!showEmergencyConfirm ? (
           <button
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-red-50 hover:bg-red-100 transition-colors group disabled:opacity-60"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors group disabled:opacity-60"
             type="button"
             disabled={emergencyState === "sending"}
             onClick={() => setShowEmergencyConfirm(true)}
@@ -271,7 +271,7 @@ export default function UserSidebar({ isOpen = false, onClose }: UserSidebarProp
           </button>
         ) : (
           // Confirmación de emergencia — acción crítica requiere doble confirmación
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+          <div className="rounded-lg border border-red-200 dark:border-red-900/40 bg-red-50 dark:bg-red-900/20 p-4">
             <p
               className="text-[11px] tracking-[1px] uppercase text-red-600 mb-1"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Badge from "@/components/ui/Badge";
 import { useForo } from "@/hooks/useForo";
 import { FORO_TAGS } from "@/lib/constants";
@@ -337,13 +338,13 @@ export default function ForoPage() {
               >
                 Recuerda que este es un espacio de respeto mutuo. No juzgamos, acompañamos el crecimiento de cada semilla.
               </p>
-              <a
-                href="#"
+              <Link
+                href="/dashboard/comunidad-manual"
                 className="text-[11px] tracking-[1px] uppercase text-sky-500 hover:underline"
                 style={{ fontFamily: "'JetBrains Mono', monospace" }}
               >
                 Leer Manual de Comunidad
-              </a>
+              </Link>
             </div>
           </div>
         </div>

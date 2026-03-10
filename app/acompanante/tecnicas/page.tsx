@@ -177,9 +177,9 @@ const TECNICAS: Tecnica[] = [
 const CATEGORIAS = [...new Set(TECNICAS.map((t) => t.categoria))];
 
 const DIFICULTAD_COLORS: Record<Tecnica["dificultad"], { bg: string; text: string }> = {
-  Básica:      { bg: "bg-emerald-50", text: "text-emerald-600" },
-  Intermedia:  { bg: "bg-amber-50",   text: "text-amber-600" },
-  Profunda:    { bg: "bg-violet-50",  text: "text-violet-600" },
+  Básica:      { bg: "bg-emerald-50 dark:bg-emerald-900/20", text: "text-emerald-600 dark:text-emerald-400" },
+  Intermedia:  { bg: "bg-amber-50 dark:bg-amber-900/20",   text: "text-amber-600 dark:text-amber-400" },
+  Profunda:    { bg: "bg-violet-50 dark:bg-violet-900/20",  text: "text-violet-600 dark:text-violet-400" },
 };
 
 // ─── Componente tarjeta ────────────────────────────────────────────────────────
@@ -190,7 +190,7 @@ function TecnicaCard({ tecnica }: { tecnica: Tecnica }) {
 
   return (
     <div
-      className="bg-white border border-[var(--ui-border)] rounded-sm overflow-hidden transition-shadow hover:shadow-sm"
+      className="bg-[var(--surface-card)] border border-[var(--ui-border)] rounded-sm overflow-hidden transition-shadow hover:shadow-sm"
       style={{ boxShadow: "0px 2px 12px -4px rgba(0,0,0,0.06)" }}
     >
       {/* Card header */}
@@ -209,7 +209,7 @@ function TecnicaCard({ tecnica }: { tecnica: Tecnica }) {
               {tecnica.dificultad}
             </span>
             <span
-              className="text-[10px] tracking-[1px] uppercase text-slate-300"
+              className="text-[10px] tracking-[1px] uppercase rs-text-caption"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               {tecnica.duracion}
@@ -242,7 +242,7 @@ function TecnicaCard({ tecnica }: { tecnica: Tecnica }) {
 
       {/* Expanded content */}
       {expanded && (
-        <div className="px-6 pb-6 border-t border-slate-100">
+        <div className="px-6 pb-6 border-t rs-border-subtle">
           <p
             className="text-[13px] rs-text-muted leading-relaxed mt-4 mb-5"
             style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}
@@ -251,7 +251,7 @@ function TecnicaCard({ tecnica }: { tecnica: Tecnica }) {
           </p>
 
           <p
-            className="text-[10px] tracking-[2px] uppercase text-slate-400 mb-3"
+            className="text-[10px] tracking-[2px] uppercase rs-text-caption mb-3"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
             Pasos
@@ -260,13 +260,13 @@ function TecnicaCard({ tecnica }: { tecnica: Tecnica }) {
             {tecnica.pasos.map((paso, i) => (
               <li key={i} className="flex gap-3 items-start">
                 <span
-                  className="flex-shrink-0 w-5 h-5 rounded-full bg-teal-50 border border-teal-100 flex items-center justify-center text-[11px] text-teal-600 font-bold"
+                  className="flex-shrink-0 w-5 h-5 rounded-full bg-teal-50 dark:bg-teal-900/20 border border-teal-100 dark:border-teal-800/40 flex items-center justify-center text-[11px] text-teal-600 dark:text-teal-400 font-bold"
                   style={{ fontFamily: "'JetBrains Mono', monospace" }}
                 >
                   {i + 1}
                 </span>
                 <p
-                  className="text-[13px] text-slate-600 leading-relaxed"
+                  className="text-[13px] rs-text-body leading-relaxed"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
                   {paso}
@@ -276,7 +276,7 @@ function TecnicaCard({ tecnica }: { tecnica: Tecnica }) {
           </ol>
 
           {tecnica.consejo && (
-            <div className="bg-teal-50 border border-teal-100 rounded-sm px-4 py-3 flex gap-3 items-start">
+            <div className="bg-teal-50 dark:bg-teal-900/20 border border-teal-100 dark:border-teal-800/40 rounded-sm px-4 py-3 flex gap-3 items-start">
               <svg
                 width="14"
                 height="14"
@@ -289,7 +289,7 @@ function TecnicaCard({ tecnica }: { tecnica: Tecnica }) {
                 <path d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               <p
-                className="text-[12px] italic text-teal-700 leading-relaxed"
+                className="text-[12px] italic text-teal-700 dark:text-teal-300 leading-relaxed"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
                 {tecnica.consejo}
@@ -349,7 +349,7 @@ export default function TecnicasAcompananteePage() {
               className={`h-8 px-4 rounded-full text-[11px] tracking-[1.5px] uppercase transition-colors ${
                 categoriaActiva === cat
                   ? "bg-teal-700 text-white"
-                  : "bg-white border border-[var(--ui-border)] text-slate-500 hover:border-teal-200"
+                  : "bg-[var(--surface-card)] border border-[var(--ui-border)] rs-text-muted hover:border-teal-200"
               }`}
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
@@ -366,7 +366,7 @@ export default function TecnicasAcompananteePage() {
         </div>
 
         {/* Banner de autocuidado */}
-        <div className="mt-12 border border-teal-100 bg-teal-50 rounded-sm p-8 text-center">
+        <div className="mt-12 border border-teal-100 dark:border-teal-800/40 bg-teal-50 dark:bg-teal-900/20 rounded-sm p-8 text-center">
           <p
             className="text-[11px] tracking-[2px] uppercase text-teal-500 mb-2"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
@@ -374,13 +374,13 @@ export default function TecnicasAcompananteePage() {
             Recuerda
           </p>
           <p
-            className="text-[18px] font-normal text-teal-800 mb-1"
+            className="text-[18px] font-normal text-teal-800 dark:text-teal-200 mb-1"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Cuidar también se aprende
           </p>
           <p
-            className="text-[11px] italic text-teal-600 max-w-sm mx-auto leading-relaxed"
+            className="text-[11px] italic text-teal-600 dark:text-teal-400 max-w-sm mx-auto leading-relaxed"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Tu bienestar no es secundario. Usando estas técnicas cuidas mejor a quien acompañas.

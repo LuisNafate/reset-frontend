@@ -52,6 +52,8 @@ export default function NotificationBell({ variant = 'blue' }: Props) {
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  // ID de la notificación de apadrinamiento pendiente de confirmar
+  const [pendingConfirmId, setPendingConfirmId] = useState<string | null>(null);
 
   const {
     notifications,
@@ -89,7 +91,7 @@ export default function NotificationBell({ variant = 'blue' }: Props) {
     return (
       <div
         key={notif._id}
-        className={`px-4 py-3 border-b border-slate-100 dark:border-slate-700/30 last:border-0 ${
+        className={`px-4 py-3 border-b rs-border-subtle last:border-0 ${
           notif.isRead ? 'opacity-60' : ''
         }`}
       >
@@ -116,22 +118,59 @@ export default function NotificationBell({ variant = 'blue' }: Props) {
 
             {/* Acciones para solicitud de apadrinamiento */}
             {isSponsorReq && !notif.isRead && (
-              <div className="flex gap-2 mt-2">
-                <button
-                  onClick={() => handleAcceptSponsorship(notif._id)}
-                  className="px-3 py-1 text-[10px] tracking-[1px] uppercase bg-teal-500 hover:bg-teal-600 text-white rounded-md transition-colors"
-                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                >
-                  Aceptar
-                </button>
-                <button
-                  onClick={() => handleRejectSponsorship(notif._id)}
-                  className="px-3 py-1 text-[10px] tracking-[1px] uppercase bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-md transition-colors"
-                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                >
-                  Rechazar
-                </button>
-              </div>
+              pendingConfirmId === notif._id ? (
+                // Paso de confirmación
+                <div className="mt-2 p-3 rounded-lg border rs-border bg-(--surface-card-inner)">
+                  <p
+                    className="text-[11px] tracking-[0.5px] rs-text-body mb-1"
+                    style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}
+                  >
+                    {notif.actorName
+                      ? `¿Aceptar el apadrinamiento de ${notif.actorName}?`
+                      : '¿Confirmar el apadrinamiento?'}
+                  </p>
+                  <p
+                    className="text-[10px] rs-text-caption mb-3 leading-relaxed"
+                    style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                  >
+                    Podrás ver su progreso y recibir alertas de emergencia.
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => { handleAcceptSponsorship(notif._id); setPendingConfirmId(null); }}
+                      className="flex-1 py-1.5 text-[10px] tracking-[1px] uppercase bg-teal-500 hover:bg-teal-600 text-white rounded-md transition-colors"
+                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                    >
+                      Confirmar
+                    </button>
+                    <button
+                      onClick={() => setPendingConfirmId(null)}
+                      className="flex-1 py-1.5 text-[10px] tracking-[1px] uppercase bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-md transition-colors"
+                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                // Botones iniciales Aceptar / Rechazar
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={() => setPendingConfirmId(notif._id)}
+                    className="px-3 py-1 text-[10px] tracking-[1px] uppercase bg-teal-500 hover:bg-teal-600 text-white rounded-md transition-colors"
+                    style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                  >
+                    Aceptar
+                  </button>
+                  <button
+                    onClick={() => handleRejectSponsorship(notif._id)}
+                    className="px-3 py-1 text-[10px] tracking-[1px] uppercase bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-md transition-colors"
+                    style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                  >
+                    Rechazar
+                  </button>
+                </div>
+              )
             )}
           </div>
 
@@ -181,10 +220,10 @@ export default function NotificationBell({ variant = 'blue' }: Props) {
       {open && (
         <div
           ref={panelRef}
-          className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-[#0d1f35] border border-slate-200 dark:border-slate-700/40 rounded-sm shadow-lg z-50 overflow-hidden"
+          className="absolute left-0 top-full mt-2 w-72 rs-surface-card border rs-border rounded-xl shadow-xl z-50 overflow-hidden"
         >
           {/* Header del panel */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-700/30">
+          <div className="flex items-center justify-between px-4 py-3 border-b rs-border-subtle">
             <p
               className="text-[11px] tracking-[2px] uppercase"
               style={{ fontFamily: "'JetBrains Mono', monospace", color: accentColor }}

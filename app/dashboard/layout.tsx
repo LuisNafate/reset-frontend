@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import UserSidebar from "@/components/features/dashboard/UserSidebar";
 import { useBackButton } from "@/hooks/useBackButton";
 import { getRouteLabel } from "@/lib/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function DashboardLayout({
   children,
@@ -16,6 +18,10 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const { handleBack, isRoot } = useBackButton();
   const pageLabel = getRouteLabel(pathname);
+  const { user } = useAuth();
+  const initials = user?.name
+    ? user.name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase()).join("")
+    : "U";
 
   return (
     <div className="flex h-dvh bg-[var(--surface-main)] overflow-hidden">
@@ -67,17 +73,15 @@ export default function DashboardLayout({
             {pageLabel}
           </span>
 
-          {/* Icono notificaciones — visible siempre en la barra móvil */}
-          <button
-            type="button"
-            className="relative rs-text-caption hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-1"
-            aria-label="Notificaciones"
-            tabIndex={-1}
+          {/* Avatar de usuario — navega a configuración */}
+          <Link
+            href="/dashboard/configuracion"
+            className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400 text-[11px] font-bold transition-opacity hover:opacity-80"
+            style={{ fontFamily: "'JetBrains Mono', monospace" }}
+            aria-label="Mi perfil"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
+            {initials}
+          </Link>
 
           {/* En sub-páginas: botón para abrir el menú lateral igualmente */}
           {!isRoot && (

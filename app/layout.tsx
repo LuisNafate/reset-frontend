@@ -44,8 +44,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${playfair.variable} ${jetbrainsMono.variable}`}>
+    <html lang="es" className={`${playfair.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <body className="antialiased">
+        {/*
+         * Script anti-flash de tema oscuro.
+         * Se ejecuta de forma SÍNCRONA antes de que React hidrate la página,
+         * evitando el destello de modo claro cuando el usuario tenía dark mode guardado.
+         */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("reset_theme");document.documentElement.setAttribute("data-theme",t==="dark"||t==="light"?t:window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");}catch(e){}`,
+          }}
+        />
         <ThemeProvider>
           <AuthProvider>
             <CapacitorProvider>
