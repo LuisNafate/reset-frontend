@@ -25,9 +25,12 @@ export default function ConfiguracionPage() {
     handleTerminateSponsorship,
     setUsername,
     setAddictionType,
+    setSponsorCode,
     handleUpdateProfile,
     handleRemovePeer,
     handleAddPeer,
+    handleToggleEmergencyNotifs,
+    handleAssignSponsor,
   } = useConfiguracion();
 
   // Estado local del formulario de "Añadir Par"
