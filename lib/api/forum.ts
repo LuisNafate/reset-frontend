@@ -101,15 +101,14 @@ export async function createForoPost(
   return normalizePost(res?.data ?? res);
 }
 
-/** Reacciona (like) o quita la reacción de un post. */
+/** Reacciona (like) o quita la reacción de un post. El toggle lo gestiona el backend por JWT. */
 export async function toggleLikePost(
   postId: string
-): Promise<{ liked: boolean; likes: number }> {
-  const res: any = await apiRequest(
+): Promise<{ message: string }> {
+  return apiRequest<{ message: string }>(
     `/forum/posts/${postId}/react`,
-    { method: 'POST' }
+    { method: 'POST', body: JSON.stringify({}) }
   );
-  return { liked: res?.liked ?? true, likes: res?.likes ?? 0 };
 }
 
 /** Obtiene los comentarios de un post. */
@@ -134,6 +133,7 @@ export async function commentPost(
   const res: any = await apiRequest(`/forum/posts/${postId}/comments`, {
     method: 'POST',
     body: JSON.stringify({ content, is_anonymous }),
+
   });
   return normalizeComment(res?.data ?? res, currentUserId);
 }
@@ -143,12 +143,22 @@ export async function commentPost(
  * Lanza error que el hook debe capturar y mostrar al usuario.
  */
 export async function deleteComment(
-  postId: string,
+  _postId: string,
   commentId: string
 ): Promise<void> {
-  await apiRequest(`/forum/posts/${postId}/comments/${commentId}`, {
+  await apiRequest(`/forum/comments/${commentId}`, {
     method: 'DELETE',
   });
+}
+
+/** Reacciona (like) o quita la reacción de un comentario. El toggle lo gestiona el backend por JWT. */
+export async function toggleLikeComment(
+  commentId: string
+): Promise<{ message: string }> {
+  return apiRequest<{ message: string }>(
+    `/forum/comments/${commentId}/react`,
+    { method: 'POST', body: JSON.stringify({}) }
+  );
 }
 
 /** Elimina un post (solo autor o admin). */

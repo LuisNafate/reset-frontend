@@ -2,21 +2,37 @@
 
 import { useState, useEffect } from "react";
 import { getContacts, addContact } from "@/lib/api/emergency";
+import { requestSponsorship, terminateSponsorship } from "@/lib/api/sponsorship";
 import { useAuth } from "@/context/AuthContext";
 import type { SupportPeer } from "@/types";
+
+// Estado del sponsorship del adicto (PENDING | ACTIVE | NONE)
+export type SponsorshipStatus = 'NONE' | 'PENDING' | 'ACTIVE';
+export interface SponsorshipState {
+  status: SponsorshipStatus;
+  sponsorshipId?: string;
+}
 
 export function useConfiguracion() {
   const { user, updateUser } = useAuth();
 
   // Precarga el nombre del usuario autenticado
   const [username, setUsername] = useState(user?.name ?? "");
-  const [addictionType, setAddictionType] = useState("Drogas");
+  const [addictionType, setAddictionType] = useState("");
   const [emergencyNotifs, setEmergencyNotifs] = useState(true);
   const [peers, setPeers] = useState<SupportPeer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /** Error exclusivo del formulario de añadir par de apoyo — no contamina el área de perfil. */
+  const [peerError, setPeerError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+
+  // ── Sponsorship (solo ADICTO) ────────────────────────────────────────────
+  const [sponsorCode, setSponsorCode] = useState("");
+  const [sponsorshipState, setSponsorshipState] = useState<SponsorshipState>({ status: 'NONE' });
+  const [isSponsorshipLoading, setIsSponsorshipLoading] = useState(false);
+  const [sponsorshipError, setSponsorshipError] = useState<string | null>(null);
 
   // Sincronizar nombre cuando el contexto de auth se carga/actualiza
   useEffect(() => {
@@ -32,8 +48,9 @@ export function useConfiguracion() {
           Array.isArray(list)
             ? list.map((c: any) => ({
                 id: c.id ?? c._id ?? String(Date.now()),
-                name: c.contactName ?? c.contact_name ?? c.name ?? "",
-                email: c.email ?? "",
+                // La API puede devolver contactName (camelCase) o contact_name (snake_case)
+                name: c.contactName ?? c.contact_name ?? c.name ?? '',
+                email: c.email ?? '',
               }))
             : []
         );
@@ -42,43 +59,16 @@ export function useConfiguracion() {
       .finally(() => setIsLoading(false));
   }, []);
 
-  // ── Bloque: conectar con un padrino ─────────────────────────────────────────
-  const [sponsorCode, setSponsorCode] = useState("");
-  const [sponsorStatus, setSponsorStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
-  const [sponsorMsg, setSponsorMsg] = useState("");
-
-  const handleAssignSponsor = async () => {
-    const codeClean = sponsorCode.trim();
-    if (!codeClean) return;
-    if (!user) { setSponsorStatus("error"); setSponsorMsg("Debes iniciar sesión."); return; }
-    setSponsorStatus("submitting");
-    setSponsorMsg("");
-    try {
-      const { assignSponsor } = await import("@/lib/api/sponsorship");
-      await assignSponsor(codeClean, user.id);
-      setSponsorStatus("success");
-      setSponsorMsg("¡Padrino asignado correctamente!");
-      setSponsorCode("");
-    } catch (err) {
-      setSponsorStatus("error");
-      setSponsorMsg(
-        err instanceof Error && err.message
-          ? err.message
-          : "No se pudo conectar. Verifica el código e intenta de nuevo."
-      );
-    }
-    setTimeout(() => setSponsorStatus("idle"), 4000);
-  };
-  // ─────────────────────────────────────────────────────────────────────────────
-
+  // ── Actualizar perfil (nombre) ───────────────────────────────────────────────
+  // El backend no expone PATCH /auth/me; el cambio solo se refleja en el contexto local.
   const handleUpdateProfile = async () => {
     setIsSaving(true);
     setError(null);
     try {
-      // El backend no expone PATCH /profile actualmente.
-      // Persiste el cambio en el contexto de auth (en memoria de sesión)
-      // para que el sidebar y el dashboard reflejen el nombre actualizado.
-      if (username.trim()) updateUser({ name: username.trim() });
+      const trimmedName = username.trim();
+      if (trimmedName) {
+        updateUser({ name: trimmedName });
+      }
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
@@ -95,17 +85,22 @@ export function useConfiguracion() {
 
   /**
    * Añade un nuevo contacto de emergencia (par de apoyo).
+   * Devuelve true si tuvo éxito, false si falló (para que la página decida si cerrar el form).
    */
   const handleAddPeer = async (data: {
-    name: string;
-    phone: string;
+    contactName: string;
+    phone?: string;
+    relationship: string;
     email?: string;
-  }) => {
+  }): Promise<boolean> => {
+    setPeerError(null);
     try {
       await addContact({
-        contact_name: data.name,
-        phone: data.phone,
+        contactName: data.contactName,
+        relationship: data.relationship,
         email: data.email,
+        phone: data.phone,
+        priorityOrder: 1,
       });
       // Recargar lista
       const res: any = await getContacts();
@@ -114,18 +109,58 @@ export function useConfiguracion() {
         Array.isArray(list)
           ? list.map((c: any) => ({
               id: c.id ?? c._id ?? String(Date.now()),
-              name: c.contactName ?? c.contact_name ?? c.name ?? "",
-              email: c.email ?? "",
+              name: c.contactName ?? c.name ?? '',
+              email: c.email ?? '',
             }))
           : []
       );
+      return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al agregar contacto");
+      setPeerError(err instanceof Error ? err.message : 'No se pudo agregar el contacto. Intenta de nuevo.');
+      return false;
     }
   };
 
   const handleToggleEmergencyNotifs = (value: boolean) => {
     setEmergencyNotifs(value);
+  };
+
+  // ── Solicitar apadrinamiento (ADICTO) ─────────────────────────────────────
+  const handleRequestSponsorship = async () => {
+    const code = sponsorCode.trim();
+    if (!code) {
+      setSponsorshipError("Ingresa el código de tu padrino.");
+      return;
+    }
+    setIsSponsorshipLoading(true);
+    setSponsorshipError(null);
+    try {
+      const res = await requestSponsorship(code);
+      setSponsorshipState({
+        status: 'PENDING',
+        sponsorshipId: res.sponsorship?.id,
+      });
+      setSponsorCode("");
+    } catch (err) {
+      setSponsorshipError(err instanceof Error ? err.message : "No se pudo enviar la solicitud.");
+    } finally {
+      setIsSponsorshipLoading(false);
+    }
+  };
+
+  // ── Terminar apadrinamiento activo ────────────────────────────────────────
+  const handleTerminateSponsorship = async () => {
+    if (!sponsorshipState.sponsorshipId) return;
+    setIsSponsorshipLoading(true);
+    setSponsorshipError(null);
+    try {
+      await terminateSponsorship(sponsorshipState.sponsorshipId);
+      setSponsorshipState({ status: 'NONE' });
+    } catch (err) {
+      setSponsorshipError(err instanceof Error ? err.message : "No se pudo terminar el apadrinamiento.");
+    } finally {
+      setIsSponsorshipLoading(false);
+    }
   };
 
   return {
@@ -136,10 +171,17 @@ export function useConfiguracion() {
     isLoading,
     isSaving,
     error,
+    /** Error exclusivo del formulario de añadir contacto. */
+    peerError,
     saved,
+    // Sponsorship
     sponsorCode,
-    sponsorStatus,
-    sponsorMsg,
+    setSponsorCode,
+    sponsorshipState,
+    isSponsorshipLoading,
+    sponsorshipError,
+    handleRequestSponsorship,
+    handleTerminateSponsorship,
     setUsername,
     setAddictionType,
     setSponsorCode,

@@ -21,7 +21,7 @@ export const MOCK_USER: User = {
   email: "alex@correo.com",
   addictionType: "Drogas",
   createdAt: "2026-01-01T00:00:00Z",
-  role: "user",
+  role: "ADICTO",
 };
 
 export const MOCK_COMPANION_USER: User = {
@@ -30,7 +30,7 @@ export const MOCK_COMPANION_USER: User = {
   email: "padrino@correo.com",
   addictionType: "",
   createdAt: "2026-01-01T00:00:00Z",
-  role: "companion",
+  role: "PADRINO",
 };
 
 // ─── Dashboard ───────────────────────────────────────────────────────────────

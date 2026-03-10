@@ -189,9 +189,9 @@ const TECNICAS: Tecnica[] = [
 const CATEGORIAS = [...new Set(TECNICAS.map((t) => t.categoria))];
 
 const DIFICULTAD_COLORS: Record<Tecnica["dificultad"], { bg: string; text: string }> = {
-  Fácil:    { bg: "bg-emerald-50",  text: "text-emerald-600" },
-  Moderada: { bg: "bg-amber-50",    text: "text-amber-600" },
-  Avanzada: { bg: "bg-violet-50",   text: "text-violet-600" },
+  Fácil:    { bg: "bg-emerald-50 dark:bg-emerald-900/20",  text: "text-emerald-600 dark:text-emerald-400" },
+  Moderada: { bg: "bg-amber-50 dark:bg-amber-900/20",      text: "text-amber-600 dark:text-amber-400" },
+  Avanzada: { bg: "bg-violet-50 dark:bg-violet-900/20",    text: "text-violet-600 dark:text-violet-400" },
 };
 
 // ─── Componente tarjeta ────────────────────────────────────────────────────────
@@ -202,47 +202,47 @@ function TecnicaCard({ tecnica }: { tecnica: Tecnica }) {
 
   return (
     <div
-      className="bg-white border border-slate-200 rounded-sm overflow-hidden transition-shadow hover:shadow-sm"
+      className="bg-[var(--surface-card)] border border-[var(--ui-border)] rounded-sm overflow-hidden transition-shadow hover:shadow-sm"
       style={{ boxShadow: "0px 2px 12px -4px rgba(0,0,0,0.06)" }}
     >
       {/* Card header */}
       <button
         type="button"
-        className="w-full text-left px-6 py-5 flex items-start justify-between gap-4 hover:bg-slate-50 transition-colors"
+        className="w-full text-left px-6 py-5 flex items-start justify-between gap-4 hover:bg-slate-50 dark:hover:bg-[#0a1628] transition-colors"
         onClick={() => setExpanded((p) => !p)}
         aria-expanded={expanded}
       >
         <div className="flex-1 min-w-0">
           <div className="flex flex-wrap items-center gap-2 mb-2">
             <span
-              className={`inline-flex items-center px-2 py-0.5 rounded text-[8px] tracking-[1px] uppercase font-normal ${dc.bg} ${dc.text}`}
+              className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] tracking-[1px] uppercase font-normal ${dc.bg} ${dc.text}`}
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               {tecnica.dificultad}
             </span>
             <span
-              className="text-[8px] tracking-[1px] uppercase text-slate-300"
+              className="text-[10px] tracking-[1px] uppercase rs-text-caption"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               {tecnica.duracion}
             </span>
           </div>
           <h3
-            className="text-[18px] font-normal text-slate-800 leading-tight"
+            className="text-[18px] font-normal rs-text-heading leading-tight"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             {tecnica.nombre}
           </h3>
           {!expanded && (
             <p
-              className="text-[11px] text-slate-400 mt-1.5 leading-relaxed line-clamp-2"
+              className="text-[11px] rs-text-caption mt-1.5 leading-relaxed line-clamp-2"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               {tecnica.descripcion}
             </p>
           )}
         </div>
-        <span className="flex-shrink-0 mt-1 text-slate-300 transition-transform" style={{ transform: expanded ? "rotate(180deg)" : "rotate(0deg)" }}>
+        <span className="flex-shrink-0 mt-1 rs-text-caption transition-transform" style={{ transform: expanded ? "rotate(180deg)" : "rotate(0deg)" }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="m19.5 8.25-7.5 7.5-7.5-7.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -251,16 +251,16 @@ function TecnicaCard({ tecnica }: { tecnica: Tecnica }) {
 
       {/* Expanded content */}
       {expanded && (
-        <div className="px-6 pb-6 border-t border-slate-100">
+        <div className="px-6 pb-6 border-t border-slate-100 dark:border-slate-700/30">
           <p
-            className="text-[13px] text-slate-500 leading-relaxed mt-4 mb-5"
+            className="text-[13px] rs-text-caption leading-relaxed mt-4 mb-5"
             style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}
           >
             {tecnica.descripcion}
           </p>
 
           <p
-            className="text-[8px] tracking-[2px] uppercase text-slate-400 mb-3"
+            className="text-[10px] tracking-[2px] uppercase rs-text-caption mb-3"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
             Pasos
@@ -269,13 +269,13 @@ function TecnicaCard({ tecnica }: { tecnica: Tecnica }) {
             {tecnica.pasos.map((paso, i) => (
               <li key={i} className="flex gap-3 items-start">
                 <span
-                  className="flex-shrink-0 w-5 h-5 rounded-full bg-sky-50 border border-sky-100 flex items-center justify-center text-[9px] text-sky-500 font-bold"
+                  className="flex-shrink-0 w-5 h-5 rounded-full bg-sky-50 dark:bg-sky-900/20 border border-sky-100 dark:border-sky-800/40 flex items-center justify-center text-[11px] text-sky-500 dark:text-sky-400 font-bold"
                   style={{ fontFamily: "'JetBrains Mono', monospace" }}
                 >
                   {i + 1}
                 </span>
                 <p
-                  className="text-[13px] text-slate-600 leading-relaxed"
+                  className="text-[13px] rs-text-muted leading-relaxed"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
                   {paso}
@@ -285,12 +285,12 @@ function TecnicaCard({ tecnica }: { tecnica: Tecnica }) {
           </ol>
 
           {tecnica.consejo && (
-            <div className="bg-sky-50 border border-sky-100 rounded-sm px-4 py-3 flex gap-3 items-start">
+            <div className="bg-sky-50 dark:bg-sky-900/20 border border-sky-100 dark:border-sky-800/40 rounded-sm px-4 py-3 flex gap-3 items-start">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="1.5" className="flex-shrink-0 mt-0.5">
                 <path d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               <p
-                className="text-[12px] italic text-sky-700 leading-relaxed"
+                className="text-[12px] italic text-sky-700 dark:text-sky-300 leading-relaxed"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
                 {tecnica.consejo}
@@ -321,19 +321,19 @@ export default function TecnicasPage() {
         {/* Header */}
         <div className="mb-10">
           <p
-            className="text-[9px] tracking-[1.8px] uppercase text-slate-400 mb-1"
+            className="text-[11px] tracking-[1.8px] uppercase rs-text-caption mb-1"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
             Herramientas de Recuperación
           </p>
           <h1
-            className="text-[42px] font-normal text-slate-800 leading-none mb-2"
+            className="text-[42px] font-normal rs-text-heading leading-none mb-2"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Mis Técnicas
           </h1>
           <p
-            className="text-[12px] italic text-slate-400 max-w-md"
+            className="text-[12px] italic rs-text-caption max-w-md"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Recursos prácticos pensados para tu proceso de recuperación. Úsalos a tu ritmo, vuelve a ellos cuando los necesites.
@@ -347,10 +347,10 @@ export default function TecnicasPage() {
               key={cat}
               type="button"
               onClick={() => setCategoriaActiva(cat)}
-              className={`h-8 px-4 rounded-full text-[9px] tracking-[1.5px] uppercase transition-colors ${
+              className={`h-8 px-4 rounded-full text-[11px] tracking-[1.5px] uppercase transition-colors ${
                 categoriaActiva === cat
                   ? "bg-slate-800 text-white"
-                  : "bg-white border border-slate-200 text-slate-500 hover:border-slate-300"
+                  : "bg-[var(--surface-card)] border border-[var(--ui-border)] rs-text-caption hover:border-slate-300 dark:hover:border-slate-700/60"
               }`}
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
@@ -367,15 +367,15 @@ export default function TecnicasPage() {
         </div>
 
         {/* CTA a bitácora */}
-        <div className="mt-12 border border-slate-100 bg-white rounded-sm p-8 text-center">
+        <div className="mt-12 border border-slate-100 dark:border-slate-700/30 bg-[var(--surface-card)] rounded-sm p-8 text-center">
           <p
-            className="text-[9px] tracking-[2px] uppercase text-slate-400 mb-2"
+            className="text-[11px] tracking-[2px] uppercase rs-text-caption mb-2"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
             Después de practicar
           </p>
           <p
-            className="text-[18px] font-normal text-slate-700 mb-4"
+            className="text-[18px] font-normal rs-text-body mb-4"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Registra cómo te sentiste en tu Bitácora

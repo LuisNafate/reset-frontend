@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { register } from "@/lib/api/auth";
+import { ADDICTION_TYPES } from "@/lib/constants";
 import type { AddictionTypeId } from "@/types";
 
 interface RegisterFormStep1 {
@@ -18,6 +19,7 @@ export function useRegister() {
   const [form, setForm] = useState<RegisterFormStep1>({ name: "", email: "", password: "" });
   const [selectedAddiction, setSelectedAddiction] = useState<AddictionTypeId | "">("");
   const [otherDescription, setOtherDescription] = useState("");
+  const [addictionClassification, setAddictionClassification] = useState<"conductual" | "sustancia" | "">("")
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,8 +29,24 @@ export function useRegister() {
   };
 
   const handleNextStep = () => {
-    if (!form.name || !form.email || !form.password) {
-      setError("Completa todos los campos antes de continuar.");
+    if (!form.name.trim()) {
+      setError('Ingresa tu nombre completo.');
+      return;
+    }
+    if (!form.email.trim()) {
+      setError('Ingresa tu correo electrónico.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      setError('El correo electrónico no tiene un formato válido.');
+      return;
+    }
+    if (!form.password) {
+      setError('Elige una contraseña.');
+      return;
+    }
+    if (form.password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres.');
       return;
     }
     setStep(2);
@@ -49,25 +67,35 @@ export function useRegister() {
         setError("Describe tu situación en el campo de texto.");
         return;
       }
+      if (selectedAddiction === "otros" && !addictionClassification) {
+        setError("Indica si tu adicción es conductual o de sustancia.");
+        return;
+      }
     }
     setIsLoading(true);
     setError(null);
     try {
-      const apiRole = role === "companion" ? "PADRINO" : "ADICTO";
-      const addictionName =
-        role === "companion"
-          ? undefined
-          : selectedAddiction === "otros"
-          ? otherDescription
-          : selectedAddiction;
+      // Determinar el nombre legible de la adicción para el backend
+      const addictionLabel =
+        selectedAddiction === "otros"
+          ? otherDescription.trim()
+          : ADDICTION_TYPES.find((a) => a.id === selectedAddiction)?.label ?? selectedAddiction;
+
+      // Mapear clasificación al formato del contrato
+      const classificationLabel =
+        addictionClassification === "conductual"
+          ? "Conductual"
+          : addictionClassification === "sustancia"
+          ? "Sustancias"
+          : undefined;
 
       await register({
         name: form.name,
         email: form.email,
         password: form.password,
-        role: apiRole,
-        addictionName,
-        classification: role === "user" ? "Sustancia" : undefined,
+        role: role === "companion" ? "PADRINO" : "ADICTO",
+        ...(role === "user" && addictionLabel ? { addictionName: addictionLabel } : {}),
+        ...(role === "user" && classificationLabel ? { classification: classificationLabel } : {}),
       });
       router.push("/login");
     } catch (err) {
@@ -83,14 +111,17 @@ export function useRegister() {
     form,
     selectedAddiction,
     otherDescription,
+    addictionClassification,
     isLoading,
     error,
     setStep,
     setRole,
     setSelectedAddiction,
     setOtherDescription,
+    setAddictionClassification,
     handleChange,
     handleNextStep,
     handleSubmit,
   };
 }
+

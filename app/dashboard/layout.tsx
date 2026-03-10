@@ -18,11 +18,11 @@ export default function DashboardLayout({
   const pageLabel = getRouteLabel(pathname);
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-dvh bg-[var(--surface-main)] overflow-hidden">
       {/* Overlay semitransparente en móvil cuando el sidebar está abierto */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/30 z-20 md:hidden"
+          className="fixed inset-0 bg-black/40 z-20 md:hidden"
           onClick={() => setSidebarOpen(false)}
           aria-hidden="true"
         />
@@ -31,15 +31,15 @@ export default function DashboardLayout({
       <UserSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* main: sin margen en móvil, con margen en md+ */}
-      <main className="flex-1 md:ml-[288px] overflow-auto bg-[#f8fafc] flex flex-col">
+      <main className="flex-1 md:ml-72 overflow-auto bg-[var(--surface-main)] flex flex-col">
         {/* Barra superior móvil — oculta en desktop */}
-        <div className="sticky top-0 z-10 flex items-center gap-3 px-4 h-14 bg-white border-b border-slate-100 md:hidden flex-shrink-0">
+        <div className="sticky top-0 z-10 flex items-end gap-3 px-4 min-h-14 pb-3 bg-[var(--surface-card)] border-b border-slate-100 dark:border-slate-800/60 md:hidden shrink-0 safe-top-bar">
           {/* En sub-páginas: botón Atrás. En raíz: botón hamburguesa */}
           {!isRoot ? (
             <button
               type="button"
               onClick={handleBack}
-              className="text-slate-500 hover:text-slate-700 transition-colors p-1 -ml-1"
+              className="rs-text-muted hover:rs-text-heading dark:hover:text-slate-200 transition-colors p-1 -ml-1"
               aria-label="Volver a la pantalla anterior"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -50,7 +50,7 @@ export default function DashboardLayout({
             <button
               type="button"
               onClick={() => setSidebarOpen(true)}
-              className="text-slate-500 hover:text-slate-700 transition-colors p-1"
+              className="rs-text-muted hover:rs-text-heading dark:hover:text-slate-200 transition-colors p-1"
               aria-label="Abrir menú de navegación"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -61,11 +61,23 @@ export default function DashboardLayout({
 
           {/* Título de la página actual */}
           <span
-            className="flex-1 text-[16px] font-normal text-slate-700"
+            className="flex-1 text-[16px] font-normal rs-text-body"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             {pageLabel}
           </span>
+
+          {/* Icono notificaciones — visible siempre en la barra móvil */}
+          <button
+            type="button"
+            className="relative rs-text-caption hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-1"
+            aria-label="Notificaciones"
+            tabIndex={-1}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
 
           {/* En sub-páginas: botón para abrir el menú lateral igualmente */}
           {!isRoot && (

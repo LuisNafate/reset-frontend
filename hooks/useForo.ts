@@ -13,40 +13,40 @@ import {
   deleteComment,
   deletePost,
 } from "@/lib/api/forum";
+import { storageSave, storageGet, STORAGE_KEYS } from "@/lib/storage";
 import type { ForoPost, ForoCategory, ForoComment } from "@/types";
 
 export function useForo() {
   const router = useRouter();
   const { user } = useAuth();
 
-  // Rastreo de posts que el usuario liké — persiste en localStorage por userId
+  // Rastreo de posts que el usuario liké — persiste vía lib/storage (web: localStorage / nativo: Preferences)
   const likedByMe = useRef<Set<string>>(new Set());
   // Rastreo de posts/comentarios reportados en esta sesión (feedback local)
   const reportedPosts = useRef<Set<string>>(new Set());
 
-  // Clave de localStorage: una por usuario para no mezclar sesiones
-  const storageKey = user?.id ? `foro_liked_${user.id}` : null;
+  // Clave de storage: una por usuario para no mezclar sesiones
+  const storageKey = user?.id ? `${STORAGE_KEYS.FORO_LIKES_PREFIX}${user.id}` : null;
 
-  // Inicializar el ref desde localStorage cuando se conoce el userId
+  // Inicializar el ref desde storage cuando se conoce el userId
   useEffect(() => {
     if (!storageKey) return;
-    try {
-      const stored = localStorage.getItem(storageKey);
-      if (stored) {
+    // storageGet es async (soporta Capacitor Preferences en nativo)
+    storageGet(storageKey).then((stored) => {
+      if (!stored) return;
+      try {
         const ids: string[] = JSON.parse(stored);
         likedByMe.current = new Set(ids);
         // Re-aplicar estado liked a los posts ya cargados
         setPosts((prev) => prev.map((p) => ({ ...p, liked: likedByMe.current.has(p.id) })));
-      }
-    } catch { /* localStorage no disponible */ }
+      } catch { /* JSON malformado: ignorar */ }
+    }).catch(() => { /* storage no disponible */ });
   }, [storageKey]);
 
-  /** Persiste el set actual en localStorage. */
+  /** Persiste el set actual en storage (fire-and-forget). */
   const persistLikes = () => {
     if (!storageKey) return;
-    try {
-      localStorage.setItem(storageKey, JSON.stringify([...likedByMe.current]));
-    } catch { /* cuota excedida u otro error — ignorar */ }
+    storageSave(storageKey, JSON.stringify([...likedByMe.current])).catch(() => {});
   };
 
   // ── Estado: lista de posts ──────────────────────────────────────────────────
@@ -60,6 +60,8 @@ export function useForo() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /** Error específico del modal de nuevo post — no contamina la lista principal. */
+  const [publishError, setPublishError] = useState<string | null>(null);
 
   // ── Estado: detalle del post (modal de comentarios) ─────────────────────────
   const [openPost, setOpenPost] = useState<ForoPost | null>(null);
@@ -109,8 +111,16 @@ export function useForo() {
   // ── Publicar post ──────────────────────────────────────────────────────────
 
   const handlePublish = async () => {
-    if (!postText.trim()) return;
+    if (!postTitle.trim()) {
+      setPublishError('El título es obligatorio.');
+      return;
+    }
+    if (!postText.trim()) {
+      setPublishError('El contenido no puede estar vacío.');
+      return;
+    }
     setIsSubmitting(true);
+    setPublishError(null);
     try {
       await createForoPost({
         title: postTitle,
@@ -119,13 +129,13 @@ export function useForo() {
         tags: selectedTags,
       });
       const refreshed = await getForoPosts(1, 10);
-      setPosts(refreshed);
+      setPosts(applyLikedState(refreshed));
       setPostText("");
       setPostTitle("");
       setSelectedTags([]);
       setIsModalOpen(false);
-    } catch {
-      setError("No se pudo publicar. Intenta de nuevo.");
+    } catch (err) {
+      setPublishError(err instanceof Error ? err.message : 'No se pudo publicar. Intenta de nuevo.');
     } finally {
       setIsSubmitting(false);
     }
@@ -195,7 +205,7 @@ export function useForo() {
     setCommentText("");
     setCommentError(null);
     setCommentFeedback({});
-  };
+  };;
 
   // ── Enviar comentario ──────────────────────────────────────────────────────
 
@@ -304,10 +314,13 @@ export function useForo() {
     isLoading,
     isSubmitting,
     error,
+    /** Error específico del modal de nuevo post. */
+    publishError,
     setPostText,
     setPostTitle,
     setSelectedTags,
-    setIsModalOpen,
+    /** Al cerrar el modal también limpiamos el error de publicación. */
+    setIsModalOpen: (v: boolean) => { if (!v) setPublishError(null); setIsModalOpen(v); },
     setIsAnonymous,
     toggleTag,
     handlePublish,

@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getMyGodchildren } from "@/lib/api/sponsorship";
-import { getStatistics } from "@/lib/api/tracking";
+import { getGodchildProfile, acceptSponsorship, rejectSponsorship, terminateSponsorship } from "@/lib/api/sponsorship";
 import { useAuth } from "@/context/AuthContext";
 import type { CompanionProfile, SupportedUser } from "@/types";
 
@@ -17,10 +16,12 @@ export function useMiCuenta() {
     smsAlerts: false,
   });
   const [supportedUsers, setSupportedUsers] = useState<SupportedUser[]>([]);
+  const [activeSponsorshipId, setActiveSponsorshipId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [sponsorshipActionError, setSponsorshipActionError] = useState<string | null>(null);
 
   useEffect(() => {
     // Rellenar datos básicos del perfil desde el contexto de auth
@@ -32,41 +33,29 @@ export function useMiCuenta() {
       }));
     }
 
-    // Cargar ahijados del padrino
-    getMyGodchildren()
-      .then((res: any) => {
-        const list: any[] = res?.data ?? res ?? [];
-        setSupportedUsers(
-          Array.isArray(list)
-            ? list.map((u: any) => ({
-                id: u.id ?? u._id ?? String(Date.now()),
-                displayName: u.name ?? u.displayName ?? "Usuario",
-                addictionType: u.addictionName ?? u.addictionType ?? "",
-                sobrietyDays: u.sobrietyDays ?? 0,
-                status: u.status === "Inactivo" ? "Inactivo" : "Activo",
-              }))
-            : []
-        );
+    // Solo los PADRINO tienen ahijados. Evitar llamada innecesaria para ADICTO.
+    if (user?.role !== 'PADRINO') {
+      setIsLoading(false);
+      return;
+    }
+
+    getGodchildProfile()
+      .then((data) => {
+        const g = data.godchild;
+        setActiveSponsorshipId(data.sponsorship.id);
+        setSupportedUsers([
+          {
+            id: g.id,
+            displayName: g.name,
+            addictionType: g.addiction?.custom_name ?? '',
+            sobrietyDays: data.statistics.dayCounter,
+            status: data.sponsorship.status === 'ACTIVE' ? 'Activo' : 'Inactivo',
+          },
+        ]);
       })
-      .catch(async () => {
-        // Si el endpoint de ahijados no existe aún, usar estadísticas generales
-        try {
-          const stats: any = await getStatistics();
-          const data = stats?.data ?? stats;
-          if (data) {
-            setSupportedUsers([
-              {
-                id: "default",
-                displayName: "Ahijado",
-                addictionType: data.addictionName ?? "",
-                sobrietyDays: data.soberDays ?? data.currentStreak ?? 0,
-                status: "Activo",
-              },
-            ]);
-          }
-        } catch {
-          // sin ahijados registrados
-        }
+      .catch(() => {
+        // Sin ahijado activo — no es un error que el usuario deba ver en esta pantalla
+        setSupportedUsers([]);
       })
       .finally(() => setIsLoading(false));
   }, [user]);
@@ -79,8 +68,10 @@ export function useMiCuenta() {
     setIsSaving(true);
     setError(null);
     try {
-      // Actualizar nombre en el contexto de auth (persistencia en sesión)
-      if (profile.name.trim()) updateUser({ name: profile.name.trim() });
+      const trimmedName = profile.name.trim();
+      if (trimmedName) {
+        updateUser({ name: trimmedName });
+      }
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
@@ -90,14 +81,31 @@ export function useMiCuenta() {
     }
   };
 
+  // ── Terminar apadrinamiento activo (desde la cuenta del padrino) ──────────
+  const handleTerminateSponsorship = async () => {
+    if (!activeSponsorshipId) return;
+    setSponsorshipActionError(null);
+    try {
+      await terminateSponsorship(activeSponsorshipId);
+      setActiveSponsorshipId(null);
+      setSupportedUsers([]);
+    } catch (err) {
+      setSponsorshipActionError(err instanceof Error ? err.message : "No se pudo terminar el apadrinamiento.");
+    }
+  };
+
   return {
     profile,
     supportedUsers,
+    activeSponsorshipId,
     isLoading,
     isSaving,
     error,
     saved,
+    sponsorshipActionError,
     handleChange,
     handleSave,
+    handleTerminateSponsorship,
   };
 }
+

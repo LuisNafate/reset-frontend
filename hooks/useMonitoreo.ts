@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { apiRequest } from "@/lib/api/client";
+import { getGodchildProfile } from "@/lib/api/sponsorship";
+import type { GodchildProfileResponse } from "@/lib/api/sponsorship";
 
-// ─── Tipos exportados ─────────────────────────────────────────────────────────
+// ─── Tipos exportados ──────────────────────────────────────────────────
 
 export interface GodchildInfo {
   id: string;
@@ -33,115 +34,83 @@ export interface MonitoreoResult {
   godchild: GodchildInfo | null;
   stats: GodchildStats | null;
   recentLogs: RecentLogEntry[];
+  error: string | null;
 }
 
-// ─── Normalización de estado emocional ────────────────────────────────────────
+// ─── Helpers de mapeo ────────────────────────────────────────────────
 
-const NUM_TO_MOOD: Record<number, { id: string; label: string }> = {
-  1: { id: "triste",   label: "Triste"   },
-  2: { id: "ansioso",  label: "Ansioso"  },
-  3: { id: "calmado",  label: "Calmado"  },
-  4: { id: "calmado",  label: "Calmado"  },
-  5: { id: "alegre",   label: "Alegre"   },
-  6: { id: "motivado", label: "Motivado" },
-  7: { id: "alegre",   label: "Alegre"   },
-};
+function mapProfile(data: GodchildProfileResponse): {
+  godchild: GodchildInfo;
+  stats: GodchildStats;
+  recentLogs: RecentLogEntry[];
+} {
+  const { godchild, statistics, recentLogs } = data;
 
-function normalizeMood(val: unknown): { id: string; label: string } {
-  if (typeof val === "number") {
-    return NUM_TO_MOOD[val] ?? { id: "calmado", label: "Calmado" };
-  }
-  if (typeof val === "string") {
-    const lower = val.toLowerCase();
-    const known: Record<string, string> = {
-      triste: "Triste", ansioso: "Ansioso", calmado: "Calmado",
-      alegre: "Alegre", motivado: "Motivado", feliz: "Alegre",
-    };
-    if (lower in known) return { id: lower === "feliz" ? "alegre" : lower, label: known[lower] };
-  }
-  return { id: "calmado", label: "Calmado" };
+  // Usar el último log disponible como proxy de "última actividad"
+  const lastActiveAt =
+    recentLogs.length > 0 ? recentLogs[0].logDate : null;
+
+  return {
+    godchild: {
+      id: godchild.id,
+      name: godchild.name,
+      sobrietyDays: statistics.dayCounter,
+    },
+    stats: {
+      sobrietyDays: statistics.dayCounter,
+      notesThisWeek: recentLogs.length, // proxy: logs en el periodo devuelto
+      consistency: 0, // La API no devuelve un % de consistencia directamente
+      lastActiveAt,
+    },
+    recentLogs: recentLogs.map((log, idx) => ({
+      id: `${log.logDate}-${idx}`,
+      moodId: String(log.emotionalState.level),
+      moodLabel: log.emotionalState.label,
+      notes: log.notes ?? '',
+      date: log.logDate,
+      isShared: false, // La API no expone shareability por log
+    })),
+  };
 }
 
-// ─── Hook ─────────────────────────────────────────────────────────────────────
+// ─── Hook ────────────────────────────────────────────────────────────
 
 export function useMonitoreo(): MonitoreoResult {
-  const [state, setState] = useState<MonitoreoResult>({
-    isLoading: true,
-    godchildFound: false,
-    godchild: null,
-    stats: null,
-    recentLogs: [],
-  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [godchildFound, setGodchildFound] = useState(false);
+  const [godchild, setGodchild] = useState<GodchildInfo | null>(null);
+  const [stats, setStats] = useState<GodchildStats | null>(null);
+  const [recentLogs, setRecentLogs] = useState<RecentLogEntry[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function load() {
-      try {
-        // Intenta obtener la lista de ahijados (actualmente 404 en el backend)
-        const res: any = await apiRequest("/sponsorships/my-godchildren");
-        const list: any[] = Array.isArray(res?.data)
-          ? res.data
-          : Array.isArray(res)
-          ? res
-          : [];
+    let cancelled = false;
 
-        if (list.length === 0) {
-          setState((s) => ({ ...s, isLoading: false, godchildFound: false }));
-          return;
+    getGodchildProfile()
+      .then((data) => {
+        if (cancelled) return;
+        const mapped = mapProfile(data);
+        setGodchild(mapped.godchild);
+        setStats(mapped.stats);
+        setRecentLogs(mapped.recentLogs);
+        setGodchildFound(true);
+      })
+      .catch((err: Error) => {
+        if (cancelled) return;
+        // 404 = no hay ahijado activo, no es un error de UI
+        if (err.message.includes('404') || err.message.toLowerCase().includes('not found')) {
+          setGodchildFound(false);
+        } else {
+          setError(err.message ?? 'Error al cargar los datos del ahijado');
         }
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
 
-        const gc = list[0];
-        const godchild: GodchildInfo = {
-          id:           gc.id ?? gc._id ?? "",
-          name:         gc.name ?? gc.displayName ?? "Tu ahijado",
-          sobrietyDays: gc.sobrietyDays ?? 0,
-        };
-
-        // Intenta cargar estadísticas y logs del ahijado
-        let stats: GodchildStats | null = null;
-        let recentLogs: RecentLogEntry[] = [];
-
-        try {
-          const sRes: any = await apiRequest("/tracking/statistics");
-          const sd = sRes?.data ?? sRes ?? {};
-          const total = Math.max(sd.totalLogs ?? 1, 1);
-          const relapses = sd.relapseCount ?? 0;
-          stats = {
-            sobrietyDays:  sd.soberDays ?? sd.sobrietyDays ?? godchild.sobrietyDays,
-            notesThisWeek: sd.totalLogs ?? 0,
-            consistency:   Math.round(((total - relapses) / total) * 100),
-            lastActiveAt:  sd.lastActiveAt ?? null,
-          };
-        } catch { /* fallo en stats es no-fatal */ }
-
-        try {
-          const lRes: any = await apiRequest("/tracking/logs?limit=5");
-          const rawLogs: any[] = Array.isArray(lRes?.data)
-            ? lRes.data
-            : Array.isArray(lRes)
-            ? lRes
-            : [];
-          recentLogs = rawLogs.map((log: any) => {
-            const mood = normalizeMood(log.emotional_state ?? log.emotionalState);
-            return {
-              id:        log.id ?? log._id ?? String(Math.random()),
-              moodId:    mood.id,
-              moodLabel: mood.label,
-              notes:     log.notes ?? log.note ?? "",
-              date:      log.logDate ?? log.log_date ?? log.createdAt ?? "",
-              isShared:  log.isShared ?? false,
-            };
-          });
-        } catch { /* fallo en logs es no-fatal */ }
-
-        setState({ isLoading: false, godchildFound: true, godchild, stats, recentLogs });
-      } catch {
-        // 404 en /sponsorships/my-godchildren → sin ahijado aún
-        setState((s) => ({ ...s, isLoading: false, godchildFound: false }));
-      }
-    }
-
-    load();
+    return () => { cancelled = true; };
   }, []);
 
-  return state;
+  return { isLoading, godchildFound, godchild, stats, recentLogs, error };
 }
+

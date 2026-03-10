@@ -128,11 +128,13 @@ export default function RegisterPage() {
     role,
     selectedAddiction,
     otherDescription,
+    addictionClassification,
     isLoading,
     error,
     setRole,
     setSelectedAddiction,
     setOtherDescription,
+    setAddictionClassification,
     handleChange,
     handleNextStep,
     handleSubmit,
@@ -140,8 +142,7 @@ export default function RegisterPage() {
 
   return (
     <div
-      className="min-h-screen w-full flex items-start lg:items-center justify-center p-4 sm:p-6 pb-20 sm:pb-20 relative overflow-hidden"
-      style={{ background: "linear-gradient(135deg, #f0f4f8 0%, #e8eef4 100%)" }}
+      className="min-h-screen w-full flex items-start lg:items-center justify-center p-4 sm:p-6 pb-20 sm:pb-20 relative overflow-hidden safe-top-padding login-bg"
     >
       {/* ── Engrane grande — inferior derecha ────────────────────────────── */}
       <div
@@ -202,22 +203,22 @@ export default function RegisterPage() {
           <path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         <span
-          className="text-[9px] tracking-[1.5px] uppercase"
+          className="text-[11px] tracking-[1.5px] uppercase"
           style={{ fontFamily: "'JetBrains Mono', monospace" }}
         >
           Iniciar sesión
         </span>
       </Link>
       {/* Layout: columna única en móvil, 2 columnas en desktop (lg+) */}
-      <div className="w-full max-w-[920px] flex flex-col gap-6">
+      <div className="w-full max-w-230 flex flex-col gap-6">
 
         {/* ── Selector de perfil ──────────────────────────────────────────── */}
         <div
-          className="bg-white rounded-2xl border border-slate-100 p-5"
+          className="card-surface rounded-2xl border p-5"
           style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}
         >
           <p
-            className="text-[9px] tracking-[2px] uppercase text-slate-400 mb-4"
+            className="text-[11px] tracking-[2px] uppercase text-muted mb-4"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
             ¿Cómo deseas registrarte?
@@ -233,7 +234,7 @@ export default function RegisterPage() {
                   : "border-slate-100 bg-white hover:border-sky-200 hover:bg-slate-50"
               }`}
             >
-              <span className={role === "user" ? "text-sky-500" : "text-slate-400"}>
+              <span className={role === "user" ? "text-sky-500" : "rs-text-caption"}>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
                   <circle cx="12" cy="8" r="4" strokeLinecap="round" strokeLinejoin="round" />
                   <path d="M4 20C4 17 7.582 15 12 15C16.418 15 20 17 20 20" strokeLinecap="round" strokeLinejoin="round" />
@@ -246,7 +247,7 @@ export default function RegisterPage() {
                 >
                   En Recuperación
                 </p>
-                <p className="text-[9px] text-slate-400 mt-0.5" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                <p className="text-[11px] text-muted mt-0.5" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                   Busco apoyo y guía
                 </p>
               </div>
@@ -262,7 +263,7 @@ export default function RegisterPage() {
                   : "border-slate-100 bg-white hover:border-teal-200 hover:bg-slate-50"
               }`}
             >
-              <span className={role === "companion" ? "text-teal-500" : "text-slate-400"}>
+              <span className={role === "companion" ? "text-teal-500" : "rs-text-caption"}>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
                   <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" strokeLinecap="round" strokeLinejoin="round" />
                   <circle cx="9" cy="7" r="4" strokeLinecap="round" strokeLinejoin="round" />
@@ -277,7 +278,7 @@ export default function RegisterPage() {
                 >
                   Padrino / Mentor
                 </p>
-                <p className="text-[9px] text-slate-400 mt-0.5" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                <p className="text-[11px] text-muted mt-0.5" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                   Quiero acompañar a otros
                 </p>
               </div>
@@ -292,28 +293,28 @@ export default function RegisterPage() {
           {/* Branding */}
           <div className="px-4">
             <p
-              className="text-[9px] tracking-[2px] uppercase text-slate-400 italic mb-1"
+              className="text-[11px] tracking-[2px] uppercase text-muted italic mb-1"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               — Comienza tu Viaje —
             </p>
             {/* T\u00edtulo marca \u2014 tama\u00f1o responsivo */}
             <h1
-              className="text-[38px] sm:text-[52px] font-normal text-slate-700 leading-none mb-3"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              className="text-[38px] sm:text-[52px] font-normal leading-none mb-3"
+              style={{ fontFamily: "'Playfair Display', serif", color: 'var(--ui-text-heading)' }}
             >
               ReSet
             </h1>
             <p
-              className="text-[14px] text-slate-500 leading-relaxed max-w-[280px]"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              className="text-[14px] leading-relaxed max-w-70"
+              style={{ fontFamily: "'Playfair Display', serif", color: 'var(--ui-text-muted)' }}
             >
               Un espacio seguro para sanar, reconectar y florecer en libertad.
             </p>
           </div>
 
           {/* Step 1 Card — padding responsivo */}
-          <div className="bg-white rounded-2xl border border-slate-100 p-6 sm:p-8 relative overflow-hidden"
+          <div className="card-surface rounded-2xl border p-6 sm:p-8 relative overflow-hidden"
             style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
             {/* Decorative icon top-right */}
             <div className="absolute right-4 top-4 opacity-10">
@@ -323,7 +324,7 @@ export default function RegisterPage() {
             </div>
 
             <p
-              className="text-[9px] tracking-[2px] uppercase text-slate-400 mb-5"
+              className="text-[11px] tracking-[2px] uppercase text-muted mb-5"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               Paso 1: Datos de Cuenta
@@ -332,7 +333,7 @@ export default function RegisterPage() {
             <div className="flex flex-col gap-5">
               {/* Name */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] tracking-[1.5px] uppercase text-slate-400"
+                <label className="text-[11px] tracking-[1.5px] uppercase text-muted"
                   style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                   Nombre Completo
                 </label>
@@ -342,7 +343,7 @@ export default function RegisterPage() {
                   value={form.name}
                   onChange={handleChange}
                   placeholder="Como desees ser llamado..."
-                  className="w-full border-0 border-b border-slate-200 bg-transparent py-2 text-slate-700 placeholder-slate-400 outline-none focus:border-sky-400 transition-colors text-[14px] italic"
+                  className="input-line w-full border-0 border-b bg-transparent py-2 outline-none focus:border-sky-400 transition-colors text-[14px] italic"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 />
               </div>
@@ -350,7 +351,7 @@ export default function RegisterPage() {
               {/* Email */}
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-[9px] tracking-[1.5px] uppercase text-slate-400"
+                  <label className="text-[11px] tracking-[1.5px] uppercase text-muted"
                     style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                     Correo Electrónico
                   </label>
@@ -364,14 +365,14 @@ export default function RegisterPage() {
                   value={form.email}
                   onChange={handleChange}
                   placeholder="tu@email.com"
-                  className="w-full border-0 border-b border-slate-200 bg-transparent py-2 text-slate-700 placeholder-slate-400 outline-none focus:border-sky-400 transition-colors text-[14px] italic"
+                  className="input-line w-full border-0 border-b bg-transparent py-2 outline-none focus:border-sky-400 transition-colors text-[14px] italic"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 />
               </div>
 
               {/* Password */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-[9px] tracking-[1.5px] uppercase text-slate-400"
+                <label className="text-[11px] tracking-[1.5px] uppercase text-muted"
                   style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                   Contraseña
                 </label>
@@ -381,7 +382,7 @@ export default function RegisterPage() {
                   value={form.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="w-full border-0 border-b border-slate-200 bg-transparent py-2 text-slate-700 placeholder-slate-400 outline-none focus:border-sky-400 transition-colors text-[14px] italic"
+                  className="input-line w-full border-0 border-b bg-transparent py-2 outline-none focus:border-sky-400 transition-colors text-[14px] italic"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 />
               </div>
@@ -390,21 +391,21 @@ export default function RegisterPage() {
         </div>
 
         {/* Step 2 Card — padding responsivo */}
-        <div className="flex-1 bg-white rounded-2xl border border-slate-100 p-6 sm:p-8"
+        <div className="flex-1 card-surface rounded-2xl border p-6 sm:p-8"
           style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
 
           {role === "user" ? (
             /* ── Flujo usuario en recuperación ─────────────────────────── */
             <>
               <p
-                className="text-[9px] tracking-[2px] uppercase text-sky-500 mb-3"
+                className="text-[11px] tracking-[2px] uppercase text-sky-500 mb-3"
                 style={{ fontFamily: "'JetBrains Mono', monospace" }}
               >
                 Paso 2: Elige tu Camino
               </p>
               <h2
-                className="text-[24px] italic text-slate-700 mb-6 leading-tight"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                className="text-[24px] italic mb-6 leading-tight"
+                style={{ fontFamily: "'Playfair Display', serif", color: 'var(--ui-text-heading)' }}
               >
                 ¿En qué área buscas renovarte?
               </h2>
@@ -428,7 +429,7 @@ export default function RegisterPage() {
                         {ADDICTION_ICONS[type.id]}
                       </span>
                       <span
-                        className="text-[9px] tracking-[1px] uppercase"
+                        className="text-[11px] tracking-[1px] uppercase"
                         style={{
                           fontFamily: "'JetBrains Mono', monospace",
                           color: isSelected ? "#0ea5e9" : "#94a3b8",
@@ -441,23 +442,97 @@ export default function RegisterPage() {
                 })}
               </div>
 
-              {/* Other description field */}
+              {/* Campos extra cuando se selecciona "Otros" */}
               {selectedAddiction === "otros" && (
-                <div className="mb-5">
-                  <label
-                    className="text-[9px] tracking-[1.5px] uppercase text-slate-400 block mb-2"
-                    style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                  >
-                    Especifica tu área de renovación
-                  </label>
-                  <input
-                    type="text"
-                    value={otherDescription}
-                    onChange={(e) => setOtherDescription(e.target.value)}
-                    placeholder="Ej: Tabaquismo, Compras, etc."
-                    className="w-full border-0 border-b border-slate-200 bg-transparent py-2 text-slate-500 placeholder-slate-400 outline-none focus:border-sky-400 transition-colors text-[12px] italic"
-                    style={{ fontFamily: "'Playfair Display', serif" }}
-                  />
+                <div className="mb-5 flex flex-col gap-4">
+                  {/* Clasificación: conductual o sustancia */}
+                  <div>
+                    <label
+                      className="text-[11px] tracking-[1.5px] uppercase text-muted block mb-2"
+                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                    >
+                      Tipo de adicción
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setAddictionClassification("conductual")}
+                        className={`flex flex-col items-start gap-1.5 p-3 rounded-xl border transition-all ${
+                          addictionClassification === "conductual"
+                            ? "border-sky-400 bg-sky-50 shadow-[0_0_0_1px_#0ea5e9]"
+                            : "border-slate-100 bg-white hover:border-sky-200 hover:bg-slate-50"
+                        }`}
+                      >
+                        <span className={addictionClassification === "conductual" ? "text-sky-500" : "rs-text-caption"}>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+                            <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </span>
+                        <div>
+                          <p
+                            className="text-[11px] font-medium"
+                            style={{
+                              fontFamily: "'Playfair Display', serif",
+                              color: addictionClassification === "conductual" ? "#0ea5e9" : "#475569",
+                            }}
+                          >
+                            Conductual
+                          </p>
+                          <p className="text-[11px] rs-text-caption mt-0.5" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                            Compras, juegos, etc.
+                          </p>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setAddictionClassification("sustancia")}
+                        className={`flex flex-col items-start gap-1.5 p-3 rounded-xl border transition-all ${
+                          addictionClassification === "sustancia"
+                            ? "border-sky-400 bg-sky-50 shadow-[0_0_0_1px_#0ea5e9]"
+                            : "border-slate-100 bg-white hover:border-sky-200 hover:bg-slate-50"
+                        }`}
+                      >
+                        <span className={addictionClassification === "sustancia" ? "text-sky-500" : "rs-text-caption"}>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+                            <path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </span>
+                        <div>
+                          <p
+                            className="text-[11px] font-medium"
+                            style={{
+                              fontFamily: "'Playfair Display', serif",
+                              color: addictionClassification === "sustancia" ? "#0ea5e9" : "#475569",
+                            }}
+                          >
+                            De Sustancia
+                          </p>
+                          <p className="text-[11px] rs-text-caption mt-0.5" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                            Tabaco, cafeína, etc.
+                          </p>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Descripción libre */}
+                  <div>
+                    <label
+                      className="text-[11px] tracking-[1.5px] uppercase text-muted block mb-2"
+                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                    >
+                      Especifica tu área de renovación
+                    </label>
+                    <input
+                      type="text"
+                      value={otherDescription}
+                      onChange={(e) => setOtherDescription(e.target.value)}
+                      placeholder="Ej: Tabaquismo, Compras, etc."
+                      className="w-full border-0 border-b border-[var(--ui-border)] bg-transparent py-2 text-slate-500 placeholder-slate-400 outline-none focus:border-sky-400 transition-colors text-[12px] italic"
+                      style={{ fontFamily: "'Playfair Display', serif" }}
+                    />
+                  </div>
                 </div>
               )}
 
@@ -473,7 +548,7 @@ export default function RegisterPage() {
                 type="button"
                 onClick={handleSubmit}
                 disabled={isLoading}
-                className="w-full h-[52px] bg-slate-800 hover:bg-slate-700 disabled:opacity-60 text-white rounded-xl flex items-center justify-center gap-3 mb-4 transition-colors"
+                className="w-full h-13 bg-slate-800 hover:bg-slate-700 disabled:opacity-60 text-white rounded-xl flex items-center justify-center gap-3 mb-4 transition-colors"
                 style={{
                   fontFamily: "'JetBrains Mono', monospace",
                   fontSize: 12,
@@ -488,7 +563,7 @@ export default function RegisterPage() {
               </button>
 
               <p
-                className="text-[9px] text-slate-400 text-center"
+                className="text-[11px] text-muted text-center"
                 style={{ fontFamily: "'JetBrains Mono', monospace" }}
               >
                 Al registrarte, aceptas nuestros{" "}
@@ -501,20 +576,20 @@ export default function RegisterPage() {
             /* ── Flujo padrino / mentor ─────────────────────────────────── */
             <>
               <p
-                className="text-[9px] tracking-[2px] uppercase text-teal-500 mb-3"
+                className="text-[11px] tracking-[2px] uppercase text-teal-500 mb-3"
                 style={{ fontFamily: "'JetBrains Mono', monospace" }}
               >
                 Paso 2: Tu Rol
               </p>
               <h2
-                className="text-[24px] italic text-slate-700 mb-2 leading-tight"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                className="text-[24px] italic mb-2 leading-tight"
+                style={{ fontFamily: "'Playfair Display', serif", color: 'var(--ui-text-heading)' }}
               >
                 Bienvenido, Padrino
               </h2>
               <p
-                className="text-[13px] italic text-slate-500 mb-6 leading-relaxed"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                className="text-[13px] italic mb-6 leading-relaxed"
+                style={{ fontFamily: "'Playfair Display', serif", color: 'var(--ui-text-muted)' }}
               >
                 Tu experiencia y compromiso serán un faro de esperanza para quienes caminan hacia la recuperación.
               </p>
@@ -542,7 +617,7 @@ export default function RegisterPage() {
                       </svg>
                     </span>
                     <p
-                      className="text-[11px] text-slate-500 leading-relaxed"
+                      className="text-[11px] rs-text-muted leading-relaxed"
                       style={{ fontFamily: "'JetBrains Mono', monospace" }}
                     >
                       {text}
@@ -563,7 +638,7 @@ export default function RegisterPage() {
                 type="button"
                 onClick={handleSubmit}
                 disabled={isLoading}
-                className="w-full h-[52px] disabled:opacity-60 text-white rounded-xl flex items-center justify-center gap-3 mb-4 transition-all hover:brightness-110"
+                className="w-full h-13 disabled:opacity-60 text-white rounded-xl flex items-center justify-center gap-3 mb-4 transition-all hover:brightness-110"
                 style={{
                   background: "linear-gradient(135deg, #0d9488 0%, #0891b2 100%)",
                   fontFamily: "'JetBrains Mono', monospace",
@@ -580,7 +655,7 @@ export default function RegisterPage() {
               </button>
 
               <p
-                className="text-[9px] text-slate-400 text-center"
+                className="text-[11px] text-muted text-center"
                 style={{ fontFamily: "'JetBrains Mono', monospace" }}
               >
                 Al registrarte, aceptas nuestros{" "}
@@ -597,14 +672,14 @@ export default function RegisterPage() {
       {/* Footer fijo — padding responsivo */}
       <div className="fixed bottom-4 left-0 right-0 flex items-center justify-between px-4 sm:px-10">
         <p
-          className="text-[9px] tracking-[1px] uppercase text-slate-400 italic"
+          className="text-[11px] tracking-[1px] uppercase text-slate-400 italic"
           style={{ fontFamily: "'JetBrains Mono', monospace" }}
         >
           Oasis de Sobriedad — Sistema de Registro
         </p>
         <Link
           href="/login"
-          className="text-[9px] tracking-[1px] uppercase text-sky-500 hover:text-sky-600 transition-colors italic"
+          className="text-[11px] tracking-[1px] uppercase text-sky-500 hover:text-sky-600 transition-colors italic"
           style={{ fontFamily: "'JetBrains Mono', monospace" }}
         >
           ¿Ya tienes cuenta?

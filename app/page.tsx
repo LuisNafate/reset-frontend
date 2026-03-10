@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { isNativePlatform } from "@/lib/platform";
 
 /* ─────────────────────────────────────────────────────────────────────────────
    SVG Icons (inline, sin librerías externas)
@@ -81,7 +83,7 @@ function AppMockup() {
           <span className="size-2.5 rounded-full bg-[#fca5a5]" />
           <span className="size-2.5 rounded-full bg-[#fcd34d]" />
           <span className="size-2.5 rounded-full bg-[#6ee7b7]" />
-          <span className="flex-1 text-center font-jetbrains text-[10px] text-[#94a3b8]">
+          <span className="flex-1 text-center font-jetbrains text-[11px] text-[#94a3b8]">
             reset-app.tech/dashboard
           </span>
         </div>
@@ -96,7 +98,7 @@ function AppMockup() {
           <div className="flex flex-col gap-4 flex-1 min-w-0">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-jetbrains text-[8px] text-[#0d9488] tracking-widest uppercase leading-none mb-1">
+                <p className="font-jetbrains text-[11px] text-[#0d9488] tracking-widest uppercase leading-none mb-1">
                   Mi Jardín Interior
                 </p>
                 <p className="font-playfair text-[18px] text-[#0f172a] italic leading-none">
@@ -115,7 +117,7 @@ function AppMockup() {
                 <ellipse cx="28" cy="54" rx="10" ry="3" fill="#e2e8f0" />
               </svg>
               <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between">
-                <span className="font-jetbrains text-[8px] text-[#64748b]">PROGRESO: 84%</span>
+                <span className="font-jetbrains text-[11px] text-[#64748b]">PROGRESO: 84%</span>
                 <div className="flex gap-1">
                   <span className="size-1.5 rounded-full bg-[#0d9488]" />
                   <span className="size-1.5 rounded-full bg-[#0d9488]" />
@@ -171,14 +173,14 @@ function AppMockup() {
       <div className="landing-hero-badge absolute -bottom-2 left-0 bg-white border border-[#e2e8f0] rounded-xl px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.1)] flex items-center gap-3">
         <div className="flex flex-col items-center">
           <span className="font-playfair text-2xl text-[#0f172a] leading-none">47</span>
-          <span className="font-jetbrains text-[8px] text-[#94a3b8] tracking-widest uppercase mt-0.5">días</span>
+          <span className="font-jetbrains text-[11px] text-[#94a3b8] tracking-widest uppercase mt-0.5">días</span>
         </div>
         <div className="w-px h-8 bg-[#e2e8f0]" />
         <div>
-          <p className="font-jetbrains text-[9px] text-[#0d9488] tracking-widest uppercase leading-none mb-0.5">
+          <p className="font-jetbrains text-[11px] text-[#0d9488] tracking-widest uppercase leading-none mb-0.5">
             Calma Ra...
           </p>
-          <p className="font-jetbrains text-[10px] text-[#64748b] leading-none">Planta Joven</p>
+          <p className="font-jetbrains text-[11px] text-[#64748b] leading-none">Planta Joven</p>
         </div>
       </div>
     </div>
@@ -197,7 +199,7 @@ function CommunityMockup() {
       <div className="p-8">
         <div className="flex items-center justify-between pb-4 border-b border-[#f8fafc] mb-6">
           <h4 className="font-playfair text-[20px] text-[#0f172a]">Comunidad ReSet</h4>
-          <span className="font-jetbrains text-[10px] text-[#94a3b8]">En línea: 1,402</span>
+          <span className="font-jetbrains text-[11px] text-[#94a3b8]">En línea: 1,402</span>
         </div>
         {/* Mensaje */}
         <div className="flex gap-4 mb-6">
@@ -207,14 +209,14 @@ function CommunityMockup() {
               <span className="font-semibold text-[12px] text-[#0f172a]" style={{ fontFamily: "Inter, sans-serif" }}>
                 Anónimo_08
               </span>
-              <span className="font-jetbrains text-[9px] text-[#cbd5e1]">Hace 12m</span>
+              <span className="font-jetbrains text-[11px] text-[#cbd5e1]">Hace 12m</span>
             </div>
             <p className="text-[14px] text-[#64748b] leading-[1.625]" style={{ fontFamily: "Inter, sans-serif" }}>
               Hoy cumplo mi primer mes. ReSet ha sido mi mayor apoyo en los momentos más difíciles.
             </p>
             <div className="flex items-center gap-4 mt-2">
-              <span className="font-jetbrains text-[10px] text-[#0d9488]">❤ 24</span>
-              <span className="font-jetbrains text-[10px] text-[#94a3b8]">💬 8</span>
+              <span className="font-jetbrains text-[11px] text-[#0d9488]">❤ 24</span>
+              <span className="font-jetbrains text-[11px] text-[#94a3b8]">💬 8</span>
             </div>
           </div>
         </div>
@@ -265,7 +267,7 @@ function useRevealOnScroll() {
 ───────────────────────────────────────────────────────────────────────────── */
 function Navbar() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm border-b border-[#f1f5f9]">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm border-b border-[#f1f5f9] safe-top-bar">
       <div className="max-w-[1280px] mx-auto px-8 h-[60px] flex items-center justify-between">
         <Link
           href="/"
@@ -308,7 +310,7 @@ function Navbar() {
 function HeroSection() {
   return (
     <section
-      className="min-h-screen pt-[60px] flex items-center overflow-hidden"
+      className="min-h-screen pt-[calc(60px+var(--safe-inset-top))] flex items-center overflow-hidden"
       style={{
         background:
           "radial-gradient(ellipse at 100% 0%, rgba(241,245,249,1) 0%, rgba(255,255,255,1) 60%)",
@@ -317,7 +319,7 @@ function HeroSection() {
       <div className="max-w-[1280px] mx-auto px-8 py-24 flex items-center gap-16 w-full">
         {/* Copy */}
         <div className="flex-1 min-w-0 flex flex-col gap-6">
-          <p className="landing-hero-label font-jetbrains text-[10px] uppercase tracking-[5px] text-[#0d9488]">
+          <p className="landing-hero-label font-jetbrains text-[11px] uppercase tracking-[5px] text-[#0d9488]">
             — Tu espacio de acompañamiento
           </p>
           <h1 className="landing-hero-h1 font-playfair text-[clamp(52px,8vw,96px)] leading-[1] text-[#0f172a]">
@@ -350,12 +352,12 @@ function HeroSection() {
           </div>
           {/* Indicador multiplataforma */}
           <div className="landing-hero-ctas flex items-center gap-3 pt-1">
-            <span className="font-jetbrains text-[10px] text-[#94a3b8] uppercase tracking-[2px]">
+            <span className="font-jetbrains text-[11px] text-[#94a3b8] uppercase tracking-[2px]">
               Disponible en web y móvil
             </span>
             <a
               href="#movil"
-              className="font-jetbrains text-[10px] uppercase tracking-[2px] text-[#0d9488] border-b border-[#0d9488] pb-px hover:opacity-70 transition-opacity"
+              className="font-jetbrains text-[11px] uppercase tracking-[2px] text-[#0d9488] border-b border-[#0d9488] pb-px hover:opacity-70 transition-opacity"
             >
               Ver más →
             </a>
@@ -406,7 +408,7 @@ function PilaresSection() {
     <section id="pilares" className="py-32 bg-white">
       <div className="max-w-[1280px] mx-auto px-8">
         <div className="text-center mb-16 reveal">
-          <p className="font-jetbrains text-[10px] uppercase tracking-[5px] text-[#0d9488] mb-4">
+          <p className="font-jetbrains text-[11px] uppercase tracking-[5px] text-[#0d9488] mb-4">
             — Metodología ReSet
           </p>
           <h2 className="font-playfair text-[clamp(32px,5vw,56px)] text-[#0f172a]">
@@ -429,7 +431,7 @@ function PilaresSection() {
               </div>
               <div>
                 <p
-                  className="font-jetbrains text-[9px] uppercase tracking-[3px] mb-3"
+                  className="font-jetbrains text-[11px] uppercase tracking-[3px] mb-3"
                   style={{ color: accentColor }}
                 >
                   {tag}
@@ -444,7 +446,7 @@ function PilaresSection() {
               </div>
               <a
                 href="/login"
-                className="mt-auto font-jetbrains text-[10px] uppercase tracking-[2px] border-b border-current pb-1 inline-block transition-colors hover:opacity-70"
+                className="mt-auto font-jetbrains text-[11px] uppercase tracking-[2px] border-b border-current pb-1 inline-block transition-colors hover:opacity-70"
                 style={{ color: accentColor, width: "fit-content" }}
               >
                 {linkText}
@@ -495,7 +497,7 @@ function HerbarioSection() {
 
       <div className="max-w-[1280px] mx-auto px-8">
         <div className="text-center mb-16 reveal">
-          <p className="font-jetbrains text-[10px] uppercase tracking-[5px] text-[#0d9488] mb-4">
+          <p className="font-jetbrains text-[11px] uppercase tracking-[5px] text-[#0d9488] mb-4">
             — Herramientas para cada etapa
           </p>
           <h2 className="font-playfair text-[clamp(32px,5vw,52px)] text-white">
@@ -603,7 +605,7 @@ function MobileSection() {
 
           {/* Texto */}
           <div className="flex-1 flex flex-col gap-5 reveal-right text-center lg:text-left">
-            <p className="font-jetbrains text-[10px] uppercase tracking-[5px] text-[#0d9488]">
+            <p className="font-jetbrains text-[11px] uppercase tracking-[5px] text-[#0d9488]">
               — Acceso multiplataforma
             </p>
             <h2 className="font-playfair text-[clamp(28px,4vw,44px)] text-[#0f172a] leading-tight">
@@ -681,7 +683,7 @@ function ComunidadSection() {
 
         {/* Texto */}
         <div className="flex-1 min-w-0 flex flex-col gap-6 reveal-right">
-          <p className="font-jetbrains text-[10px] uppercase tracking-[5px] text-[#0d9488]">
+          <p className="font-jetbrains text-[11px] uppercase tracking-[5px] text-[#0d9488]">
             — Espacios de encuentro
           </p>
           <h2 className="font-playfair text-[clamp(36px,5vw,52px)] leading-[1.1] text-[#0f172a]">
@@ -714,7 +716,7 @@ function ComunidadSection() {
           </ul>
           <Link
             href="/login"
-            className="font-jetbrains text-[10px] uppercase tracking-[3px] border-b border-[#0f172a] pb-2 inline-block hover:text-[#0d9488] hover:border-[#0d9488] transition-colors"
+            className="font-jetbrains text-[11px] uppercase tracking-[3px] border-b border-[#0f172a] pb-2 inline-block hover:text-[#0d9488] hover:border-[#0d9488] transition-colors"
             style={{ width: "fit-content" }}
           >
             Unirme a la comunidad
@@ -737,7 +739,7 @@ function Footer() {
           <div className="md:col-span-1 flex flex-col gap-5">
             <div>
               <p className="font-playfair italic text-[24px] text-[#0f172a] leading-none">ReSet</p>
-              <p className="font-jetbrains text-[9px] text-[#94a3b8] tracking-[2px] uppercase mt-1">
+              <p className="font-jetbrains text-[11px] text-[#94a3b8] tracking-[2px] uppercase mt-1">
                 by Hagging Lines
               </p>
             </div>
@@ -749,7 +751,7 @@ function Footer() {
             </p>
             <a
               href="https://reset-app.tech"
-              className="font-jetbrains text-[10px] text-[#94a3b8] hover:text-[#0d9488] transition-colors"
+              className="font-jetbrains text-[11px] text-[#94a3b8] hover:text-[#0d9488] transition-colors"
             >
               reset-app.tech
             </a>
@@ -757,7 +759,7 @@ function Footer() {
 
           {/* Producto */}
           <div>
-            <h5 className="font-jetbrains text-[10px] uppercase tracking-[1px] text-[#0f172a] mb-6">
+            <h5 className="font-jetbrains text-[11px] uppercase tracking-[1px] text-[#0f172a] mb-6">
               Producto
             </h5>
             <ul className="flex flex-col gap-4">
@@ -777,7 +779,7 @@ function Footer() {
 
           {/* Compañía */}
           <div>
-            <h5 className="font-jetbrains text-[10px] uppercase tracking-[1px] text-[#0f172a] mb-6">
+            <h5 className="font-jetbrains text-[11px] uppercase tracking-[1px] text-[#0f172a] mb-6">
               Compañía
             </h5>
             <ul className="flex flex-col gap-4">
@@ -799,7 +801,7 @@ function Footer() {
 
         {/* Bottom */}
         <div className="border-t border-[#f8fafc] pt-12 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="font-jetbrains text-[10px] uppercase tracking-[1px] text-[#94a3b8]">
+          <p className="font-jetbrains text-[11px] uppercase tracking-[1px] text-[#94a3b8]">
             © 2026 Hagging Lines. Todos los derechos reservados.
           </p>
           <div className="flex gap-8">
@@ -807,7 +809,7 @@ function Footer() {
               <a
                 key={item}
                 href="#"
-                className="font-jetbrains text-[10px] uppercase tracking-[1px] text-[#94a3b8] hover:text-[#0f172a] transition-colors"
+                className="font-jetbrains text-[11px] uppercase tracking-[1px] text-[#94a3b8] hover:text-[#0f172a] transition-colors"
               >
                 {item}
               </a>
@@ -823,7 +825,21 @@ function Footer() {
    ROOT PAGE — Landing
 ───────────────────────────────────────────────────────────────────────────── */
 export default function LandingPage() {
+  const router = useRouter();
   useRevealOnScroll();
+
+  // En plataforma nativa (Android/iOS) redirigir al login directamente.
+  // En web se muestra la landing page normal sin cambios.
+  useEffect(() => {
+    if (isNativePlatform()) {
+      router.replace("/login");
+    }
+  }, [router]);
+
+  // Mientras se espera la redirección en móvil, no renderizar nada
+  if (typeof window !== "undefined" && isNativePlatform()) {
+    return null;
+  }
 
   return (
     <>

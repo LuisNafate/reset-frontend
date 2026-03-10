@@ -97,8 +97,7 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen w-full flex items-center justify-center relative overflow-hidden"
-      style={{ background: "linear-gradient(135deg, #f0f4f8 0%, #e8eef4 100%)" }}
+      className="min-h-screen w-full flex items-center justify-center relative overflow-hidden safe-top-padding login-bg"
     >
       {/* ── Engrane grande — inferior derecha ────────────────────────────── */}
       <div
@@ -149,7 +148,7 @@ export default function LoginPage() {
       </div>
 
       {/* ── Contenedor principal ─────────────────────────────────────────── */}
-      <div className="relative z-10 w-full max-w-[420px] px-4 py-8 animate-fade-in-up">
+      <div className="relative z-10 w-full max-w-105 px-4 py-8 animate-fade-in-up">
 
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
@@ -169,26 +168,20 @@ export default function LoginPage() {
           </div>
 
           <h1
-            className="text-4xl tracking-widest text-slate-800 text-center leading-tight font-playfair"
+            className="text-4xl tracking-widest text-center leading-tight font-playfair"
+            style={{ color: 'var(--ui-text-heading)' }}
           >
             RESET
           </h1>
           <p
-            className="text-[10px] tracking-[3px] uppercase font-jetbrains text-center mt-1 text-sky-500"
+            className="text-[11px] tracking-[3px] uppercase font-jetbrains text-center mt-1 text-sky-500"
           >
             Tu Oasis · Recuperación &amp; Paz
           </p>
         </div>
 
         {/* ── Tarjeta ──────────────────────────────────────────────────── */}
-        <div
-          className="rounded-2xl overflow-hidden"
-          style={{
-            background: "#ffffff",
-            border: "1px solid #e2e8f0",
-            boxShadow: "0 20px 50px -15px rgba(0,0,0,0.1), 0 4px 16px -4px rgba(14,165,233,0.08)",
-          }}
-        >
+        <div className="rounded-2xl overflow-hidden login-card">
           {/* Línea decorativa superior */}
           <div
             aria-hidden="true"
@@ -202,7 +195,7 @@ export default function LoginPage() {
 
             {/* Encabezado */}
             <div className="text-center mb-7">
-              <h2 className="text-xl italic font-playfair mb-2 text-slate-700">
+              <h2 className="text-xl italic font-playfair mb-2" style={{ color: 'var(--ui-text-heading)' }}>
                 Bienvenido de nuevo
               </h2>
               <div
@@ -220,11 +213,11 @@ export default function LoginPage() {
 
               {/* Email */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] tracking-[1.5px] uppercase font-jetbrains text-slate-400">
+                <label className="text-[12px] tracking-[1.2px] uppercase font-jetbrains" style={{ color: 'var(--ui-text-muted)' }}>
                   Correo Electrónico
                 </label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--ui-text-caption)' }}>
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                       <path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -235,7 +228,7 @@ export default function LoginPage() {
                     value={form.email}
                     onChange={handleChange}
                     placeholder="tu@correo.com"
-                    className="futuristic-input w-full h-[50px] rounded-xl pl-12 pr-4 font-jetbrains text-xs"
+                    className="futuristic-input w-full h-13 rounded-xl pl-12 pr-4 font-jetbrains" style={{ fontSize: 13 }}
                     autoComplete="email"
                   />
                 </div>
@@ -244,18 +237,18 @@ export default function LoginPage() {
               {/* Contraseña */}
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-[10px] tracking-[1.5px] uppercase font-jetbrains text-slate-400">
+                  <label className="text-[12px] tracking-[1.2px] uppercase font-jetbrains" style={{ color: 'var(--ui-text-muted)' }}>
                     Contraseña
                   </label>
                   <a
                     href="#"
-                    className="text-[9px] tracking-wide uppercase font-jetbrains text-sky-500 hover:text-sky-600 transition-colors"
+                    className="text-[11px] tracking-wide uppercase font-jetbrains text-sky-500 hover:text-sky-400 transition-colors"
                   >
                     ¿Olvidaste tu contraseña?
                   </a>
                 </div>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--ui-text-caption)' }}>
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                       <path d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -266,13 +259,13 @@ export default function LoginPage() {
                     value={form.password}
                     onChange={handleChange}
                     placeholder="••••••••"
-                    className="futuristic-input w-full h-[50px] rounded-xl pl-12 pr-12 font-jetbrains text-xs"
+                    className="futuristic-input w-full h-13 rounded-xl pl-12 pr-12 font-jetbrains" style={{ fontSize: 13 }}
                     autoComplete="current-password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-sky-500 transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 hover:text-sky-500 transition-colors" style={{ color: 'var(--ui-text-caption)' }}
                     aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                   >
                     {showPassword ? <EyeOffIcon /> : <EyeIcon />}
@@ -291,7 +284,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="futuristic-btn w-full h-[52px] text-white rounded-xl flex items-center justify-center gap-3 mt-1 font-jetbrains"
+                className="futuristic-btn w-full h-13 text-white rounded-xl flex items-center justify-center gap-3 mt-1 font-jetbrains"
                 style={{ fontSize: 11, letterSpacing: "2.5px", textTransform: "uppercase" }}
               >
                 {isLoading ? (
@@ -316,8 +309,8 @@ export default function LoginPage() {
           </div>
 
           {/* Enlace de registro */}
-          <div className="px-6 py-5 sm:px-9 flex items-center justify-center gap-1 border-t border-slate-100">
-            <span className="text-sm italic font-playfair text-slate-600">
+          <div className="px-6 py-5 sm:px-9 flex items-center justify-center gap-1 login-card-footer">
+            <span className="text-sm italic font-playfair" style={{ color: 'var(--ui-text-body)' }}>
               ¿No tienes cuenta?{" "}
             </span>
             <Link
@@ -330,7 +323,7 @@ export default function LoginPage() {
         </div>
 
         {/* Footer mínimo */}
-        <p className="text-[9px] tracking-[1px] uppercase font-jetbrains text-center mt-6 text-slate-400 italic">
+        <p className="text-[11px] tracking-[1px] uppercase font-jetbrains text-center mt-6 italic" style={{ color: 'var(--ui-text-caption)' }}>
           cada paso, un día a la paz.
         </p>
       </div>

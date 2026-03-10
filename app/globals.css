@@ -1,21 +1,82 @@
 @import "tailwindcss";
 
+/*
+ * Tailwind v4: configurar el variant `dark:` para que use el atributo
+ * data-theme="dark" en el elemento <html>, en lugar del media query del sistema.
+ * Esto permite al usuario elegir el modo y guardarlo aunque su sistema esté en claro.
+ */
+@variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ── Modo Claro (valores por defecto) ───────────────────────────────── */
 :root {
-  --background: #f8fafc;
-  --foreground: #1e293b;
+  --background: #e6edf5;
+  --foreground: #0f172a;
 
   /* ReSet Design Tokens */
   --color-primary: #1a365d;
-  --color-accent: #0ea5e9;
+  --color-accent: #0284c7;
   --color-accent-companion: #0d9488;
-  --color-text-primary: #1e293b;
-  --color-text-secondary: #334155;
-  --color-text-muted: #94a3b8;
-  --color-border: #e2e8f0;
-  --color-border-light: #f1f5f9;
-  --color-bg-light: #f8fafc;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #1e293b;
+  /* Aumentado de #475569 → más oscuro para cumplir WCAG AA en pantallas de baja calidad */
+  --color-text-muted: #2d4059;
+  --color-border: #93a8be;
+  --color-border-light: #b8cad8;
+  --color-bg-light: #e6edf5;
   --color-bg-card: #ffffff;
-  --color-emergency: #ef4444;
+  --color-emergency: #dc2626;
+
+  /* Superficies de UI */
+  --surface-sidebar: #ffffff;
+  --surface-main: #e6edf5;
+  --surface-card: #ffffff;
+  --surface-card-inner: #eef3f8;
+  --surface-input: #f8fafc;
+
+  /* Textos de UI contextuales — contrastes WCAG AA mínimos 4.5:1 sobre fondos claros */
+  --ui-text-heading:   #0c1727;
+  --ui-text-body:      #162032;
+  --ui-text-muted:     #2d4059;
+  --ui-text-caption:   #3d5166;
+  --ui-border:         #93a8be;
+  --ui-border-subtle:  #b8cad8;
+
+  /* Tamaños mínimos de texto para legibilidad */
+  --text-label-min: 12px;
+  --text-caption-min: 11px;
+}
+
+/* ── Modo Oscuro ─────────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --background: #0d1929;
+  --foreground: #e8edf6;
+
+  --color-primary: #93c5fd;
+  --color-accent: #38bdf8;
+  --color-accent-companion: #2dd4bf;
+  --color-text-primary: #e8edf6;
+  --color-text-secondary: #d1dae8;
+  /* En oscuro: texto muted más brillante para no perderse */
+  --color-text-muted: #a8bdd4;
+  --color-border: #1e3048;
+  --color-border-light: #162438;
+  --color-bg-light: #0d1929;
+  --color-bg-card: #122033;
+  --color-emergency: #f87171;
+
+  --surface-sidebar:    #0f1d2d;
+  --surface-main:       #0d1929;
+  --surface-card:       #122033;
+  --surface-card-inner: #0f1d2d;
+  --surface-input:      #162438;
+
+  /* Textos de UI contextuales — contrastes WCAG AA mínimos 4.5:1 sobre fondos oscuros */
+  --ui-text-heading:   #eef2fa;
+  --ui-text-body:      #d8e2f0;
+  --ui-text-muted:     #a8bdd4;
+  --ui-text-caption:   #8aaac4;
+  --ui-border:         #1e3048;
+  --ui-border-subtle:  #162438;
 }
 
 @theme inline {
@@ -27,6 +88,19 @@
 
 * {
   box-sizing: border-box;
+  /* Transición suave entre temas claro ↔ oscuro */
+  transition:
+    background-color 0.25s ease,
+    border-color     0.25s ease,
+    color            0.2s ease,
+    fill             0.2s ease,
+    box-shadow       0.2s ease;
+}
+
+/* Excluir animaciones propias de la transición global */
+*[class*="animate-"],
+*[class*="transition-"] {
+  transition: unset;
 }
 
 html,
@@ -36,12 +110,59 @@ body {
   padding: 0;
 }
 
+html {
+  /* Tamaño base cómodo — evita texto invisible en pantallas LCD de baja gama */
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: var(--surface-main);
+  color: var(--ui-text-body);
   font-family: var(--font-jetbrains), 'Courier New', monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Mejora el renderizado de fuentes monoespaciadas en pantallas de baja calidad */
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1;
+
+  /* ── Capacitor / móvil ──────────────────────────────────────────────────
+   * overscroll-behavior-y: none  → elimina el "rebote" de scroll en iOS que
+   *   se siente extraño dentro de un WebView nativo. Sin efecto en web.
+   *
+   * -webkit-tap-highlight-color: transparent → quita el rectángulo azul/gris
+   *   que aparece al tocar elementos en Android. Ya no es necesario en apps.
+   *
+   * touch-action: pan-y → deja el scroll vertical libre pero evita gestos
+   *   horizontales accidentales que podrían interferir con la navegación.
+   * ─────────────────────────────────────────────────────────────────────── */
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: pan-y;
+}
+
+/* ─── Clases utilitarias de texto accesible ──────────────────────────── */
+
+/* Mínimo para etiquetas — reemplaza los text-[10px] que desaparecen en LCD */
+.text-label {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+.text-caption {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+/* Texto muted con contraste garantizado en ambos modos */
+.text-muted {
+  color: var(--ui-text-muted);
+}
+
+.text-caption-color {
+  color: var(--ui-text-caption);
 }
 
 /* Typography helpers */
@@ -51,6 +172,53 @@ body {
 
 .font-jetbrains {
   font-family: var(--font-jetbrains), 'Courier New', monospace;
+}
+
+/* ── Capacitor / Safe Areas ──────────────────────────────────────────────────
+ * env(safe-area-inset-*) devuelve los píxeles del notch/dynamic-island/home-
+ * bar del dispositivo. SOLO funciona si el viewport tiene viewport-fit=cover
+ * (configurado en el Viewport export de app/layout.tsx).
+ *
+ * USO:
+ *   <div className="safe-top-padding"> → empuja el contenido bajo el notch
+ *   Los dashboards layouts añaden padding-top al header sticky usando .safe-top-bar
+ * ──────────────────────────────────────────────────────────────────────────── */
+:root {
+  --safe-inset-top:    env(safe-area-inset-top,    0px);
+  --safe-inset-right:  env(safe-area-inset-right,  0px);
+  --safe-inset-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-inset-left:   env(safe-area-inset-left,   0px);
+}
+
+/*
+ * Clases de utilidad para padding seguro.
+ * Se usan en los layouts de la app (dashboard y acompañante).
+ */
+.safe-top-padding    { padding-top:    var(--safe-inset-top);    }
+.safe-bottom-padding { padding-bottom: var(--safe-inset-bottom); }
+.safe-left-padding   { padding-left:   var(--safe-inset-left);   }
+.safe-right-padding  { padding-right:  var(--safe-inset-right);  }
+
+/*
+ * Para barras superiores fijas (sticky headers):
+ * Suma el safe area al height base de la barra para que no quede
+ * bajo el notch. La barra "cresa" hacia arriba, no hacia abajo.
+ */
+.safe-top-bar {
+  padding-top: var(--safe-inset-top);
+}
+
+/*
+ * Para el encabezado del sidebar (fixed, empieza en top-0).
+ * Reemplaza pt-8 (2rem) añadiendo el safe-area encima del padding normal.
+ */
+.sidebar-safe-top {
+  padding-top: calc(var(--safe-inset-top) + 2rem);
+}
+
+/* Bottom safe area — para botones o navbars que estén pegados al fondo */
+.safe-bottom-bar {
+  padding-bottom: calc(var(--safe-inset-bottom) + 0.5rem);
 }
 
 /* Toggle switch */
@@ -104,11 +272,32 @@ input:checked + .toggle-slider::before {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--ui-border);
   border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--ui-text-caption);
+}
+
+/* ─── Focus visible accesible ────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Placeholder legible en ambos modos ───────────────────────────────── */
+::placeholder {
+  color: var(--ui-text-caption);
+  opacity: 1;
+}
+
+/* ─── Estilos globales de inputs: foco adaptado al tema ─────────────── */
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent) !important;
 }
 
 /* ─── Animations ─────────────────────────────────────────────────────────── */
@@ -137,6 +326,148 @@ input:checked + .toggle-slider::before {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ── Clases utilitarias de color ReSet ────────────────────────────────────────
+ * Usan las variables CSS del tema para soportar modo claro/oscuro sin necesitar
+ * duplicar estilos en cada componente.
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/* Superficies */
+.rs-surface-sidebar  { background-color: var(--surface-sidebar);    color: var(--ui-text-body); }
+.rs-surface-main     { background-color: var(--surface-main);        color: var(--ui-text-body); }
+.rs-surface-card     { background-color: var(--surface-card);        color: var(--ui-text-body); }
+.rs-surface-card-inner { background-color: var(--surface-card-inner); }
+.rs-surface-input    { background-color: var(--surface-input); }
+
+/* Textos */
+.rs-text-heading  { color: var(--ui-text-heading); }
+.rs-text-body     { color: var(--ui-text-body); }
+.rs-text-muted    { color: var(--ui-text-muted); }
+.rs-text-caption  { color: var(--ui-text-caption); }
+
+/* Bordes */
+.rs-border        { border-color: var(--ui-border); }
+.rs-border-subtle { border-color: var(--ui-border-subtle); }
+
+/* ── Tarjeta de contenido — fondo + borde adaptativos ──────────────────────
+ * Reemplaza: bg-white dark:bg-[#0d1f35] border-slate-200 dark:border-slate-700/40
+ * USO: <div className="rs-card rounded-sm border p-8">
+ * ─────────────────────────────────────────────────────────────────────────── */
+.rs-card {
+  background-color: var(--surface-card);
+  border-color: var(--ui-border);
+}
+
+/* ── Campo de entrada — background + borde + texto con tema ────────────────── */
+.rs-input-field {
+  background-color: var(--surface-input);
+  border: 1px solid var(--ui-border);
+  color: var(--ui-text-body);
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.25s;
+}
+.rs-input-field::placeholder {
+  color: var(--ui-text-caption);
+}
+.rs-input-field:focus {
+  outline: none;
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 15%, transparent) !important;
+}
+
+/* ── Etiquetas de formulario — uppercase monospace sobre inputs ──────────────
+ * Reemplaza: text-[11px] tracking-[1.5px] uppercase text-slate-400 dark:text-slate-300
+ * + style={{ fontFamily: "'JetBrains Mono', monospace" }}
+ * USO: <label className="rs-form-label">
+ * ─────────────────────────────────────────────────────────────────────────── */
+.rs-form-label {
+  display: block;
+  color: var(--ui-text-muted);
+  font-family: var(--font-jetbrains), 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ── Tag de sección — pequeña etiqueta italic encima de títulos de página ────
+ * Reemplaza: text-[11px] tracking-[2px] uppercase italic text-slate-400 dark:text-slate-300
+ * + style={{ fontFamily: "'JetBrains Mono', monospace" }}
+ * USO: <p className="rs-page-tag italic mb-2">— Ajustes de ReSet —</p>
+ * ─────────────────────────────────────────────────────────────────────────── */
+.rs-page-tag {
+  color: var(--ui-text-caption);
+  font-family: var(--font-jetbrains), 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ── Subtítulo de página — línea de descripción bajo el heading ──────────────
+ * Reemplaza: text-[11px] tracking-[1.5px] uppercase text-slate-400 dark:text-slate-300
+ * USO: <p className="rs-page-subtitle mb-10">Gestiona tu red de seguridad</p>
+ * ─────────────────────────────────────────────────────────────────────────── */
+.rs-page-subtitle {
+  color: var(--ui-text-muted);
+  font-family: var(--font-jetbrains), 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── Heading de página — título principal con Playfair ───────────────────────
+ * Reemplaza: text-[42px] font-normal text-slate-800 dark:text-slate-100
+ * + style={{ fontFamily: "'Playfair Display', serif" }}
+ * USO: <h1 className="rs-page-heading leading-none mb-2">Bitácora Diaria</h1>
+ * ─────────────────────────────────────────────────────────────────────────── */
+.rs-page-heading {
+  color: var(--ui-text-heading);
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  line-height: 1;
+  font-weight: 400;
+}
+
+/* ── Cuerpo de texto de tarjeta — párrafos con buen contraste ───────────────
+ * Reemplaza: text-slate-700 dark:text-slate-200 (legible en ambos modos)
+ * USO: <p className="rs-card-body">...</p>
+ * ─────────────────────────────────────────────────────────────────────────── */
+.rs-card-body {
+  color: var(--ui-text-body);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* ── Dark mode: overrides globales de layout ─────────────────────────────────
+ * Aplicados con selectores específicos para no interferir con utilidades
+ * de Tailwind en el código de los componentes.
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/* Scrollbar en modo oscuro */
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #1e3048;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #2d4a6e;
+}
+
+/* Fondos estructurales de layout */
+[data-theme="dark"] .reset-layout-bg {
+  background-color: var(--surface-main);
+}
+[data-theme="dark"] .reset-sidebar-bg {
+  background-color: var(--surface-sidebar);
+  border-color: var(--ui-border);
+}
+
+/* ── Animación bloom — para la flor del hito 30 días ─────────────────────── */
+@keyframes bloom {
+  0%   { transform: scale(0.8); opacity: 0; }
+  60%  { transform: scale(1.1); }
+  100% { transform: scale(1);   opacity: 1; }
+}
+.animate-bloom {
+  animation: bloom 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
 
 @keyframes pulse-ring {
   0%   { transform: scale(0.9); opacity: 0.6; }
@@ -250,19 +581,19 @@ input:checked + .toggle-slider::before {
 
 /* Input focus glow compatible con :focus */
 .futuristic-input {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  color: #1e293b;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  background: var(--surface-input);
+  border: 1px solid var(--ui-border);
+  color: var(--ui-text-body);
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.25s;
 }
 .futuristic-input::placeholder {
-  color: #94a3b8;
+  color: var(--ui-text-caption);
 }
 .futuristic-input:focus {
   outline: none;
-  border-color: #7dd3fc;
-  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
-  background: #ffffff;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 15%, transparent);
+  background: var(--color-bg-card);
 }
 
 .futuristic-btn {
@@ -281,6 +612,59 @@ input:checked + .toggle-slider::before {
 .futuristic-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Fondo adaptativo para las páginas de login / register */
+.login-bg {
+  background: linear-gradient(135deg, #f0f4f8 0%, #e8eef4 100%);
+}
+[data-theme="dark"] .login-bg {
+  background: linear-gradient(135deg, #0d1929 0%, #091422 100%);
+}
+
+/* Tarjeta de login — fondo adaptativo */
+.login-card {
+  background: var(--surface-card);
+  border: 1px solid var(--ui-border-subtle);
+  box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.12), 0 4px 16px -4px rgba(14, 165, 233, 0.08);
+}
+[data-theme="dark"] .login-card {
+  box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.5), 0 4px 16px -4px rgba(14, 165, 233, 0.05);
+}
+
+/* Footer divisor en la tarjeta de login */
+.login-card-footer {
+  border-top: 1px solid var(--ui-border-subtle);
+}
+
+/* Superficies blancas que deben adaptarse al tema (tarjetas de registro) */
+.card-surface {
+  background-color: var(--surface-card);
+  border-color: var(--ui-border-subtle);
+}
+
+/* Input de línea base (sin fondo, con borde inferior) adaptativo al tema */
+.input-line {
+  color: var(--ui-text-body);
+  border-bottom-color: var(--ui-border) !important;
+  transition: border-color 0.2s;
+}
+.input-line::placeholder {
+  color: var(--ui-text-caption);
+}
+.input-line:focus {
+  border-bottom-color: var(--color-accent) !important;
+}
+
+/* Botones de selección (rol, adicción) — adaptan fondo y borde al tema */
+.select-btn-idle {
+  background-color: var(--surface-card);
+  border-color: var(--ui-border-subtle);
+  color: var(--ui-text-body);
+}
+.select-btn-idle:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+  background-color: var(--surface-card-inner);
 }
 
 /* ─── Landing Page Animations ─────────────────────────────────────────── */

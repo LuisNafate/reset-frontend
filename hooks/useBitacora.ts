@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createLog, getLogs } from "@/lib/api/tracking";
-import { useAuth } from "@/context/AuthContext";
+import type { DailyLogResponse } from "@/lib/api/tracking";
 import {
   getMoodLabel,
   getMoodColor,
@@ -12,20 +12,6 @@ import {
 import type { JournalEntry, MoodId } from "@/types";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
-
-/** Valor numérico (1-10) que representa cada estado de ánimo para la API. */
-const MOOD_TO_NUMBER: Record<MoodId, number> = {
-  feliz:       9,
-  motivado:    8,
-  agradecido:  8,
-  esperanzado: 7,
-  calmado:     7,
-  confundido:  5,
-  ansioso:     4,
-  agotado:     3,
-  triste:      3,
-  enojado:     2,
-};
 
 const NUMBER_TO_MOOD: Array<[number, MoodId]> = [
   [9, "feliz"],
@@ -46,51 +32,42 @@ function closestMood(value: number): MoodId {
   )[1];
 }
 
-/** Convierte un registro diario de la API al formato JournalEntry del UI.
- * La API devuelve: logDate (ISO), cravingLevelId (UUID), emotionalStateId (UUID).
- * Como los IDs son opacos, el mood se deja en 'calmado' por defecto si no viene como número.
- */
-function normalizeEntry(raw: any): JournalEntry {
-  // Soporta tanto el campo legácy (log_date) como el real de la API (logDate)
-  const dateStr = raw.logDate ?? raw.log_date ?? "";
+/** Convierte un registro diario de la API al formato JournalEntry del UI. */
+function normalizeEntry(raw: DailyLogResponse): JournalEntry {
+  const dateStr = raw.logDate ?? '';
+  const emotionLevel = raw.emotionalState?.level ?? 5;
   return {
-    id: raw.id ?? raw._id ?? String(Date.now()),
-    title: dateStr ? dateStr.split('T')[0] : "",
-    // emotional_state viene como número en /tracking/statistics pero como UUID en /tracking/logs
-    mood: typeof raw.emotional_state === 'number'
-      ? closestMood(raw.emotional_state)
-      : "calmado",
-    notes: raw.notes ?? "",
+    id: raw.id ?? String(Date.now()),
+    title: dateStr ? dateStr.split('T')[0] : '',
+    mood: closestMood(emotionLevel),
+    notes: raw.notes ?? '',
     consumed: raw.consumed ?? false,
-    createdAt: raw.createdAt ?? dateStr ?? new Date().toISOString(),
+    createdAt: raw.logDate ?? new Date().toISOString(),
   };
 }
 
 // ─── Hook ───────────────────────────────────────────────────────────────────
 
 export function useBitacora() {
-  const { user } = useAuth();
-  // ── Lista de entradas ────────────────────────────────────────────────────────────
+  // ── Lista de entradas ────────────────────────────────────────────────────────
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [isLoadingEntries, setIsLoadingEntries] = useState(true);
 
-  // ── Formulario nueva entrada ─────────────────────────────────────────────────────
+  // ── Formulario nueva entrada ─────────────────────────────────────────────────
   const [title, setTitle] = useState("");
-  const [moodLevel, setMoodLevel] = useState(5);           // 1-10: desanimado → muy animado
+  const [moodLevel, setMoodLevel] = useState(5);       // 1-10: desanimado → muy animado
   const [notes, setNotes] = useState("");
   const [consumed, setConsumed] = useState(false);
-  const [cravingLevel, setCravingLevel] = useState(5);     // 1-10, el usuario lo elige
+  const [cravingLevel, setCravingLevel] = useState(5); // 1-10, el usuario lo elige
 
-  // ── Estado general ───────────────────────────────────────────────────────────────
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
   // Cargar entradas al montar
   useEffect(() => {
-    getLogs(30, user?.id)
-      .then((res: any) => {
-        const data: any[] = res?.data ?? res ?? [];
+    getLogs(30)
+      .then((data) => {
         setEntries(
           Array.isArray(data)
             ? data.map(normalizeEntry).sort(
@@ -110,24 +87,24 @@ export function useBitacora() {
       setError("Escribe algo antes de guardar.");
       return;
     }
+
     setIsSubmitting(true);
     setError(null);
     setSaved(false);
     try {
+      // La API recibe números directos 1-10, NO UUIDs de catálogos
       await createLog({
-        log_date: new Date().toISOString().split("T")[0],
         consumed,
         craving_level: cravingLevel,
         emotional_state: moodLevel,
+        notes: notes.trim() || undefined,
       });
       setSaved(true);
-      setError(null);
       // Recargar entradas desde la API
-      const res: any = await getLogs(30, user?.id);
-      const data: any[] = res?.data ?? res ?? [];
+      const refreshed = await getLogs(30);
       setEntries(
-        Array.isArray(data)
-          ? data.map(normalizeEntry).sort(
+        Array.isArray(refreshed)
+          ? refreshed.map(normalizeEntry).sort(
               (a, b) =>
                 new Date(b.createdAt).getTime() -
                 new Date(a.createdAt).getTime()
@@ -147,7 +124,7 @@ export function useBitacora() {
     }
   };
 
-  // La API de tracking no expone endpoint DELETE por log — se omite
+  // La API de tracking no expone endpoint DELETE por log — eliminación local optimista
   const handleDelete = (_id: string) => {
     setEntries((prev) => prev.filter((e) => e.id !== _id));
   };

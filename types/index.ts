@@ -11,11 +11,11 @@ export interface RegisterData {
   password: string;
   addictionType: string;
   otherDescription?: string;
-  role?: "user" | "companion";
+  role?: "ADICTO" | "PADRINO";
 }
 
 export interface AuthResponse {
-  token: string;
+  accessToken: string;
   user: User;
 }
 
@@ -25,9 +25,11 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  addictionType: string;
+  role: "ADICTO" | "PADRINO";
+  sponsorCode?: string | null;
   createdAt: string;
-  role: "user" | "companion";
+  /** @deprecated Solo disponible en mocks — la API no devuelve addictionType */
+  addictionType?: string;
 }
 
 // ─── Dashboard / Progress ────────────────────────────────────────────────────
@@ -152,6 +154,14 @@ export interface ProfileUpdateData {
 
 // ─── Companion ───────────────────────────────────────────────────────────────
 
+export interface SupportedUser {
+  id: string;
+  displayName: string;
+  addictionType: string;
+  sobrietyDays: number;
+  status: 'Activo' | 'Inactivo';
+}
+
 export interface CompanionActivity {
   mood: string;
   moodEmoji: string;
@@ -193,12 +203,4 @@ export interface CompanionProfile {
   phone: string;
   emailAlerts: boolean;
   smsAlerts: boolean;
-}
-
-export interface SupportedUser {
-  id: string;
-  displayName: string;
-  addictionType: string;
-  sobrietyDays: number;
-  status: "Activo" | "Inactivo";
 }

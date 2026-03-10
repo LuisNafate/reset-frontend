@@ -4,51 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useMonitoreo } from "@/hooks/useMonitoreo";
 import type { RecentLogEntry } from "@/hooks/useMonitoreo";
-
-// ─── SVGs de estado emocional ─────────────────────────────────────────────────
-
-const MOOD_SVG: Record<string, React.ReactNode> = {
-  calmado: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0d9488" strokeWidth="1.5">
-      <circle cx="12" cy="12" r="9" strokeLinecap="round"/>
-      <path d="M9 15h6" strokeLinecap="round"/>
-      <circle cx="9" cy="9.5" r="1" fill="#0d9488"/>
-      <circle cx="15" cy="9.5" r="1" fill="#0d9488"/>
-    </svg>
-  ),
-  ansioso: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="1.5">
-      <circle cx="12" cy="12" r="9" strokeLinecap="round"/>
-      <path d="M8.5 15.5s1-1 3.5-1 3.5 1 3.5 1" strokeLinecap="round"/>
-      <circle cx="9" cy="9.5" r="1" fill="#f59e0b"/>
-      <circle cx="15" cy="9.5" r="1" fill="#f59e0b"/>
-    </svg>
-  ),
-  alegre: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="1.5">
-      <circle cx="12" cy="12" r="9" strokeLinecap="round"/>
-      <path d="M8.5 13.5s1 2 3.5 2 3.5-2 3.5-2" strokeLinecap="round"/>
-      <circle cx="9" cy="9.5" r="1" fill="#0ea5e9"/>
-      <circle cx="15" cy="9.5" r="1" fill="#0ea5e9"/>
-    </svg>
-  ),
-  motivado: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="1.5">
-      <circle cx="12" cy="12" r="9" strokeLinecap="round"/>
-      <path d="M8.5 13.5s1 2 3.5 2 3.5-2 3.5-2" strokeLinecap="round"/>
-      <circle cx="9" cy="9.5" r="1.5" fill="#14b8a6"/>
-      <circle cx="15" cy="9.5" r="1.5" fill="#14b8a6"/>
-    </svg>
-  ),
-  triste: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5">
-      <circle cx="12" cy="12" r="9" strokeLinecap="round"/>
-      <path d="M8.5 16s1-2 3.5-2 3.5 2 3.5 2" strokeLinecap="round"/>
-      <circle cx="9" cy="9.5" r="1" fill="#6366f1"/>
-      <circle cx="15" cy="9.5" r="1" fill="#6366f1"/>
-    </svg>
-  ),
-};
+import { MOOD_SVG } from "@/components/ui/MoodIcons";
 
 // ─── Utilidades ───────────────────────────────────────────────────────────────
 
@@ -120,7 +76,7 @@ export default function HistorialPage() {
       <div className="min-h-full flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-2 border-teal-200 border-t-teal-500 rounded-full animate-spin" />
-          <p className="text-[10px] text-slate-400 tracking-[1px] uppercase" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+          <p className="text-[11px] rs-text-caption tracking-[1px] uppercase" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
             Cargando historial...
           </p>
         </div>
@@ -134,26 +90,26 @@ export default function HistorialPage() {
       <div className="min-h-full">
         <div className="max-w-2xl mx-auto px-4 sm:px-10 py-8 sm:py-12">
           <p
-            className="text-[9px] tracking-[2px] uppercase italic text-slate-400 mb-2"
+            className="text-[11px] tracking-[2px] uppercase italic rs-text-caption mb-2"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
             — Registros Emocionales —
           </p>
           <h1
-            className="text-[44px] font-normal text-slate-800 leading-none mb-1"
+            className="text-[44px] font-normal rs-text-heading leading-none mb-1"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Bitácora de Progreso
           </h1>
           <p
-            className="text-[9px] tracking-[1.5px] uppercase text-slate-400 mb-10"
+            className="text-[11px] tracking-[1.5px] uppercase rs-text-caption mb-10"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
             Sin ahijado conectado aún
           </p>
 
           <div
-            className="border border-slate-200 bg-white rounded-sm p-10 flex flex-col items-center text-center"
+            className="border border-[var(--ui-border)] bg-white rounded-sm p-10 flex flex-col items-center text-center"
             style={{ boxShadow: "8px 8px 0px 0px rgba(13, 148, 136, 0.04)" }}
           >
             {/* Gráfico vacío placeholder */}
@@ -169,13 +125,13 @@ export default function HistorialPage() {
             </svg>
 
             <p
-              className="text-[20px] font-normal text-slate-700 mb-3"
+              className="text-[20px] font-normal rs-text-body mb-3"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
               No hay historial disponible
             </p>
             <p
-              className="text-[11px] text-slate-400 leading-relaxed max-w-sm mb-6"
+              className="text-[11px] rs-text-caption leading-relaxed max-w-sm mb-6"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               El historial emocional de tu ahijado aparecerá aquí una vez que se establezca la conexión y empiece a registrar su progreso.
@@ -183,7 +139,7 @@ export default function HistorialPage() {
 
             <Link
               href="/acompanante"
-              className="inline-flex items-center gap-2 text-[9px] tracking-[1.5px] uppercase text-teal-600 border border-teal-200 hover:bg-teal-50 transition-colors px-6 py-2.5 rounded"
+              className="inline-flex items-center gap-2 text-[11px] tracking-[1.5px] uppercase text-teal-600 border border-teal-200 hover:bg-teal-50 transition-colors px-6 py-2.5 rounded"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               ← Volver al panel
@@ -203,19 +159,19 @@ export default function HistorialPage() {
       <div className="max-w-2xl mx-auto px-4 sm:px-10 py-8 sm:py-12">
         {/* Header */}
         <p
-          className="text-[9px] tracking-[2px] uppercase italic text-slate-400 mb-2"
+          className="text-[11px] tracking-[2px] uppercase italic rs-text-caption mb-2"
           style={{ fontFamily: "'JetBrains Mono', monospace" }}
         >
           — Registros Emocionales —
         </p>
         <h1
-          className="text-[44px] font-normal text-slate-800 leading-none mb-1"
+          className="text-[44px] font-normal rs-text-heading leading-none mb-1"
           style={{ fontFamily: "'Playfair Display', serif" }}
         >
           Bitácora de Progreso
         </h1>
         <p
-          className="text-[9px] tracking-[1.5px] uppercase text-slate-400 mb-10"
+          className="text-[11px] tracking-[1.5px] uppercase rs-text-caption mb-10"
           style={{ fontFamily: "'JetBrains Mono', monospace" }}
         >
           Historial emocional de {godchildName} — Últimas entradas
@@ -223,9 +179,9 @@ export default function HistorialPage() {
 
         {/* Gráfico de tendencia */}
         {recentLogs.length > 1 && (
-          <div className="border border-slate-200 bg-white rounded-sm p-8 mb-6">
+          <div className="border border-[var(--ui-border)] bg-white rounded-sm p-8 mb-6">
             <p
-              className="text-[9px] tracking-[2px] uppercase text-teal-600 mb-6"
+              className="text-[11px] tracking-[2px] uppercase text-teal-600 mb-6"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               Tendencia Emocional
@@ -245,25 +201,25 @@ export default function HistorialPage() {
                 ))}
               </svg>
               <div className="absolute left-0 top-0 h-full flex flex-col justify-between pointer-events-none">
-                <p className="text-[8px] text-slate-300" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Muy bien</p>
-                <p className="text-[8px] text-slate-300" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Regular</p>
-                <p className="text-[8px] text-slate-300" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Difícil</p>
+                <p className="text-[11px] text-slate-300" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Muy bien</p>
+                <p className="text-[11px] text-slate-300" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Regular</p>
+                <p className="text-[11px] text-slate-300" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Difícil</p>
               </div>
             </div>
           </div>
         )}
 
         {/* Lista de entradas */}
-        <div className="border border-slate-200 bg-white rounded-sm p-8">
+        <div className="border border-[var(--ui-border)] bg-white rounded-sm p-8">
           <p
-            className="text-[9px] tracking-[2px] uppercase text-teal-600 mb-5"
+            className="text-[11px] tracking-[2px] uppercase text-teal-600 mb-5"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
             Entradas Recientes
           </p>
 
           {recentLogs.length === 0 ? (
-            <p className="text-[12px] italic text-slate-400 py-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <p className="text-[12px] italic rs-text-caption py-4" style={{ fontFamily: "'Playfair Display', serif" }}>
               {godchildName} aún no ha registrado entradas en su bitácora.
             </p>
           ) : (
@@ -276,7 +232,7 @@ export default function HistorialPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <p
-                        className="text-[15px] italic text-slate-700"
+                        className="text-[15px] italic rs-text-body"
                         style={{ fontFamily: "'Playfair Display', serif" }}
                       >
                         {entry.moodLabel}
@@ -297,7 +253,7 @@ export default function HistorialPage() {
                         </span>
                       )}
                       <p
-                        className="text-[9px] text-slate-300 ml-auto"
+                        className="text-[11px] text-slate-300 ml-auto"
                         style={{ fontFamily: "'JetBrains Mono', monospace" }}
                       >
                         {formatRelativeDate(entry.date)}
@@ -305,7 +261,7 @@ export default function HistorialPage() {
                     </div>
                     {entry.notes ? (
                       <p
-                        className="text-[12px] italic text-slate-400 leading-relaxed"
+                        className="text-[12px] italic rs-text-caption leading-relaxed"
                         style={{ fontFamily: "'Playfair Display', serif" }}
                       >
                         &ldquo;{entry.notes.slice(0, 150)}{entry.notes.length > 150 ? "..." : ""}&rdquo;

@@ -1,15 +1,33 @@
 // lib/api/emergency.ts
 // Emergencias — contactos y alertas de emergencia del usuario.
+// Contrato exacto según documentación API v1.
 
 import { apiRequest } from './client';
 
 // ─── Tipos ───────────────────────────────────────────────────────────────────
 
 export interface EmergencyContactPayload {
-  contact_name: string;
-  phone: string;
+  contactName: string;
+  relationship: string;
   email?: string;
-  relationship?: string;
+  phone?: string;
+  customRelationship?: string;
+  priorityOrder?: number;
+}
+
+export interface TriggerAlertPayload {
+  resultedInRelapse?: boolean;
+  resolutionNotes?: string;
+}
+
+export interface TriggerAlertResponse {
+  message: string;
+  alert: {
+    id: string;
+    userId: string;
+    activatedAt: string;
+    resultedInRelapse: boolean;
+  };
 }
 
 // ─── Funciones ───────────────────────────────────────────────────────────────
@@ -18,7 +36,14 @@ export interface EmergencyContactPayload {
 export const addContact = (data: EmergencyContactPayload): Promise<any> =>
   apiRequest('/emergency/contacts', {
     method: 'POST',
-    body: JSON.stringify(data),
+    body: JSON.stringify({
+      contact_name: data.contactName,
+      relationship: data.relationship,
+      ...(data.email ? { email: data.email } : {}),
+      ...(data.phone ? { phone: data.phone } : {}),
+      ...(data.customRelationship ? { custom_relationship: data.customRelationship } : {}),
+      priority_order: data.priorityOrder ?? 1,
+    }),
   });
 
 /** Obtiene la lista de contactos de emergencia del usuario autenticado. */
@@ -26,17 +51,12 @@ export const getContacts = (): Promise<any> =>
   apiRequest('/emergency/contacts');
 
 /**
- * Dispara una alerta de emergencia.
- * @param notes Mensaje opcional de resolución notificado a los contactos.
+ * Dispara una alerta de emergencia (botón de pánico).
+ * Notifica a todos los contactos activos del usuario.
  */
-export const triggerAlert = (notes?: string): Promise<any> =>
-  apiRequest('/emergency/alert', {
+export const triggerAlert = (payload: TriggerAlertPayload = {}): Promise<TriggerAlertResponse> =>
+  apiRequest<TriggerAlertResponse>('/emergency/alert', {
     method: 'POST',
-    body: JSON.stringify({
-      resulted_in_relapse: false,
-      resolution_notes: notes ?? 'Alerta de emergencia activada',
-    }),
+    body: JSON.stringify(payload),
   });
 
-/** Obtiene el historial de alertas del usuario. */
-export const getAlerts = (): Promise<any> => apiRequest('/emergency/alerts');

@@ -15,27 +15,40 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       <div className="flex flex-col gap-1.5">
         {label && (
           <label
-            className="text-[10px] tracking-[1px] uppercase text-slate-400"
-            style={{ fontFamily: "'JetBrains Mono', monospace" }}
+            className="text-[12px] tracking-[1px] uppercase"
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              color: "var(--ui-text-muted)",
+            }}
           >
             {label}
           </label>
         )}
         <div className="relative">
           {icon && (
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+            <div
+              className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
+              style={{ color: "var(--ui-text-caption)" }}
+            >
               {icon}
             </div>
           )}
           <input
             ref={ref}
-            className={`w-full h-[50px] rounded-xl border border-slate-200 bg-slate-50/30 px-4 text-sm text-slate-700 placeholder-slate-400 transition-all outline-none
-              focus:border-sky-300 focus:ring-2 focus:ring-sky-100 
+            className={`w-full h-13 rounded-xl border px-4 text-[13px] transition-all outline-none
+              focus:ring-2
               ${icon ? "pl-12" : "pl-4"}
               ${rightElement ? "pr-12" : "pr-4"}
-              ${error ? "border-red-300 focus:border-red-400 focus:ring-red-100" : ""}
+              ${error ? "border-red-400 focus:border-red-500 focus:ring-red-200 dark:border-red-600 dark:focus:ring-red-900/30" : ""}
               ${className}`}
-            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12 }}
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 13,
+              backgroundColor: "var(--surface-input)",
+              color: "var(--ui-text-body)",
+              borderColor: error ? undefined : "var(--ui-border)",
+              /* placeholder se controla via CSS variable abajo */
+            } as React.CSSProperties}
             {...props}
           />
           {rightElement && (
@@ -45,7 +58,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
         {error && (
-          <p className="text-[10px] text-red-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+          <p
+            className="text-[11px] text-red-500 dark:text-red-400"
+            style={{ fontFamily: "'JetBrains Mono', monospace" }}
+          >
             {error}
           </p>
         )}

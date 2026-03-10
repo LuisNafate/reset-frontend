@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "@/hooks/useSession";
+import ThemeToggle from "@/components/ui/ThemeToggle";
+import NotificationBell from "@/components/ui/NotificationBell";
 
 const navItems = [
   {
@@ -74,40 +76,44 @@ export default function CompanionSidebar({ isOpen = false, onClose }: CompanionS
   return (
     <aside
       className={
-        `fixed left-0 top-0 h-full w-[288px] flex flex-col border-r border-slate-100 bg-white z-30
+        `fixed left-0 top-0 h-full w-[288px] flex flex-col border-r border-slate-100 dark:border-slate-800/60 bg-white dark:bg-[#0f1e2e] z-30
         transition-transform duration-300 ease-in-out
         ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`
       }
       style={{ boxShadow: "1px 0 0 0 #f1f5f9" }}
     >
       {/* Logo — nombre real del acompañante */}
-      <div className="px-8 pt-8 pb-6 border-b border-slate-100 flex items-start justify-between">
+      <div className="px-8 sidebar-safe-top pb-6 border-b border-slate-100 flex items-start justify-between">
         <div className="min-w-0 flex-1">
           <p
-            className="text-[9px] tracking-[1.8px] uppercase text-teal-500 mb-1"
+            className="text-[11px] tracking-[1.8px] uppercase text-teal-500 mb-1"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
             Vista de Acompañante
           </p>
           <h1
-            className="text-[22px] font-normal text-slate-800 leading-tight truncate"
+            className="text-[22px] font-normal text-slate-800 dark:text-slate-100 leading-tight truncate"
             style={{ fontFamily: "'Playfair Display', serif" }}
             title={user?.name ?? ""}
           >
             {user?.name ? `ReSet de ${displayName}` : "Mi ReSet"}
           </h1>
         </div>
-        {/* Botón cerrar sidebar — solo visible en móvil */}
-        <button
-          type="button"
-          onClick={onClose}
-          className="md:hidden text-slate-400 hover:text-slate-600 transition-colors mt-1 p-1 flex-shrink-0"
-          aria-label="Cerrar menú"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
+        {/* Acciones del header: notificaciones + cerrar (móvil) */}
+        <div className="flex items-center gap-0.5 mt-1 shrink-0">
+          <NotificationBell variant="teal" />
+          {/* Botón cerrar sidebar — solo visible en móvil */}
+          <button
+            type="button"
+            onClick={onClose}
+            className="md:hidden text-slate-500 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300 transition-colors p-1"
+            aria-label="Cerrar menú"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Navigation */}
@@ -120,18 +126,18 @@ export default function CompanionSidebar({ isOpen = false, onClose }: CompanionS
               href={item.href}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all relative group ${
                 active
-                  ? "text-teal-600 bg-teal-50"
-                  : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
+                  ? "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20"
+                  : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50"
               }`}
             >
               {active && (
                 <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-teal-400 rounded-r-full" />
               )}
-              <span className={active ? "text-teal-600" : "text-slate-400 group-hover:text-slate-500"}>
+              <span className={active ? "text-teal-600 dark:text-teal-400" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-500 dark:group-hover:text-slate-300"}>
                 {item.icon}
               </span>
               <span
-                className="text-[10px] tracking-[2px] uppercase font-normal"
+                className="text-[12px] tracking-[1.5px] uppercase font-normal"
                 style={{ fontFamily: "'JetBrains Mono', monospace" }}
               >
                 {item.label}
@@ -141,36 +147,41 @@ export default function CompanionSidebar({ isOpen = false, onClose }: CompanionS
         })}
       </nav>
 
+      {/* ── Theme Toggle ──────────────────────────────────────────── */}
+      <div className="px-4 pb-1">
+        <ThemeToggle />
+      </div>
+
       {/* ── Cerrar Sesión ──────────────────────────────────────────── */}
       <div className="px-4 pb-2">
         {!showLogoutConfirm ? (
           <button
             type="button"
             onClick={() => setShowLogoutConfirm(true)}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors group"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
           >
-            <span className="text-slate-400 group-hover:text-slate-500 flex-shrink-0">
+            <span className="text-slate-400 dark:text-slate-500 group-hover:text-slate-500 dark:group-hover:text-slate-300 shrink-0">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </span>
             <span
-              className="text-[10px] tracking-[2px] uppercase font-normal"
+              className="text-[12px] tracking-[1.5px] uppercase font-normal"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               Cerrar Sesión
             </span>
           </button>
         ) : (
-          <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+          <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-4">
             <p
-              className="text-[10px] tracking-[1px] uppercase text-slate-600 mb-1"
+              className="text-[11px] tracking-[1px] uppercase text-slate-600 dark:text-slate-400 mb-1"
               style={{ fontFamily: "'JetBrains Mono', monospace" }}
             >
               ¿Cerrar sesión?
             </p>
             <p
-              className="text-[11px] italic text-slate-400 mb-3 leading-relaxed"
+              className="text-[11px] italic text-slate-500 dark:text-slate-500 mb-3 leading-relaxed"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
               Tendrás que volver a iniciar sesión con tu correo y contraseña.
@@ -180,15 +191,15 @@ export default function CompanionSidebar({ isOpen = false, onClose }: CompanionS
                 type="button"
                 onClick={logout}
                 className="flex-1 h-[34px] bg-slate-700 hover:bg-slate-800 text-white rounded-md transition-colors"
-                style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: "1.5px", textTransform: "uppercase" }}
+                style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase" }}
               >
                 Sí, salir
               </button>
               <button
                 type="button"
                 onClick={() => setShowLogoutConfirm(false)}
-                className="flex-1 h-[34px] border border-slate-200 text-slate-500 hover:bg-slate-100 rounded-md transition-colors"
-                style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: "1.5px", textTransform: "uppercase" }}
+                className="flex-1 h-[34px] border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-md transition-colors"
+                style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase" }}
               >
                 Cancelar
               </button>
@@ -201,7 +212,7 @@ export default function CompanionSidebar({ isOpen = false, onClose }: CompanionS
       <div className="p-4 border-t border-teal-50">
         <div className="px-4 py-3 rounded-lg bg-teal-50">
           <p
-            className="text-[9px] tracking-[1.5px] uppercase text-teal-500 mb-0.5"
+            className="text-[11px] tracking-[1.5px] uppercase text-teal-500 mb-0.5"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
           >
             Tu Rol

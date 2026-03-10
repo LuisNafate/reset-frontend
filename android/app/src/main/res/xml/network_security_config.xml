@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Configuración de seguridad de red — ReSet (desarrollo).
+  base-config: permite HTTP en todos los dominios para la build de desarrollo.
+  ANTES de publicar en Play Store, cambiar a HTTPS y eliminar cleartextTrafficPermitted.
+-->
+<network-security-config>
+  <!-- Configuración base: permite cleartext globalmente en desarrollo -->
+  <base-config cleartextTrafficPermitted="true">
+    <trust-anchors>
+      <certificates src="system" />
+    </trust-anchors>
+  </base-config>
+  <!-- Entrada explícita para el servidor de la API -->
+  <domain-config cleartextTrafficPermitted="true">
+    <domain includeSubdomains="false">64.23.248.243</domain>
+  </domain-config>
+</network-security-config>
