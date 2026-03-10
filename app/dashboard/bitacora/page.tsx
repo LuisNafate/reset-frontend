@@ -2,8 +2,7 @@
 
 import React from "react";
 import { useBitacora } from "@/hooks/useBitacora";
-import { MOOD_ICONS, MOOD_COLORS, formatDate, getMoodDisplayLabel } from "@/lib/bitacora-helpers";
-import { MOOD_OPTIONS } from "@/lib/constants";
+import { MOOD_COLORS, formatDate, getMoodDisplayLabel } from "@/lib/bitacora-helpers";
 import BitacoraEntryModal from "@/components/features/dashboard/BitacoraEntryModal";
 import type { JournalEntry, MoodId } from "@/types";
 
@@ -14,6 +13,8 @@ export default function BitacoraPage() {
     title,
     moodLevel,
     setMoodLevel,
+    moodColor,
+    moodTrack,
     cravingLevel,
     setCravingLevel,
     cravingColor,
@@ -32,16 +33,6 @@ export default function BitacoraPage() {
 
   // ── Entrada seleccionada para ver detalle ─────────────────────────────
   const [selectedEntry, setSelectedEntry] = React.useState<JournalEntry | null>(null);
-
-  // Mapeo mood ID → moodLevel numérico (igual al de useBitacora)
-  const MOOD_TO_LEVEL: Record<string, number> = {
-    feliz: 9, motivado: 8, agradecido: 8, esperanzado: 7, calmado: 7,
-    confundido: 5, ansioso: 4, agotado: 3, triste: 3, enojado: 2,
-  };
-  // Estado de ánimo seleccionado en el picker (se deriva del moodLevel actual)
-  // Se usa para resaltar el ícono correspondiente
-  const activeMoodId: string | null = Object.entries(MOOD_TO_LEVEL)
-    .sort((a, b) => Math.abs(a[1] - moodLevel) - Math.abs(b[1] - moodLevel))[0]?.[0] ?? null;
 
   const entry = selectedEntry;
 
@@ -88,44 +79,33 @@ export default function BitacoraPage() {
           </div>
 
           <div className="p-6">
-            {/* ── Selector visual: Estado de Ánimo ── */}
+            {/* ── Slider: Estado de Ánimo ── */}
             <div className="mb-5">
-              <p
-                className="text-[11px] tracking-[1px] uppercase rs-text-muted mb-3"
-                style={{ fontFamily: "'JetBrains Mono', monospace" }}
-              >
-                Estado de Ánimo
-              </p>
-              <div className="grid grid-cols-5 gap-2">
-                {MOOD_OPTIONS.map(({ id, label }) => {
-                  const colors = MOOD_COLORS[id as MoodId];
-                  const isActive = activeMoodId === id;
-                  return (
-                    <button
-                      key={id}
-                      type="button"
-                      onClick={() => setMoodLevel(MOOD_TO_LEVEL[id] ?? 5)}
-                      className="flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-lg border transition-all"
-                      style={{
-                        borderColor: isActive ? colors.border : "var(--ui-border-subtle)",
-                        background: isActive ? colors.bg : "var(--surface-card-inner)",
-                        color: isActive ? colors.text : "var(--ui-text-muted)",
-                      }}
-                      aria-pressed={isActive}
-                      title={label}
-                    >
-                      <span style={{ color: isActive ? colors.text : "var(--ui-text-muted)", display: "flex" }}>
-                        {MOOD_ICONS[id as MoodId]}
-                      </span>
-                      <span
-                        className="text-[9px] uppercase tracking-[0.5px] leading-tight text-center"
-                        style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                      >
-                        {label}
-                      </span>
-                    </button>
-                  );
-                })}
+              <div className="flex items-center justify-between mb-2">
+                <p
+                  className="text-[11px] tracking-[1px] uppercase rs-text-muted"
+                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                >
+                  Estado de Ánimo
+                </p>
+                <span
+                  className="text-[13px] tabular-nums"
+                  style={{ fontFamily: "'JetBrains Mono', monospace", color: moodColor }}
+                >
+                  {moodLevel}<span className="text-[11px] rs-text-caption">/10</span>
+                </span>
+              </div>
+              <input
+                type="range"
+                min={1} max={10} step={1}
+                value={moodLevel}
+                onChange={(e) => setMoodLevel(Number(e.target.value))}
+                className="w-full h-1.5 rounded-full cursor-pointer appearance-none"
+                style={{ background: moodTrack, accentColor: moodColor }}
+              />
+              <div className="flex justify-between mt-1.5">
+                <span className="text-[10px] rs-text-caption" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Muy bajo</span>
+                <span className="text-[10px] rs-text-caption" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Muy alto</span>
               </div>
             </div>
 
@@ -320,12 +300,9 @@ export default function BitacoraPage() {
                     <div className="flex items-center gap-2 flex-wrap min-w-0">
                       {/* Mood badge */}
                       <div
-                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full shrink-0"
+                        className="flex items-center px-2.5 py-1 rounded-full shrink-0"
                         style={{ backgroundColor: colors.bg, border: `1px solid ${colors.border}`, color: colors.text }}
                       >
-                        <span style={{ color: colors.text, display: "flex", transform: "scale(0.7)", transformOrigin: "center" }}>
-                          {MOOD_ICONS[entry.mood as MoodId]}
-                        </span>
                         <span
                           className="text-[10px] uppercase tracking-[0.5px]"
                           style={{ fontFamily: "'JetBrains Mono', monospace", color: colors.text }}

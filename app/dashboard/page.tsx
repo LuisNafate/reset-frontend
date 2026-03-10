@@ -1,10 +1,12 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useDashboard } from "@/hooks/useDashboard";
 import { useSession } from "@/hooks/useSession";
 import { useAuth } from "@/context/AuthContext";
 import PlantStage, { getPlantLabel } from "@/components/ui/PlantStage";
+import { getMyNotes, type EncouragementNote } from "@/lib/api/encouragement";
 
 // Técnica del día — rota según el día de la semana
 const TIPS_DIARIOS = [
@@ -30,6 +32,16 @@ export default function InicioPage() {
   const plantStage   = progress?.plantStage ?? "Semilla";
   const nextMilestone = progress?.nextMilestone;
   const firstName = user?.name ? abbreviateName(user.name, 14).split(" ")[0] : null;
+
+  // ── Notas de aliento del padrino ──
+  const [encouragementNotes, setEncouragementNotes] = useState<EncouragementNote[]>([]);
+  const [notesLoading, setNotesLoading] = useState(true);
+  useEffect(() => {
+    getMyNotes()
+      .then(setEncouragementNotes)
+      .catch(() => { /* silencious — no notes section visible */ })
+      .finally(() => setNotesLoading(false));
+  }, []);
   return (
     <div className="min-h-full relative bg-[#f8fafc] dark:bg-[#0d1929] overflow-x-hidden">
       {/* Ambient blur circles */}
@@ -55,11 +67,13 @@ export default function InicioPage() {
           </p>
           <Link
             href="/dashboard/configuracion"
-            className="w-8 h-8 rounded-full hidden md:flex items-center justify-center shrink-0 bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400 text-[11px] font-bold transition-opacity hover:opacity-80"
+            className="w-8 h-8 rounded-full hidden md:flex items-center justify-center shrink-0 bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400 text-[11px] font-bold transition-opacity hover:opacity-80 overflow-hidden"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
             aria-label="Mi perfil"
           >
-            {initials}
+            {user?.avatarUrl
+              ? <img src={user.avatarUrl} alt={initials} className="w-full h-full object-cover" />
+              : initials}
           </Link>
         </div>
       </header>
@@ -439,6 +453,60 @@ export default function InicioPage() {
             </div>
           </div>
         </div>
+
+        {/* ── Notas de Aliento — recibidas del padrino ── */}
+        {(notesLoading || encouragementNotes.length > 0) && (
+          <div className="mt-6 relative pt-3.75">
+            {/* Tape */}
+            <div className="absolute left-[40%] top-0 z-20 pointer-events-none">
+              <div
+                className="w-17.5 h-7.25 bg-[rgba(186,230,253,0.4)]"
+                style={{ backdropFilter: "blur(0.5px)", transform: "rotate(-2deg)" }}
+              />
+            </div>
+            <div
+              className="bg-[#f8fafc] dark:bg-[#122033] border border-[#cbd5e1] dark:border-[#1e3048] relative"
+              style={{ boxShadow: "8px 8px 0px 0px rgba(26,54,93,0.05)" }}
+            >
+              <div className="absolute inset-3 border border-[#e2e8f0] dark:border-[#1e3a52] pointer-events-none" />
+              <div className="relative z-10 p-6">
+                <p
+                  className="text-[11px] tracking-[1.5px] uppercase text-[rgba(60,107,174,0.6)] dark:text-sky-400 mb-4"
+                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                >
+                  Notas de Aliento
+                </p>
+                {notesLoading ? (
+                  <p
+                    className="text-[15px] italic text-[rgba(26,54,93,0.4)] dark:text-slate-500"
+                    style={{ fontFamily: "'Playfair Display', serif" }}
+                  >
+                    ···
+                  </p>
+                ) : (
+                  <ul className="flex flex-col gap-4">
+                    {encouragementNotes.map((note) => (
+                      <li key={note.id} className="flex flex-col gap-1">
+                        <p
+                          className="text-[16px] italic text-[rgba(26,54,93,0.85)] dark:text-slate-200 leading-relaxed"
+                          style={{ fontFamily: "'Playfair Display', serif" }}
+                        >
+                          &ldquo;{note.content}&rdquo;
+                        </p>
+                        <p
+                          className="text-[11px] text-[rgba(26,54,93,0.4)] dark:text-slate-500"
+                          style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                        >
+                          {note.senderName} &mdash; {new Date(note.createdAt).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </div>

@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { Message, MessageLibraryItem } from "@/types";
-
-// El módulo de mensajería no está documentado en la API actual.
-// Se usa biblioteca local como contenido de muestra.
+import { getGodchildProfile } from "@/lib/api/sponsorship";
+import { sendEncouragement } from "@/lib/api/encouragement";
 
 const FALLBACK_LIBRARY: MessageLibraryItem[] = [
   { id: "f1", text: "Cada día que pasa es una victoria. Estoy orgulloso/a de ti." },
@@ -18,26 +17,60 @@ const FALLBACK_LIBRARY: MessageLibraryItem[] = [
 ];
 
 export function useMensajes() {
-  const [messages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [library] = useState<MessageLibraryItem[]>(FALLBACK_LIBRARY);
   const [text, setText] = useState("");
-  const [isSending] = useState(false);
-  const [error] = useState<string | null>(
-    "El servicio de mensajería no está disponible en la API actual."
-  );
+  const [isSending, setIsSending] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [receiverId, setReceiverId] = useState<string | null>(null);
 
-  // No-op: endpoint no existe en la API
-  const handleSend = async () => { void 0; };
+  // Cargar el ID del ahijado al montar
+  useEffect(() => {
+    getGodchildProfile()
+      .then((data) => {
+        setReceiverId(data.godchild.id);
+        setError(null);
+      })
+      .catch(() => {
+        setError("No se encontró un ahijado activo. Vincula tu código primero.");
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  const handleSend = useCallback(async () => {
+    const trimmed = text.trim();
+    if (!trimmed || !receiverId || isSending) return;
+
+    setIsSending(true);
+    try {
+      await sendEncouragement(receiverId, trimmed);
+      // Añadir a la lista local con ID temporal
+      const newMsg: Message = {
+        id: `local-${Date.now()}`,
+        text: trimmed,
+        time: new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }),
+        fromMe: true,
+      };
+      setMessages((prev) => [...prev, newMsg]);
+      setText("");
+    } catch {
+      setError("No se pudo enviar el mensaje. Inténtalo de nuevo.");
+    } finally {
+      setIsSending(false);
+    }
+  }, [text, receiverId, isSending]);
 
   return {
     messages,
     library,
     text,
-    isLoading: false,
+    isLoading,
     isSending,
-    sendDisabled: true,
+    sendDisabled: !receiverId || isSending,
     error,
     setText,
     handleSend,
   };
 }
+

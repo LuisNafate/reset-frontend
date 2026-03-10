@@ -32,6 +32,8 @@ export interface AuthUser {
   role: 'ADICTO' | 'PADRINO';
   /** Código de 8 caracteres del padrino — solo presente si role = 'PADRINO' */
   sponsorCode?: string | null;
+  /** URL del avatar generado por DiceBear u otro servicio — null si no disponible */
+  avatarUrl?: string | null;
 }
 
 interface AuthCtx {

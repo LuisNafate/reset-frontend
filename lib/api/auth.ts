@@ -32,6 +32,7 @@ export interface AuthUser {
   email: string;
   role: 'ADICTO' | 'PADRINO';
   sponsorCode?: string | null;
+  avatarUrl?: string | null;
 }
 
 export interface AuthResult {
@@ -101,6 +102,7 @@ export async function login(payload: LoginPayload): Promise<AuthResult> {
       email: apiUser.email ?? '',
       role: (apiUser.role === 'PADRINO' ? 'PADRINO' : 'ADICTO') as 'ADICTO' | 'PADRINO',
       sponsorCode: resolvedSponsorCode,
+      avatarUrl: (apiUser.avatarUrl ?? apiUser.avatar_url ?? null) as string | null,
     },
   };
 }

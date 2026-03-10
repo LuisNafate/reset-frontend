@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import CompanionSidebar from "@/components/features/dashboard/CompanionSidebar";
 import { useBackButton } from "@/hooks/useBackButton";
 import { getRouteLabel } from "@/lib/navigation";
+import { useAuth } from "@/context/AuthContext";
+import NotificationBell from "@/components/ui/NotificationBell";
 
 export default function AcompananteLayout({
   children,
@@ -16,9 +19,13 @@ export default function AcompananteLayout({
   const pathname = usePathname();
   const { handleBack, isRoot } = useBackButton();
   const pageLabel = getRouteLabel(pathname);
+  const { user } = useAuth();
+  const initials = user?.name
+    ? user.name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase()).join("")
+    : "P";
 
   return (
-    <div className="flex h-dvh bg-[var(--surface-main)] overflow-hidden">
+    <div className="flex h-dvh bg-(--surface-main) overflow-hidden">
       {/* Overlay semitransparente en móvil cuando el sidebar está abierto */}
       {sidebarOpen && (
         <div
@@ -31,9 +38,9 @@ export default function AcompananteLayout({
       <CompanionSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* main: sin margen en móvil, con margen en md+ */}
-      <main className="flex-1 md:ml-72 overflow-auto bg-[var(--surface-main)] flex flex-col">
+      <main className="flex-1 md:ml-72 overflow-auto bg-(--surface-main) flex flex-col">
         {/* Barra superior móvil — oculta en desktop */}
-        <div className="sticky top-0 z-10 flex items-end gap-3 px-4 min-h-14 pb-3 bg-[var(--surface-card)] border-b border-teal-50 dark:border-teal-900/20 md:hidden shrink-0 safe-top-bar">
+        <div className="sticky top-0 z-10 flex items-end gap-3 px-4 min-h-14 pb-3 bg-(--surface-card) border-b border-teal-50 dark:border-teal-900/20 md:hidden shrink-0 safe-top-bar">
           {/* En sub-páginas: botón Atrás. En raíz: botón hamburguesa */}
           {!isRoot ? (
             <button
@@ -67,17 +74,18 @@ export default function AcompananteLayout({
             {pageLabel}
           </span>
 
-          {/* Icono notificaciones — visible siempre en la barra móvil */}
-          <button
-            type="button"
-            className="relative text-teal-400 dark:text-teal-500 hover:text-teal-600 dark:hover:text-teal-300 transition-colors p-1"
-            aria-label="Notificaciones"
-            tabIndex={-1}
+          {/* Notificaciones + Avatar — lado derecho de la barra móvil */}
+          <NotificationBell variant="teal" />
+          <Link
+            href="/acompanante/cuenta"
+            className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-teal-100 dark:bg-teal-900/40 text-teal-600 dark:text-teal-400 text-[11px] font-bold transition-opacity hover:opacity-80 overflow-hidden"
+            style={{ fontFamily: "'JetBrains Mono', monospace" }}
+            aria-label="Mi perfil"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
+            {user?.avatarUrl
+              ? <img src={user.avatarUrl} alt={initials} className="w-full h-full object-cover" />
+              : initials}
+          </Link>
 
           {/* En sub-páginas: botón menú lateral igualmente accesible */}
           {!isRoot && (

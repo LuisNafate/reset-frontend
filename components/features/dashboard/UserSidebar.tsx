@@ -120,7 +120,10 @@ export default function UserSidebar({ isOpen = false, onClose }: UserSidebarProp
         </div>
         {/* Acciones del header: notificaciones + cerrar (móvil) */}
         <div className="flex items-center gap-0.5 mt-1 shrink-0">
-          <NotificationBell variant="blue" />
+          {/* Bell solo visible en desktop — en móvil aparece en la barra superior del layout */}
+          <span className="hidden md:flex">
+            <NotificationBell variant="blue" />
+          </span>
           {/* Botón cerrar sidebar — solo visible en móvil */}
           <button
             type="button"

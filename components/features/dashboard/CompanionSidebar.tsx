@@ -101,7 +101,10 @@ export default function CompanionSidebar({ isOpen = false, onClose }: CompanionS
         </div>
         {/* Acciones del header: notificaciones + cerrar (móvil) */}
         <div className="flex items-center gap-0.5 mt-1 shrink-0">
-          <NotificationBell variant="teal" />
+          {/* Bell solo en desktop — en móvil ya aparece en la barra superior */}
+          <span className="hidden md:flex">
+            <NotificationBell variant="teal" />
+          </span>
           {/* Botón cerrar sidebar — solo visible en móvil */}
           <button
             type="button"

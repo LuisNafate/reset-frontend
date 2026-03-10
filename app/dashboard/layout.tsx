@@ -7,6 +7,7 @@ import UserSidebar from "@/components/features/dashboard/UserSidebar";
 import { useBackButton } from "@/hooks/useBackButton";
 import { getRouteLabel } from "@/lib/navigation";
 import { useAuth } from "@/context/AuthContext";
+import NotificationBell from "@/components/ui/NotificationBell";
 
 export default function DashboardLayout({
   children,
@@ -73,14 +74,17 @@ export default function DashboardLayout({
             {pageLabel}
           </span>
 
-          {/* Avatar de usuario — navega a configuración */}
+          {/* Notificaciones + Avatar — lado derecho de la barra móvil */}
+          <NotificationBell variant="blue" />
           <Link
             href="/dashboard/configuracion"
-            className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400 text-[11px] font-bold transition-opacity hover:opacity-80"
+            className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400 text-[11px] font-bold transition-opacity hover:opacity-80 overflow-hidden"
             style={{ fontFamily: "'JetBrains Mono', monospace" }}
             aria-label="Mi perfil"
           >
-            {initials}
+            {user?.avatarUrl
+              ? <img src={user.avatarUrl} alt={initials} className="w-full h-full object-cover" />
+              : initials}
           </Link>
 
           {/* En sub-páginas: botón para abrir el menú lateral igualmente */}
