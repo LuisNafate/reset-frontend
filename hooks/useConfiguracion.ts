@@ -184,9 +184,11 @@ export function useConfiguracion() {
     handleTerminateSponsorship,
     setUsername,
     setAddictionType,
+    setSponsorCode,
     handleUpdateProfile,
     handleRemovePeer,
     handleAddPeer,
     handleToggleEmergencyNotifs,
+    handleAssignSponsor,
   };
 }

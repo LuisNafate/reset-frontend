@@ -23,6 +23,8 @@ export async function getCompanionProgress(): Promise<CompanionProgress> {
 
 // ─── Usuarios apoyados ───────────────────────────────────────────────────────
 
+// ─── Usuarios apoyados ───────────────────────────────────────────────────────
+
 export async function getSupportedUsers(): Promise<SupportedUser[]> {
   try {
     const data = await getGodchildProfile();

@@ -43,6 +43,33 @@ function formatRelativeDate(isoDate: string): string {
 
 // ─── Componente ───────────────────────────────────────────────────────────────
 
+// ─── Utilidades ───────────────────────────────────────────────────────────────
+
+function plantStageFromDays(days: number): { name: string; stage: string } {
+  if (days < 7)   return { name: "Semilla de Esperanza",    stage: "Estadio I"  };
+  if (days < 30)  return { name: "Brote de Voluntad",       stage: "Estadio II" };
+  if (days < 90)  return { name: "Planta de Fortaleza",     stage: "Estadio III"};
+  if (days < 180) return { name: "Árbol de Resiliencia",    stage: "Estadio IV" };
+  return           { name: "Ciprés de la Transformación",   stage: "Estadio V"  };
+}
+
+function formatRelativeDate(isoDate: string): string {
+  if (!isoDate) return "";
+  try {
+    const d = new Date(isoDate);
+    const now = new Date();
+    const diffMs = now.getTime() - d.getTime();
+    const diffDays = Math.floor(diffMs / 86400000);
+    if (diffDays === 0) return `Hoy ${d.toLocaleTimeString("es", { hour: "2-digit", minute: "2-digit" })}`;
+    if (diffDays === 1) return "Ayer";
+    return `Hace ${diffDays} días`;
+  } catch {
+    return isoDate;
+  }
+}
+
+// ─── Componente ───────────────────────────────────────────────────────────────
+
 export default function MonitoreoPage() {
   const { isLoading, godchildFound, godchild, stats, recentLogs, error } = useMonitoreo();
   const tipP = TIPS_PADRINO[new Date().getDay() % TIPS_PADRINO.length];
