@@ -95,7 +95,7 @@ export default function UserSidebar({ isOpen = false, onClose }: UserSidebarProp
   return (
     <aside
       className={
-        `fixed left-0 top-0 h-full w-[288px] flex flex-col border-r border-slate-100 dark:border-slate-800/60 bg-white dark:bg-[#0f1d2d] z-30
+        `fixed left-0 top-0 h-full w-[288px] flex flex-col border-r border-slate-100 dark:border-slate-800/60 bg-white dark:bg-[#0f1d2d] z-50
         transition-transform duration-300 ease-in-out
         ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`
       }

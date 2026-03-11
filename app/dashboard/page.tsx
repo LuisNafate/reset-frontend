@@ -44,7 +44,7 @@ export default function InicioPage() {
       .finally(() => setNotesLoading(false));
   }, []);
   return (
-    <div className="min-h-full relative bg-[#f8fafc] dark:bg-[#0d1929] overflow-x-hidden">
+    <div className="min-h-full relative bg-(--surface-main) overflow-x-hidden">
       {/* Ambient blur circles */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute bg-[rgba(59,130,246,0.05)] blur-[32px] rounded-full w-64 h-64 -bottom-10 -right-10" />
@@ -54,15 +54,13 @@ export default function InicioPage() {
       {/* Header — fecha real + saludo con nombre */}
       <header className="sticky top-0 z-10 backdrop-blur-sm bg-[rgba(255,255,255,0.4)] dark:bg-[rgba(15,29,45,0.85)] border-b border-[rgba(132,139,148,0.4)] dark:border-[rgba(30,48,72,0.8)] h-16 sm:h-20 px-4 sm:px-8 md:px-12 flex items-center justify-between">
         <p
-          className="text-[11px] uppercase rs-text-muted"
-          style={{ fontFamily: "'JetBrains Mono', monospace", letterSpacing: "0.05em" }}
+          className="font-jetbrains text-[11px] uppercase rs-text-muted tracking-[0.05em]"
         >
           {todayLabel()}
         </p>
         <div className="flex items-center gap-2.5">
           <p
-            className="text-[12px] font-bold uppercase rs-text-muted"
-            style={{ fontFamily: "'JetBrains Mono', monospace", letterSpacing: "-0.3px" }}
+            className="font-jetbrains text-[12px] font-bold uppercase rs-text-muted tracking-[-0.3px]"
           >
             {firstName ? `Hola, ${firstName}` : "Mi ReSet"}
           </p>
@@ -91,8 +89,7 @@ export default function InicioPage() {
               <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <p
-              className="text-[11px] uppercase tracking-[1px] text-red-500"
-              style={{ fontFamily: "'JetBrains Mono', monospace" }}
+              className="font-jetbrains text-[11px] uppercase tracking-[1px] text-red-500"
             >
               {error}
             </p>
@@ -114,11 +111,11 @@ export default function InicioPage() {
 
           {/* Card */}
           <div
-            className="bg-[#f8fafc] dark:bg-[#122033] border border-[#cbd5e1] dark:border-[#1e3048] relative"
+            className="bg-(--surface-card) border border-(--ui-border) relative"
             style={{ boxShadow: "8px 8px 0px 0px rgba(26,54,93,0.05)" }}
           >
             {/* Inner border */}
-            <div className="absolute inset-3 border border-[#e2e8f0] dark:border-[#1e3a52] pointer-events-none z-0" />
+            <div className="absolute inset-3 border border-(--ui-border-subtle) pointer-events-none z-0" />
 
             {/* Grid del hero card: 1 columna en móvil, 2 en sm+ */}
             <div className="grid grid-cols-1 sm:grid-cols-2 sm:min-h-130">
@@ -142,8 +139,7 @@ export default function InicioPage() {
                   style={{ boxShadow: "0px 1px 2px 0px rgba(0,0,0,0.05)" }}
                 >
                   <span
-                    className="text-[11px] font-bold italic uppercase text-[#3b82f6] dark:text-sky-400"
-                    style={{ fontFamily: "'JetBrains Mono', monospace", letterSpacing: "1px" }}
+                    className="font-jetbrains text-[11px] font-bold italic uppercase text-[#3b82f6] dark:text-sky-400 tracking-[1px]"
                   >
                     {isLoading ? "···" : getPlantLabel(sobrietyDays)}
                   </span>
@@ -155,8 +151,7 @@ export default function InicioPage() {
                 className="flex flex-col justify-center px-6 py-8 sm:px-12 sm:py-12 border-t-2 border-[rgba(59,130,246,0.1)] dark:border-[rgba(96,165,250,0.12)] sm:border-t-0 sm:border-l-2"
               >
                 <p
-                  className="uppercase text-[#1a365d] dark:text-sky-400 mb-8"
-                  style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: "4px" }}
+                  className="font-jetbrains uppercase text-[11px] text-[#1a365d] dark:text-sky-400 mb-8 tracking-[4px]"
                 >
                   Mi Progreso
                 </p>
@@ -164,22 +159,19 @@ export default function InicioPage() {
                 {/* Counter — días de racha reales */}
                 <div className="flex items-end gap-4 mb-10">
                   <span
-                    className="font-bold italic leading-none text-[#1a365d] dark:text-slate-100 text-[58px] sm:text-[100px] md:text-[128px]"
-                    style={{ fontFamily: "'Playfair Display', serif" }}
+                    className="font-playfair font-bold italic leading-none text-[#1a365d] dark:text-slate-100 text-[58px] sm:text-[100px] md:text-[128px]"
                   >
                     {isLoading ? "—" : sobrietyDays}
                   </span>
                   <div className="pb-5">
                     {/* "días" / "cumplidos" \u2014 tama\u00f1os responsivos */}
                     <p
-                      className="italic text-[rgba(26,54,93,0.8)] dark:text-slate-200 leading-none text-[22px] sm:text-[30px]"
-                      style={{ fontFamily: "'Playfair Display', serif" }}
+                      className="font-playfair italic text-[rgba(26,54,93,0.8)] dark:text-slate-200 leading-none text-[22px] sm:text-[30px]"
                     >
                       días
                     </p>
                     <p
-                      className="italic text-[rgba(26,54,93,0.5)] dark:text-slate-400 text-[14px] sm:text-[18px]"
-                      style={{ fontFamily: "'Playfair Display', serif" }}
+                      className="font-playfair italic text-[rgba(26,54,93,0.5)] dark:text-slate-400 text-[14px] sm:text-[18px]"
                     >
                       cumplidos
                     </p>
@@ -189,12 +181,8 @@ export default function InicioPage() {
                 {/* CTA Button — altura responsiva */}
                 <Link
                   href="/dashboard/bitacora"
-                  className="flex items-center gap-3 justify-center h-13 sm:h-15 w-full bg-[#3b82f6] hover:bg-blue-500 text-white transition-colors mb-8 rounded-sm"
+                  className="font-jetbrains flex items-center gap-3 justify-center h-13 sm:h-15 w-full bg-[#3b82f6] hover:bg-blue-500 text-white transition-colors mb-8 rounded-sm text-[13px] uppercase tracking-[1.2px]"
                   style={{
-                    fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: 13,
-                    letterSpacing: "1.2px",
-                    textTransform: "uppercase",
                     boxShadow: "0px 4px 12px -2px rgba(59,130,246,0.3)",
                   }}
                 >
@@ -211,8 +199,7 @@ export default function InicioPage() {
 
                 {/* Quote */}
                 <p
-                  className="italic leading-relaxed text-[rgba(26,54,93,0.6)] dark:text-slate-400"
-                  style={{ fontFamily: "'Playfair Display', serif", fontSize: 16, maxWidth: 352 }}
+                  className="font-playfair italic leading-relaxed text-[rgba(26,54,93,0.6)] dark:text-slate-400 text-[16px] max-w-88"
                 >
                   &ldquo;Cada día que cuidas tu jardín, las flores de tu voluntad crecen con más fuerza.&rdquo;
                 </p>
@@ -244,24 +231,22 @@ export default function InicioPage() {
               />
             </div>
             <div
-              className="bg-[#f8fafc] dark:bg-[#122033] border border-[#cbd5e1] dark:border-[#1e3048] relative"
+              className="bg-(--surface-card) border border-(--ui-border) relative"
               style={{
                 boxShadow: "8px 8px 0px 0px rgba(26,54,93,0.05)",
                 backdropFilter: "blur(2px)",
                 minHeight: 128,
               }}
             >
-              <div className="absolute inset-3 border border-[#e2e8f0] dark:border-[#1e3a52] pointer-events-none" />
+              <div className="absolute inset-3 border border-(--ui-border-subtle) pointer-events-none" />
               <div className="relative z-10 p-6 pt-7">
                 <p
-                  className="uppercase text-[rgba(60,107,174,0.6)] dark:text-sky-400 mb-4"
-                  style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: "0.9px" }}
+                  className="font-jetbrains uppercase text-[10px] text-[rgba(60,107,174,0.6)] dark:text-sky-400 mb-4 tracking-[0.9px]"
                 >
                   Última Nota
                 </p>
                 <p
-                  className="italic text-[rgba(26,54,93,0.8)] dark:text-slate-300 leading-6"
-                  style={{ fontFamily: "'Playfair Display', serif", fontSize: 16 }}
+                  className="font-playfair italic text-[rgba(26,54,93,0.8)] dark:text-slate-300 leading-6 text-[16px]"
                 >
                   {isLoading
                     ? "···"
@@ -280,18 +265,17 @@ export default function InicioPage() {
               />
             </div>
             <div
-              className="bg-[#f8fafc] dark:bg-[#122033] border border-[#cbd5e1] dark:border-[#1e3048] group-hover:border-[#93c5fd] dark:group-hover:border-[#1d4ed8] relative flex items-center transition-colors"
+              className="bg-(--surface-card) border border-(--ui-border) group-hover:border-[#93c5fd] dark:group-hover:border-[#1d4ed8] relative flex items-center transition-colors"
               style={{
                 boxShadow: "8px 8px 0px 0px rgba(26,54,93,0.05)",
                 backdropFilter: "blur(2px)",
                 minHeight: 128,
               }}
             >
-              <div className="absolute inset-3 border border-[#e2e8f0] dark:border-[#1e3a52] pointer-events-none" />
+              <div className="absolute inset-3 border border-(--ui-border-subtle) pointer-events-none" />
               <div className="relative z-10 p-6 pt-7">
                 <p
-                  className="uppercase text-[rgba(60,107,174,0.6)] dark:text-sky-400 mb-4"
-                  style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: "0.9px" }}
+                  className="font-jetbrains uppercase text-[10px] text-[rgba(60,107,174,0.6)] dark:text-sky-400 mb-4 tracking-[0.9px]"
                 >
                   Comunidad
                 </p>
@@ -300,8 +284,7 @@ export default function InicioPage() {
                     <path d="M8 8.5H17M8 12H13M3.75 7.241C3.75 5.64 4.873 4.246 6.457 4.013C8.756 3.675 11.108 3.5 13.5 3.5C15.892 3.5 18.244 3.675 20.543 4.013C22.127 4.246 23.25 5.639 23.25 7.241V13.259C23.25 14.861 22.127 16.254 20.543 16.487C19.456 16.647 18.358 16.77 17.25 16.856V21.5L13.066 17.317A1.14 1.14 0 0012.287 16.985C10.3 16.832 8.347 16.552 6.457 16.487C4.873 16.254 3.75 14.861 3.75 13.259V7.241Z" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                   <p
-                    className="font-bold text-[#1a365d] dark:text-slate-100"
-                    style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 16 }}
+                    className="font-jetbrains font-bold text-[16px] text-[#1a365d] dark:text-slate-100"
                   >
                     Ver el Foro →
                   </p>
@@ -319,18 +302,17 @@ export default function InicioPage() {
               />
             </div>
             <div
-              className="bg-[#f8fafc] dark:bg-[#122033] border border-[#cbd5e1] dark:border-[#1e3048] relative flex items-center"
+              className="bg-(--surface-card) border border-(--ui-border) relative flex items-center"
               style={{
                 boxShadow: "8px 8px 0px 0px rgba(26,54,93,0.05)",
                 backdropFilter: "blur(2px)",
                 minHeight: 128,
               }}
             >
-              <div className="absolute inset-3 border border-[#e2e8f0] dark:border-[#1e3a52] pointer-events-none" />
+              <div className="absolute inset-3 border border-(--ui-border-subtle) pointer-events-none" />
               <div className="relative z-10 p-6 pt-7">
                 <p
-                  className="uppercase text-[rgba(60,107,174,0.6)] dark:text-sky-400 mb-4"
-                  style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: "0.9px" }}
+                  className="font-jetbrains uppercase text-[10px] text-[rgba(60,107,174,0.6)] dark:text-sky-400 mb-4 tracking-[0.9px]"
                 >
                   Próximo Hito
                 </p>
@@ -342,8 +324,7 @@ export default function InicioPage() {
                     <path d="M9.5 13C9.5 13 10.5 15 12.5 15C14.5 15 15.5 13 15.5 13" stroke="#1a365d" strokeWidth="1.5" strokeLinecap="round"/>
                   </svg>
                   <p
-                    className="font-bold text-[#1a365d]"
-                    style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 16 }}
+                    className="font-jetbrains font-bold text-[16px] text-[#1a365d]"
                   >
                     {isLoading
                       ? "···"
@@ -370,10 +351,10 @@ export default function InicioPage() {
             />
           </div>
           <div
-            className="bg-[#f8fafc] dark:bg-[#122033] border border-[#cbd5e1] dark:border-[#1e3048] relative"
+            className="bg-(--surface-card) border border-(--ui-border) relative"
             style={{ boxShadow: "8px 8px 0px 0px rgba(26,54,93,0.05)" }}
           >
-            <div className="absolute inset-3 border border-[#e2e8f0] dark:border-[#1e3a52] pointer-events-none" />
+            <div className="absolute inset-3 border border-(--ui-border-subtle) pointer-events-none" />
             <div className="relative z-10 p-6 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
               {/* Ícono */}
               <div className="shrink-0 w-10 h-10 rounded-full bg-[#f0f9ff] dark:bg-sky-900/20 border border-[rgba(14,165,233,0.15)] flex items-center justify-center">
@@ -384,14 +365,12 @@ export default function InicioPage() {
               {/* Texto */}
               <div className="flex-1 min-w-0">
                 <p
-                  className="text-[11px] tracking-[1.5px] uppercase text-[rgba(60,107,174,0.6)] dark:text-sky-400 mb-1"
-                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                  className="font-jetbrains text-[11px] tracking-[1.5px] uppercase text-[rgba(60,107,174,0.6)] dark:text-sky-400 mb-1"
                 >
                   Mensaje de tu Padrino
                 </p>
                 <p
-                  className="text-[16px] italic text-[rgba(26,54,93,0.8)] dark:text-slate-300 leading-relaxed"
-                  style={{ fontFamily: "'Playfair Display', serif" }}
+                  className="font-playfair text-[16px] italic text-[rgba(26,54,93,0.8)] dark:text-slate-300 leading-relaxed"
                 >
                   &ldquo;Recuerda por qué empezaste este camino. Eres más fuerte de lo que crees.&rdquo;
                 </p>
@@ -410,10 +389,10 @@ export default function InicioPage() {
             />
           </div>
           <div
-            className="bg-[#f8fafc] dark:bg-[#122033] border border-[#cbd5e1] dark:border-[#1e3048] relative"
+            className="bg-(--surface-card) border border-(--ui-border) relative"
             style={{ boxShadow: "8px 8px 0px 0px rgba(26,54,93,0.05)" }}
           >
-            <div className="absolute inset-3 border border-[#e2e8f0] dark:border-[#1e3a52] pointer-events-none" />
+            <div className="absolute inset-3 border border-(--ui-border-subtle) pointer-events-none" />
             <div className="relative z-10 p-6 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
               {/* Ícono */}
               <div className="shrink-0 w-10 h-10 rounded-full bg-[#eff6ff] border border-[rgba(59,130,246,0.15)] flex items-center justify-center">
@@ -424,20 +403,17 @@ export default function InicioPage() {
               {/* Texto */}
               <div className="flex-1 min-w-0">
                 <p
-                  className="text-[11px] tracking-[1.5px] uppercase text-[rgba(60,107,174,0.6)] dark:text-sky-400 mb-1"
-                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                  className="font-jetbrains text-[11px] tracking-[1.5px] uppercase text-[rgba(60,107,174,0.6)] dark:text-sky-400 mb-1"
                 >
                   Técnica del día
                 </p>
                 <p
-                  className="text-[17px] font-normal text-[#1a365d] dark:text-slate-100 leading-tight mb-1.5"
-                  style={{ fontFamily: "'Playfair Display', serif" }}
+                  className="font-playfair text-[17px] font-normal text-[#1a365d] dark:text-slate-100 leading-tight mb-1.5"
                 >
                   {tip.nombre}
                 </p>
                 <p
-                  className="text-[13px] italic text-[rgba(26,54,93,0.55)] dark:text-slate-400 leading-relaxed"
-                  style={{ fontFamily: "'Playfair Display', serif" }}
+                  className="font-playfair text-[13px] italic text-[rgba(26,54,93,0.55)] dark:text-slate-400 leading-relaxed"
                 >
                   {tip.hint}
                 </p>
@@ -445,8 +421,7 @@ export default function InicioPage() {
               {/* Enlace */}
               <Link
                 href="/dashboard/tecnicas"
-                className="shrink-0 h-9 px-5 bg-(--surface-card) border border-[rgba(59,130,246,0.3)] dark:border-sky-900/40 hover:bg-[#eff6ff] dark:hover:bg-sky-900/20 text-[#3b82f6] dark:text-sky-400 flex items-center transition-colors"
-                style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase" }}
+                className="font-jetbrains shrink-0 h-9 px-5 bg-(--surface-card) border border-[rgba(59,130,246,0.3)] dark:border-sky-900/40 hover:bg-[#eff6ff] dark:hover:bg-sky-900/20 text-[#3b82f6] dark:text-sky-400 flex items-center transition-colors text-[11px] tracking-[1.5px] uppercase"
               >
                 Ver todas →
               </Link>
@@ -465,21 +440,19 @@ export default function InicioPage() {
               />
             </div>
             <div
-              className="bg-[#f8fafc] dark:bg-[#122033] border border-[#cbd5e1] dark:border-[#1e3048] relative"
+              className="bg-(--surface-card) border border-(--ui-border) relative"
               style={{ boxShadow: "8px 8px 0px 0px rgba(26,54,93,0.05)" }}
             >
-              <div className="absolute inset-3 border border-[#e2e8f0] dark:border-[#1e3a52] pointer-events-none" />
+              <div className="absolute inset-3 border border-(--ui-border-subtle) pointer-events-none" />
               <div className="relative z-10 p-6">
                 <p
-                  className="text-[11px] tracking-[1.5px] uppercase text-[rgba(60,107,174,0.6)] dark:text-sky-400 mb-4"
-                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                  className="font-jetbrains text-[11px] tracking-[1.5px] uppercase text-[rgba(60,107,174,0.6)] dark:text-sky-400 mb-4"
                 >
                   Notas de Aliento
                 </p>
                 {notesLoading ? (
                   <p
-                    className="text-[15px] italic text-[rgba(26,54,93,0.4)] dark:text-slate-500"
-                    style={{ fontFamily: "'Playfair Display', serif" }}
+                    className="font-playfair text-[15px] italic text-[rgba(26,54,93,0.4)] dark:text-slate-500"
                   >
                     ···
                   </p>
@@ -488,14 +461,12 @@ export default function InicioPage() {
                     {encouragementNotes.map((note) => (
                       <li key={note.id} className="flex flex-col gap-1">
                         <p
-                          className="text-[16px] italic text-[rgba(26,54,93,0.85)] dark:text-slate-200 leading-relaxed"
-                          style={{ fontFamily: "'Playfair Display', serif" }}
+                          className="font-playfair text-[16px] italic text-[rgba(26,54,93,0.85)] dark:text-slate-200 leading-relaxed"
                         >
                           &ldquo;{note.content}&rdquo;
                         </p>
                         <p
-                          className="text-[11px] text-[rgba(26,54,93,0.4)] dark:text-slate-500"
-                          style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                          className="font-jetbrains text-[11px] text-[rgba(26,54,93,0.4)] dark:text-slate-500"
                         >
                           {note.senderName} &mdash; {new Date(note.createdAt).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
                         </p>

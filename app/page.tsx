@@ -268,7 +268,7 @@ function useRevealOnScroll() {
 function Navbar() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm border-b border-[#f1f5f9] safe-top-bar">
-      <div className="max-w-[1280px] mx-auto px-8 h-[60px] flex items-center justify-between">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-8 h-[60px] flex items-center justify-between">
         <Link
           href="/"
           className="font-playfair italic text-[22px] text-[#0f172a] tracking-tight hover:text-[#0d9488] transition-colors"
@@ -316,13 +316,13 @@ function HeroSection() {
           "radial-gradient(ellipse at 100% 0%, rgba(241,245,249,1) 0%, rgba(255,255,255,1) 60%)",
       }}
     >
-      <div className="max-w-[1280px] mx-auto px-8 py-24 flex items-center gap-16 w-full">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-8 py-12 sm:py-24 flex items-center gap-16 w-full">
         {/* Copy */}
         <div className="flex-1 min-w-0 flex flex-col gap-6">
           <p className="landing-hero-label font-jetbrains text-[11px] uppercase tracking-[5px] text-[#0d9488]">
             — Tu espacio de acompañamiento
           </p>
-          <h1 className="landing-hero-h1 font-playfair text-[clamp(52px,8vw,96px)] leading-[1] text-[#0f172a]">
+          <h1 className="landing-hero-h1 font-playfair text-[clamp(36px,8vw,96px)] leading-[1] text-[#0f172a]">
             Tu momento
             <br />
             <em>de ReSet</em>
@@ -405,8 +405,8 @@ function PilaresSection() {
   ];
 
   return (
-    <section id="pilares" className="py-32 bg-white">
-      <div className="max-w-[1280px] mx-auto px-8">
+    <section id="pilares" className="py-16 sm:py-32 bg-white">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-8">
         <div className="text-center mb-16 reveal">
           <p className="font-jetbrains text-[11px] uppercase tracking-[5px] text-[#0d9488] mb-4">
             — Metodología ReSet
@@ -420,7 +420,7 @@ function PilaresSection() {
           {pillars.map(({ icon, accentColor, tag, title, desc, linkText }, i) => (
             <div
               key={title}
-              className="reveal feature-card bg-white border border-[#e2e8f0] rounded-sm p-8 flex flex-col gap-5"
+              className="reveal feature-card bg-white border border-[#e2e8f0] rounded-sm p-6 sm:p-8 flex flex-col gap-5"
               style={{ transitionDelay: `${i * 0.1}s` }}
             >
               <div
@@ -495,7 +495,7 @@ function HerbarioSection() {
         <div className="absolute top-1/2 left-1/3 w-16 h-16 border border-white rotate-45" />
       </div>
 
-      <div className="max-w-[1280px] mx-auto px-8">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-8">
         <div className="text-center mb-16 reveal">
           <p className="font-jetbrains text-[11px] uppercase tracking-[5px] text-[#0d9488] mb-4">
             — Herramientas para cada etapa
@@ -516,7 +516,7 @@ function HerbarioSection() {
           {tools.map(({ emoji, title, desc }, i) => (
             <div
               key={title}
-              className={`flex flex-col gap-4 p-8 ${
+              className={`flex flex-col gap-4 p-5 sm:p-8 ${
                 i < 3 ? "border-b sm:border-b-0 sm:border-r border-white/10" : ""
               } hover:bg-white/5 transition-colors`}
             >
@@ -552,7 +552,7 @@ function MobileSection() {
   return (
     <section
       id="movil"
-      className="py-20 bg-white border-y border-[#f1f5f9] overflow-hidden relative"
+      className="py-12 sm:py-20 bg-white border-y border-[#f1f5f9] overflow-hidden relative"
     >
       {/* Fondo decorativo sutil */}
       <div
@@ -564,8 +564,8 @@ function MobileSection() {
         }}
       />
 
-      <div className="max-w-[1280px] mx-auto px-8 relative">
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-8 relative">
+        <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-20">
 
           {/* Ícono de teléfono SVG */}
           <div className="reveal shrink-0 flex items-center justify-center">
@@ -672,10 +672,10 @@ function ComunidadSection() {
   return (
     <section
       id="comunidad"
-      className="py-32"
+      className="py-16 sm:py-32"
       style={{ background: "rgba(248,250,252,0.5)" }}
     >
-      <div className="max-w-[1280px] mx-auto px-8 flex items-center gap-16 flex-col lg:flex-row">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-8 flex items-center gap-10 lg:gap-16 flex-col lg:flex-row">
         {/* Mockup */}
         <div className="flex-1 min-w-0 flex justify-center">
           <CommunityMockup />
@@ -732,9 +732,9 @@ function ComunidadSection() {
 ───────────────────────────────────────────────────────────────────────────── */
 function Footer() {
   return (
-    <footer className="bg-white border-t border-[#f1f5f9] pt-24 pb-12">
-      <div className="max-w-[1280px] mx-auto px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+    <footer className="bg-white border-t border-[#f1f5f9] pt-12 sm:pt-24 pb-12">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12 mb-12">
           {/* Brand */}
           <div className="md:col-span-1 flex flex-col gap-5">
             <div>
@@ -800,7 +800,7 @@ function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-[#f8fafc] pt-12 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="border-t border-[#f8fafc] pt-8 sm:pt-12 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="font-jetbrains text-[11px] uppercase tracking-[1px] text-[#94a3b8]">
             © 2026 Hagging Lines. Todos los derechos reservados.
           </p>

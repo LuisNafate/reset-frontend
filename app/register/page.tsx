@@ -346,8 +346,7 @@ export default function RegisterPage() {
                   value={form.name}
                   onChange={handleChange}
                   placeholder="Como desees ser llamado..."
-                  className="input-line w-full border-0 border-b bg-transparent py-2 outline-none focus:border-sky-400 transition-colors text-[14px] italic"
-                  style={{ fontFamily: "'Playfair Display', serif" }}
+                  className="font-playfair input-line w-full border-0 border-b bg-transparent py-2 min-h-11 outline-none focus:border-sky-400 transition-colors text-[14px] italic"
                 />
               </div>
 
@@ -368,8 +367,7 @@ export default function RegisterPage() {
                   value={form.email}
                   onChange={handleChange}
                   placeholder="tu@email.com"
-                  className="input-line w-full border-0 border-b bg-transparent py-2 outline-none focus:border-sky-400 transition-colors text-[14px] italic"
-                  style={{ fontFamily: "'Playfair Display', serif" }}
+                  className="font-playfair input-line w-full border-0 border-b bg-transparent py-2 min-h-11 outline-none focus:border-sky-400 transition-colors text-[14px] italic"
                 />
               </div>
 
@@ -385,8 +383,7 @@ export default function RegisterPage() {
                   value={form.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="input-line w-full border-0 border-b bg-transparent py-2 outline-none focus:border-sky-400 transition-colors text-[14px] italic"
-                  style={{ fontFamily: "'Playfair Display', serif" }}
+                  className="font-playfair input-line w-full border-0 border-b bg-transparent py-2 min-h-11 outline-none focus:border-sky-400 transition-colors text-[14px] italic"
                 />
               </div>
 
@@ -403,8 +400,7 @@ export default function RegisterPage() {
                     value={form.confirmPassword}
                     onChange={handleChange}
                     placeholder="••••••••"
-                    className="input-line w-full border-0 border-b bg-transparent py-2 pr-8 outline-none focus:border-sky-400 transition-colors text-[14px] italic"
-                    style={{ fontFamily: "'Playfair Display', serif" }}
+                    className="font-playfair input-line w-full border-0 border-b bg-transparent py-2 min-h-11 pr-8 outline-none focus:border-sky-400 transition-colors text-[14px] italic"
                     autoComplete="new-password"
                   />
                   <button
@@ -583,8 +579,7 @@ export default function RegisterPage() {
                       value={otherDescription}
                       onChange={(e) => setOtherDescription(e.target.value)}
                       placeholder="Ej: Tabaquismo, Compras, etc."
-                      className="w-full border-0 border-b border-(--ui-border) bg-transparent py-2 outline-none focus:border-sky-400 transition-colors text-[12px] italic input-line"
-                      style={{ fontFamily: "'Playfair Display', serif" }}
+                      className="font-playfair w-full border-0 border-b border-(--ui-border) bg-transparent py-2 min-h-11 outline-none focus:border-sky-400 transition-colors text-[12px] italic input-line"
                     />
                   </div>
                 </div>
