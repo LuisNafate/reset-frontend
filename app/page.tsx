@@ -99,10 +99,10 @@ function AppMockup() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-jetbrains text-[11px] text-[#0d9488] tracking-widest uppercase leading-none mb-1">
-                  Mi Jardín Interior
+                  Mi Espacio ReSet
                 </p>
                 <p className="font-playfair text-[18px] text-[#0f172a] italic leading-none">
-                  Herbario de Sobriedad
+                  Tu momento de ReSet
                 </p>
               </div>
               <div className="size-8 rounded-full bg-[#f1f5f9]" />
@@ -279,7 +279,7 @@ function Navbar() {
         <nav className="hidden md:flex items-center gap-8">
           {[
             { label: "Pilares", href: "#pilares" },
-            { label: "Herbario", href: "#herbario" },
+            { label: "Herramientas", href: "#herramientas" },
             { label: "Móvil", href: "#movil" },
             { label: "Comunidad", href: "#comunidad" },
           ].map(({ label, href }) => (
@@ -460,7 +460,7 @@ function PilaresSection() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Herbario — Kit de herramientas
+   ReSet — Kit de herramientas
 ───────────────────────────────────────────────────────────────────────────── */
 function HerbarioSection() {
   const tools = [
@@ -487,7 +487,7 @@ function HerbarioSection() {
   ];
 
   return (
-    <section id="herbario" className="py-24 bg-[#0f172a] overflow-hidden relative">
+    <section id="herramientas" className="py-24 bg-[#0f172a] overflow-hidden relative">
       {/* Formas decorativas */}
       <div className="absolute inset-0 opacity-5 pointer-events-none" aria-hidden="true">
         <div className="absolute top-8 left-12 w-32 h-32 border border-white rounded-full" />
@@ -617,7 +617,7 @@ function MobileSection() {
               className="text-[16px] text-[#64748b] leading-relaxed max-w-[480px] mx-auto lg:mx-0"
               style={{ fontWeight: 300, fontFamily: "Inter, sans-serif" }}
             >
-              ReSet funciona en cualquier dispositivo: abre tu herbario, escribe en tu bitácora o contacta a tu red de apoyo desde el móvil, la tablet o la web, sin instalar nada adicional.
+              ReSet funciona en cualquier dispositivo: accede a tus herramientas, escribe en tu bitácora o contacta a tu red de apoyo desde el móvil, la tablet o la web, sin instalar nada adicional.
             </p>
             <ul className="flex flex-col gap-3 items-center lg:items-start">
               {[
@@ -763,7 +763,7 @@ function Footer() {
               Producto
             </h5>
             <ul className="flex flex-col gap-4">
-              {["Herbario", "Pares de Apoyo", "Comunidad", "Precios"].map((item) => (
+              {["Herramientas ReSet", "Pares de Apoyo", "Comunidad", "Precios"].map((item) => (
                 <li key={item}>
                   <a
                     href="/login"
