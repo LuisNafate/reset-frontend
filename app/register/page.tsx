@@ -144,7 +144,7 @@ export default function RegisterPage() {
 
   return (
     <div
-      className="min-h-screen w-full flex items-start lg:items-center justify-center p-4 sm:p-6 pb-20 sm:pb-20 relative overflow-hidden safe-top-padding login-bg"
+      className="min-h-screen w-full flex flex-col items-center justify-between p-4 sm:p-6 relative overflow-hidden safe-top-padding login-bg"
     >
       {/* ── Engrane grande — inferior derecha ────────────────────────────── */}
       <div
@@ -212,7 +212,7 @@ export default function RegisterPage() {
         </span>
       </Link>
       {/* Layout: columna única en móvil, 2 columnas en desktop (lg+) */}
-      <div className="w-full max-w-230 flex flex-col gap-6 mt-14 sm:mt-16 lg:mt-0">
+      <div className="w-full max-w-230 flex flex-col gap-6 mt-14 sm:mt-16">
 
         {/* ── Selector de perfil ──────────────────────────────────────────── */}
         <div
@@ -718,8 +718,8 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      {/* Footer fijo — padding responsivo */}
-      <div className="fixed bottom-4 left-0 right-0 flex items-center justify-between px-4 sm:px-10">
+      {/* Footer — en flujo normal, no fijo */}
+      <div className="w-full flex items-center justify-between pt-6 pb-2">
         <p
           className="text-[11px] tracking-[1px] uppercase text-slate-400 italic"
           style={{ fontFamily: "'JetBrains Mono', monospace" }}

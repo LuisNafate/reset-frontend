@@ -65,7 +65,7 @@ export default function RootLayout({
          */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem("reset_theme");document.documentElement.setAttribute("data-theme",t==="dark"||t==="light"?t:window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");}catch(e){}`,
+            __html: `try{var t=localStorage.getItem("reset_theme");document.documentElement.setAttribute("data-theme",t==="dark"?"dark":"light");}catch(e){}`,
           }}
         />
         <ThemeProvider>

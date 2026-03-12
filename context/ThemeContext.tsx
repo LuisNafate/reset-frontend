@@ -30,12 +30,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem("reset_theme");
-      const initial: Theme =
-        saved === "dark" || saved === "light"
-          ? saved
-          : window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light";
+      // Solo se respeta la preferencia del usuario guardada explícitamente.
+      // Nunca se lee prefers-color-scheme: las páginas públicas siempre
+      // arrancan en claro, el dark solo se activa si el usuario lo toggleó.
+      const initial: Theme = saved === "dark" ? "dark" : "light";
       applyTheme(initial);
     } catch {
       // localStorage no disponible — usar modo claro por defecto
