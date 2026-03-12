@@ -19,7 +19,12 @@ export const MOCK_USER: User = {
   id: "usr_001",
   name: "Alex",
   email: "alex@correo.com",
-  addictionType: "Drogas",
+  addiction: {
+    custom_name: "Drogas",
+    classification: "sustancia",
+    is_active: true,
+    registered_at: "2026-01-01T00:00:00Z",
+  },
   createdAt: "2026-01-01T00:00:00Z",
   role: "ADICTO",
 };
@@ -28,7 +33,7 @@ export const MOCK_COMPANION_USER: User = {
   id: "cmp_001",
   name: "Martina García",
   email: "padrino@correo.com",
-  addictionType: "",
+  addiction: null,
   createdAt: "2026-01-01T00:00:00Z",
   role: "PADRINO",
 };
@@ -243,7 +248,7 @@ export const MOCK_SUPPORTED_USERS: SupportedUser[] = [
   {
     id: "usr_001",
     displayName: "Alex R.",
-    addictionType: "Drogas",
+    addictionType: "drogas",
     sobrietyDays: 42,
     status: "Activo",
   },
