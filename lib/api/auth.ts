@@ -33,6 +33,8 @@ export interface AuthUser {
   role: 'ADICTO' | 'PADRINO';
   sponsorCode?: string | null;
   avatarUrl?: string | null;
+  /** Nombre de la adición tal como lo entregó el backend — solo presente si role = 'ADICTO' */
+  addictionType?: string | null;
 }
 
 export interface AuthResult {
@@ -94,6 +96,30 @@ export async function login(payload: LoginPayload): Promise<AuthResult> {
     } catch { /* JWT malformado — ignorar */ }
   }
 
+  // Extraer tipo de adición del usuario (puede venir como addictionName, addiction_name, etc.)
+  const addictionRaw =
+    apiUser.addictionName ??
+    (apiUser as Record<string, unknown>).addiction_name ??
+    (apiUser as Record<string, unknown>).addictionType ??
+    (apiUser as Record<string, unknown>).addiction_type ??
+    null;
+
+  // Fallback: intentar desde el JWT si no vino en el body
+  let resolvedAddiction = addictionRaw as string | null;
+  if (!resolvedAddiction && token) {
+    try {
+      const b64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      const payload = JSON.parse(atob(b64)) as Record<string, unknown>;
+      resolvedAddiction = (
+        payload.addictionName ??
+        payload.addiction_name ??
+        payload.addictionType ??
+        payload.addiction_type ??
+        null
+      ) as string | null;
+    } catch { /* JWT malformado — ignorar */ }
+  }
+
   return {
     accessToken: token,
     user: {
@@ -103,6 +129,7 @@ export async function login(payload: LoginPayload): Promise<AuthResult> {
       role: (apiUser.role === 'PADRINO' ? 'PADRINO' : 'ADICTO') as 'ADICTO' | 'PADRINO',
       sponsorCode: resolvedSponsorCode,
       avatarUrl: (apiUser.avatarUrl ?? apiUser.avatar_url ?? null) as string | null,
+      addictionType: resolvedAddiction,
     },
   };
 }

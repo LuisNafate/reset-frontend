@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useConfiguracion } from "@/hooks/useConfiguracion";
 import { useAuth } from "@/context/AuthContext";
-import { ADDICTION_TYPES } from "@/lib/constants";
 
 export default function ConfiguracionPage() {
   const { user } = useAuth();
@@ -24,7 +23,6 @@ export default function ConfiguracionPage() {
     handleRequestSponsorship,
     handleTerminateSponsorship,
     setUsername,
-    setAddictionType,
     handleUpdateProfile,
     handleRemovePeer,
     handleAddPeer,
@@ -107,29 +105,21 @@ export default function ConfiguracionPage() {
               </div>
             </div>
 
-            {/* Addiction type */}
+            {/* Addiction type — solo lectura */}
             <div className="flex flex-col gap-1.5">
               <label
                 className="font-jetbrains text-[11px] tracking-[1.5px] uppercase rs-text-caption"
               >
                 Tipo de Adicción
               </label>
-              <div className="relative">
-                <select
-                  value={addictionType}
-                  onChange={(e) => setAddictionType(e.target.value)}
-                  className="font-playfair italic w-full h-11 border border-(--ui-border) bg-(--surface-input) rounded-sm px-4 text-[14px] rs-text-body outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 transition-all appearance-none cursor-pointer"
-                >
-                  {ADDICTION_TYPES.map((t) => (
-                    <option key={t.id} value={t.id}>{t.label}</option>
-                  ))}
-                </select>
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5">
-                    <path d="M19.5 8.25l-7.5 7.5-7.5-7.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
+              <div
+                className="font-playfair italic w-full h-11 border border-(--ui-border) bg-(--surface-card-inner) rounded-sm px-4 text-[14px] rs-text-body flex items-center opacity-70 select-none cursor-default"
+              >
+                {addictionType || "No especificado"}
               </div>
+              <p className="font-jetbrains text-[10px] tracking-[0.5px] rs-text-caption">
+                Para cambiar tu tipo de adicción, contacta a soporte.
+              </p>
             </div>
           </div>
 

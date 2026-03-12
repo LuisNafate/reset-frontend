@@ -18,7 +18,7 @@ export function useConfiguracion() {
 
   // Precarga el nombre del usuario autenticado
   const [username, setUsername] = useState(user?.name ?? "");
-  const [addictionType, setAddictionType] = useState("");
+  const [addictionType, setAddictionType] = useState(user?.addictionType ?? "");
   const [emergencyNotifs, setEmergencyNotifs] = useState(true);
   const [peers, setPeers] = useState<SupportPeer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,6 +38,11 @@ export function useConfiguracion() {
   useEffect(() => {
     if (user?.name) setUsername(user.name);
   }, [user?.name]);
+
+  // Sincronizar tipo de adicción cuando el usuario se carga desde storage
+  useEffect(() => {
+    if (user?.addictionType) setAddictionType(user.addictionType);
+  }, [user?.addictionType]);
 
   // Cargar contactos de emergencia (= pares de apoyo en la UI)
   useEffect(() => {
@@ -183,7 +188,6 @@ export function useConfiguracion() {
     handleRequestSponsorship,
     handleTerminateSponsorship,
     setUsername,
-    setAddictionType,
     handleUpdateProfile,
     handleRemovePeer,
     handleAddPeer,

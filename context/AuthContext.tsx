@@ -34,6 +34,8 @@ export interface AuthUser {
   sponsorCode?: string | null;
   /** URL del avatar generado por DiceBear u otro servicio — null si no disponible */
   avatarUrl?: string | null;
+  /** Nombre de la adición — solo presente si role = 'ADICTO' */
+  addictionType?: string | null;
 }
 
 interface AuthCtx {

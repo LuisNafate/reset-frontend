@@ -855,8 +855,8 @@ function MobileSection() {
 
             {/* CTAs móvil */}
             <div className="flex flex-wrap items-center gap-4 pt-2 justify-center lg:justify-start">
-              <a
-                href="https://reset-app.tech/download"
+              <Link
+                href="/download"
                 className="landing-btn-primary font-jetbrains text-[12px] uppercase tracking-[1.2px] px-8 py-4 rounded-sm inline-flex items-center gap-3"
               >
                 <svg width="14" height="16" viewBox="0 0 14 16" fill="none" aria-hidden="true">
@@ -866,7 +866,7 @@ function MobileSection() {
                   <line x1="7" y1="5" x2="7" y2="10" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
                 </svg>
                 Usar en mi celular
-              </a>
+              </Link>
               <Link
                 href="/login"
                 className="landing-btn-ghost font-jetbrains text-[12px] uppercase tracking-[1.2px] border border-[#e2e8f0] px-8 py-4 rounded-sm hover:border-[#0d9488] transition-colors"
