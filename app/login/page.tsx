@@ -343,6 +343,12 @@ export default function LoginPage() {
         <p className="text-[11px] tracking-[1px] uppercase font-jetbrains text-center mt-6 italic" style={{ color: 'var(--ui-text-caption)' }}>
           cada paso, un día a la paz.
         </p>
+        <p className="text-[10px] tracking-[0.5px] font-jetbrains text-center mt-3" style={{ color: 'var(--ui-text-caption)' }}>
+          Al usar ReSet aceptas nuestros{" "}
+          <Link href="/terms" className="text-sky-500 hover:underline uppercase tracking-[0.5px]">
+            Términos y Condiciones
+          </Link>
+        </p>
       </div>
     </div>
   );
