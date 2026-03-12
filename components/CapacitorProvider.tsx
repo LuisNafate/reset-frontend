@@ -39,7 +39,27 @@ export default function CapacitorProvider({ children }: CapacitorProviderProps) 
   const router = useRouter();
   const pathname = usePathname();
   const { isRestoring } = useAuth();
+  // ── Configuración de la barra de estado nativa (únicamente Android/iOS) ────────
+  useEffect(() => {
+    if (!isNativePlatform()) return;
 
+    async function setupStatusBar() {
+      try {
+        const { StatusBar, Style } = await import("@capacitor/status-bar");
+        // El WebView NO dibuja detrás de la barra del sistema.
+        // El contenido comienza justo debajo de ella sin necesidad de CSS.
+        await StatusBar.setOverlaysWebView({ overlay: false });
+        // Iconos oscuros sobre el fondo claro de la app
+        await StatusBar.setStyle({ style: Style.Light });
+        // Color de fondo igual al surface principal de la app (modo claro)
+        await StatusBar.setBackgroundColor({ color: "#e6edf5" });
+      } catch {
+        // El plugin puede no estar disponible en entornos de prueba web
+      }
+    }
+
+    setupStatusBar();
+  }, []);
   // ── Botón físico de Android ─────────────────────────────────────────────
   useEffect(() => {
     // No hacer nada en web — evita importar Capacitor innecesariamente

@@ -70,6 +70,14 @@ const config: CapacitorConfig = {
       launchShowDuration: 0,
       backgroundColor: "#f8fafc",
     },
+    StatusBar: {
+      // El WebView NO dibuja detrás de la barra de estado del sistema.
+      // El contenido comienza debajo de ella → no se necesita safe-area CSS.
+      // Con 'overlaysWebView: false' el color de la barra lo controla Android.
+      overlaysWebView: false,
+      style: "DARK",          // iconos de la barra en color oscuro (app clara)
+      backgroundColor: "#e6edf5", // coincide con --surface-main en modo claro
+    },
   },
 };
 
