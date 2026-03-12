@@ -57,7 +57,10 @@ export function useLogin() {
         rememberMe: form.rememberMe,
       });
 
+      console.log("[useLogin] loginResult:", loginResult);
+
       if (loginResult.code === '2FA_REQUIRED') {
+        console.log("[useLogin] Setting mfaToken:", loginResult.mfaToken);
         setMfaToken(loginResult.mfaToken || null);
         setIsLoading(false);
         return; // Detener flujo para mostrar OTP

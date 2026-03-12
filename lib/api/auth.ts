@@ -77,14 +77,17 @@ export async function login(payload: LoginPayload): Promise<AuthBasicResult> {
       rememberMe: payload.rememberMe,
     }),
   });
+  console.log("[AuthService] Login Response Raw:", res);
   const data = res?.data ?? res;
+  console.log("[AuthService] Unwrapped Data:", data);
 
-  if (data?.code === '2FA_REQUIRED') {
+  if (data?.code === '2FA_REQUIRED' || res?.code === '2FA_REQUIRED') {
+    console.log("[AuthService] 2FA Required detected");
     return {
       accessToken: '',
       user: { id: '', name: '', email: '', role: 'ADICTO', sponsorCode: null },
       code: '2FA_REQUIRED',
-      mfaToken: data.mfaToken,
+      mfaToken: data.mfaToken || res.mfaToken,
     };
   }
 
