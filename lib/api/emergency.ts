@@ -36,14 +36,7 @@ export interface TriggerAlertResponse {
 export const addContact = (data: EmergencyContactPayload): Promise<any> =>
   apiRequest('/emergency/contacts', {
     method: 'POST',
-    body: JSON.stringify({
-      contact_name: data.contactName,
-      relationship: data.relationship,
-      ...(data.email ? { email: data.email } : {}),
-      ...(data.phone ? { phone: data.phone } : {}),
-      ...(data.customRelationship ? { custom_relationship: data.customRelationship } : {}),
-      priority_order: data.priorityOrder ?? 1,
-    }),
+    body: JSON.stringify(data),
   });
 
 /** Obtiene la lista de contactos de emergencia del usuario autenticado. */
