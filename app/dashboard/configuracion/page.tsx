@@ -250,15 +250,18 @@ export default function ConfiguracionPage() {
           {/* Estado ACTIVE: conexión activa */}
           {sponsorshipState.status === 'ACTIVE' && (
             <div>
-              <div className="flex items-start gap-3 p-4 bg-teal-50 dark:bg-teal-900/20 border border-teal-100 dark:border-teal-800/40 rounded-lg mb-4">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0d9488" strokeWidth="1.5" className="shrink-0 mt-0.5">
-                  <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <div>
+              <div className="flex items-start gap-4 p-4 bg-teal-50 dark:bg-teal-900/20 border border-teal-100 dark:border-teal-800/40 rounded-lg mb-4">
+                <div className="shrink-0 w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-900/40 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold overflow-hidden">
+                  {user?.sponsor?.avatarUrl ? (
+                    <img src={user.sponsor.avatarUrl} alt={user.sponsor.name} className="w-full h-full object-cover" />
+                  ) : (
+                    user?.sponsor?.name?.charAt(0).toUpperCase() ?? 'P'
+                  )}
+                </div>
+                <div className="flex-1">
                   <p className="font-jetbrains text-[11px] tracking-[1.5px] uppercase text-teal-600 dark:text-teal-400 mb-1">Apadrinamiento activo</p>
-                  <p className="font-jetbrains text-[12px] rs-text-caption">
-                    Tu padrino puede ver tu progreso y te acompañará en tu recuperación.
-                  </p>
+                  <p className="font-playfair text-[15px] rs-text-heading font-bold">{user?.sponsor?.name ?? "Tu Padrino"}</p>
+                  <p className="font-jetbrains text-[11px] rs-text-caption lowercase">{user?.sponsor?.email}</p>
                 </div>
               </div>
               {sponsorshipError && (

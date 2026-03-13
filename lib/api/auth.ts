@@ -162,6 +162,12 @@ export async function getProfile(): Promise<AuthProfileResult> {
       is_active: data.addiction.is_active ?? data.addiction.isActive,
       registered_at: data.addiction.registered_at ?? data.addiction.registeredAt,
     } : null,
+    sponsor: data.sponsor ? {
+      id: data.sponsor.id,
+      name: data.sponsor.name,
+      email: data.sponsor.email,
+      avatarUrl: data.sponsor.avatarUrl ?? data.sponsor.avatar_url ?? null,
+    } : null,
   };
 }
 

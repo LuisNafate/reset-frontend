@@ -367,7 +367,7 @@ export default function InicioPage() {
                 <p
                   className="font-jetbrains text-[11px] tracking-[1.5px] uppercase text-[rgba(60,107,174,0.6)] dark:text-sky-400 mb-1"
                 >
-                  Mensaje de tu Padrino
+                  Mensaje de {user?.sponsor?.name ?? "tu Padrino"}
                 </p>
                 <p
                   className="font-playfair text-[16px] italic text-[rgba(26,54,93,0.8)] dark:text-slate-300 leading-relaxed"

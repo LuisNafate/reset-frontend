@@ -21,6 +21,13 @@ export interface AddictionData {
   registered_at: string;
 }
 
+export interface SponsorData {
+  id: string;
+  name: string;
+  email: string;
+  avatarUrl?: string | null;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -30,6 +37,7 @@ export interface User {
   avatarUrl?: string | null;
   createdAt: string;
   addiction?: AddictionData | null;
+  sponsor?: SponsorData | null;
 }
 
 export interface AuthResponse {
