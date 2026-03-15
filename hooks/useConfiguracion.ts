@@ -15,12 +15,36 @@ export interface SponsorshipState {
   sponsorshipId?: string;
 }
 
+type ContactApi = {
+  id?: string;
+  _id?: string;
+  contactName?: string;
+  contact_name?: string;
+  name?: string;
+  email?: string;
+};
+
+function normalizeContacts(input: unknown): SupportPeer[] {
+  const payload = input as { data?: unknown };
+  const maybeList = payload?.data ?? input;
+  if (!Array.isArray(maybeList)) return [];
+
+  return maybeList.map((raw, index) => {
+    const c = raw as ContactApi;
+    return {
+      id: c.id ?? c._id ?? `contact-${index}-${Date.now()}`,
+      // La API puede devolver contactName (camelCase) o contact_name (snake_case)
+      name: c.contactName ?? c.contact_name ?? c.name ?? "",
+      email: c.email ?? "",
+    };
+  });
+}
+
 export function useConfiguracion() {
   const { user, updateUser, clearAuth } = useAuth();
   const router = useRouter();
 
-  // Precarga el nombre del usuario autenticado
-  const [username, setUsername] = useState(user?.name ?? "");
+  const username = user?.name ?? "";
   const [addictionType, setAddictionType] = useState(user?.addiction?.custom_name ?? "");
   const [emergencyNotifs, setEmergencyNotifs] = useState(true);
   const [peers, setPeers] = useState<SupportPeer[]>([]);
@@ -29,18 +53,12 @@ export function useConfiguracion() {
   const [error, setError] = useState<string | null>(null);
   /** Error exclusivo del formulario de añadir par de apoyo — no contamina el área de perfil. */
   const [peerError, setPeerError] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
 
   // ── Sponsorship (solo ADICTO) ────────────────────────────────────────────
   const [sponsorCode, setSponsorCode] = useState("");
   const [sponsorshipState, setSponsorshipState] = useState<SponsorshipState>({ status: 'NONE' });
   const [isSponsorshipLoading, setIsSponsorshipLoading] = useState(false);
   const [sponsorshipError, setSponsorshipError] = useState<string | null>(null);
-
-  // Sincronizar nombre cuando el contexto de auth se carga/actualiza
-  useEffect(() => {
-    if (user?.name) setUsername(user.name);
-  }, [user?.name]);
 
   // Sincronizar tipo de adicción cuando el usuario se carga desde storage
   useEffect(() => {
@@ -51,7 +69,7 @@ export function useConfiguracion() {
   useEffect(() => {
     if (user?.sponsor) {
       // Mapear el status del backend (que ahora devolvemos si es ACTIVE o PENDING)
-      const apiStatus = (user.sponsor as any).status || 'ACTIVE';
+      const apiStatus = (user.sponsor as { status?: SponsorshipStatus }).status ?? 'ACTIVE';
       setSponsorshipState({
         status: apiStatus as SponsorshipStatus,
         sponsorshipId: user.sponsor.sponsorshipId,
@@ -68,46 +86,12 @@ export function useConfiguracion() {
   // Cargar contactos de emergencia (= pares de apoyo en la UI)
   useEffect(() => {
     getContacts()
-      .then((res: any) => {
-        const list: any[] = res?.data ?? res ?? [];
-        setPeers(
-          Array.isArray(list)
-            ? list.map((c: any) => ({
-                id: c.id ?? c._id ?? String(Date.now()),
-                // La API puede devolver contactName (camelCase) o contact_name (snake_case)
-                name: c.contactName ?? c.contact_name ?? c.name ?? '',
-                email: c.email ?? '',
-              }))
-            : []
-        );
+      .then((res: unknown) => {
+        setPeers(normalizeContacts(res));
       })
       .catch(() => setError("Error al cargar los contactos de emergencia"))
       .finally(() => setIsLoading(false));
   }, []);
-
-  // ── Actualizar perfil (nombre) ───────────────────────────────────────────────
-  // El backend no expone PATCH /auth/me; el cambio solo se refleja en el contexto local.
-  const handleUpdateProfile = async () => {
-    setIsSaving(true);
-    setError(null);
-    try {
-      const trimmedName = username.trim();
-      if (trimmedName) {
-        updateUser({ name: trimmedName });
-      }
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al guardar");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleRemovePeer = (id: string) => {
-    // Eliminación optimista local — la API de emergencia no expone DELETE /contacts/:id
-    setPeers((prev) => prev.filter((p) => p.id !== id));
-  };
 
   /**
    * Añade un nuevo contacto de emergencia (par de apoyo).
@@ -127,17 +111,8 @@ export function useConfiguracion() {
         priorityOrder: 1,
       });
       // Recargar lista
-      const res: any = await getContacts();
-      const list: any[] = res?.data ?? res ?? [];
-      setPeers(
-        Array.isArray(list)
-          ? list.map((c: any) => ({
-              id: c.id ?? c._id ?? String(Date.now()),
-              name: c.contactName ?? c.name ?? '',
-              email: c.email ?? '',
-            }))
-          : []
-      );
+      const res: unknown = await getContacts();
+      setPeers(normalizeContacts(res));
       return true;
     } catch (err) {
       setPeerError(err instanceof Error ? err.message : 'No se pudo agregar el contacto. Intenta de nuevo.');
@@ -230,7 +205,6 @@ export function useConfiguracion() {
     error,
     /** Error exclusivo del formulario de añadir contacto. */
     peerError,
-    saved,
     // Sponsorship
     sponsorCode,
     setSponsorCode,
@@ -240,9 +214,6 @@ export function useConfiguracion() {
     handleRequestSponsorship,
     handleTerminateSponsorship,
     handleDeleteAccount,
-    setUsername,
-    handleUpdateProfile,
-    handleRemovePeer,
     handleAddPeer,
     handleToggleEmergencyNotifs,
     handleRelapse,

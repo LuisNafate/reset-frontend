@@ -30,8 +30,11 @@ export default function InicioPage() {
   const tip = TIPS_DIARIOS[new Date().getDay() % TIPS_DIARIOS.length];
 
   const sobrietyDays = progress?.sobrietyDays ?? 0;
-  const plantStage   = progress?.plantStage ?? "Semilla";
   const nextMilestone = progress?.nextMilestone;
+  const nextMilestoneTargetDays = nextMilestone ? sobrietyDays + nextMilestone.daysLeft : sobrietyDays;
+  const nextMilestoneProgressPercent = nextMilestone
+    ? Math.max(0, Math.min(100, Math.round((sobrietyDays / Math.max(nextMilestoneTargetDays, 1)) * 100)))
+    : 100;
   const firstName = user?.name ? abbreviateName(user.name, 14).split(" ")[0] : null;
 
   // ── Notas de aliento del padrino ──
@@ -121,25 +124,24 @@ export default function InicioPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 sm:min-h-130">
 
               {/* ── Left: Plant ── */}
-              <div className="relative flex flex-col items-center justify-center py-10 sm:py-14 overflow-hidden">
+              <div className="relative flex flex-col items-center justify-center py-8 sm:py-14 px-4 sm:px-0 overflow-hidden">
                 {/* Background circle */}
                 <div
-                  className="absolute rounded-full bg-[#f0f4f8] dark:bg-[#0d1f35] border border-[rgba(59,130,246,0.1)] dark:border-[rgba(96,165,250,0.07)] animate-breathe"
-                  style={{ width: 288, height: 288 }}
+                  className="absolute rounded-full bg-[#f0f4f8] dark:bg-[#0d1f35] border border-[rgba(59,130,246,0.1)] dark:border-[rgba(96,165,250,0.07)] animate-breathe w-56 h-56 sm:w-72 sm:h-72"
                 />
 
                 {/* Plant — etapa dinámica según días de sobriedad */}
-                <div className="relative z-10 animate-float">
+                <div className="relative z-10 animate-float max-w-full">
                   <PlantStage days={sobrietyDays} />
                 </div>
 
                 {/* Stage label — etapa real según la racha */}
                 <div
-                  className="relative z-10 mt-10 bg-(--surface-card) border border-[rgba(59,130,246,0.2)] dark:border-[rgba(59,130,246,0.15)] h-10 px-8 flex items-center"
+                  className="relative z-10 mt-14 sm:mt-16 w-full max-w-60 sm:max-w-none bg-(--surface-card) border border-[rgba(59,130,246,0.2)] dark:border-[rgba(59,130,246,0.15)] min-h-10 px-4 sm:px-8 flex items-center justify-center text-center"
                   style={{ boxShadow: "0px 1px 2px 0px rgba(0,0,0,0.05)" }}
                 >
                   <span
-                    className="font-jetbrains text-[11px] font-bold italic uppercase text-[#3b82f6] dark:text-sky-400 tracking-[1px]"
+                    className="font-jetbrains text-[10px] sm:text-[11px] font-bold italic uppercase text-[#3b82f6] dark:text-sky-400 tracking-[1px]"
                   >
                     {isLoading ? "···" : getPlantLabel(sobrietyDays)}
                   </span>
@@ -220,10 +222,10 @@ export default function InicioPage() {
         {/* =============================================
             BOTTOM INFO CARDS — 1 columna en móvil, 3 en sm+
         ============================================= */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-stretch">
 
           {/* ── Última Nota ── */}
-          <div className="relative pt-3.75">
+          <div className="relative pt-3.75 h-full">
             <div className="absolute left-1/2 -translate-x-1/2 top-0 z-20 pointer-events-none">
               <div
                 className="w-17.5 h-7.25 bg-[rgba(186,230,253,0.4)]"
@@ -231,15 +233,14 @@ export default function InicioPage() {
               />
             </div>
             <div
-              className="bg-(--surface-card) border border-(--ui-border) relative"
+              className="bg-(--surface-card) border border-(--ui-border) relative h-full min-h-41 sm:min-h-55"
               style={{
                 boxShadow: "8px 8px 0px 0px rgba(26,54,93,0.05)",
                 backdropFilter: "blur(2px)",
-                minHeight: 128,
               }}
             >
               <div className="absolute inset-3 border border-(--ui-border-subtle) pointer-events-none" />
-              <div className="relative z-10 p-6 pt-7">
+              <div className="relative z-10 p-6 pt-7 h-full flex flex-col">
                 <p
                   className="font-jetbrains uppercase text-[11px] text-[rgba(60,107,174,0.6)] dark:text-sky-400 mb-4 tracking-[0.9px]"
                 >
@@ -257,7 +258,7 @@ export default function InicioPage() {
           </div>
 
           {/* ── Comunidad ── */}
-          <Link href="/dashboard/foro" className="block relative pt-3.75 group">
+          <Link href="/dashboard/foro" className="block relative pt-3.75 group h-full">
             <div className="absolute left-1/2 -translate-x-1/2 top-0 z-20 pointer-events-none">
               <div
                 className="w-17.5 h-7.25 bg-[rgba(186,230,253,0.4)]"
@@ -265,15 +266,14 @@ export default function InicioPage() {
               />
             </div>
             <div
-              className="bg-(--surface-card) border border-(--ui-border) group-hover:border-[#93c5fd] dark:group-hover:border-[#1d4ed8] relative flex items-center transition-colors"
+              className="bg-(--surface-card) border border-(--ui-border) group-hover:border-[#93c5fd] dark:group-hover:border-[#1d4ed8] relative flex items-center transition-colors h-full min-h-41 sm:min-h-55"
               style={{
                 boxShadow: "8px 8px 0px 0px rgba(26,54,93,0.05)",
                 backdropFilter: "blur(2px)",
-                minHeight: 128,
               }}
             >
               <div className="absolute inset-3 border border-(--ui-border-subtle) pointer-events-none" />
-              <div className="relative z-10 p-6 pt-7">
+              <div className="relative z-10 p-6 pt-7 h-full flex flex-col justify-center">
                 <p
                   className="font-jetbrains uppercase text-[11px] text-[rgba(60,107,174,0.6)] dark:text-sky-400 mb-4 tracking-[0.9px]"
                 >
@@ -294,7 +294,7 @@ export default function InicioPage() {
           </Link>
 
           {/* ── Próximo Hito ── */}
-          <div className="relative pt-3.75">
+          <div className="relative pt-3.75 h-full">
             <div className="absolute left-1/2 -translate-x-1/2 top-0 z-20 pointer-events-none">
               <div
                 className="w-17.5 h-7.25 bg-[rgba(186,230,253,0.4)]"
@@ -302,36 +302,56 @@ export default function InicioPage() {
               />
             </div>
             <div
-              className="bg-(--surface-card) border border-(--ui-border) relative flex items-center"
+              className="bg-(--surface-card) border border-(--ui-border) relative flex items-center h-full min-h-41 sm:min-h-55"
               style={{
                 boxShadow: "8px 8px 0px 0px rgba(26,54,93,0.05)",
                 backdropFilter: "blur(2px)",
-                minHeight: 128,
               }}
             >
               <div className="absolute inset-3 border border-(--ui-border-subtle) pointer-events-none" />
-              <div className="relative z-10 p-6 pt-7">
+              <div className="relative z-10 p-5 sm:p-6 pt-6 sm:pt-7 w-full h-full flex flex-col justify-between">
                 <p
                   className="font-jetbrains uppercase text-[11px] text-[rgba(60,107,174,0.6)] dark:text-sky-400 mb-4 tracking-[0.9px]"
                 >
                   Próximo Hito
                 </p>
-                <div className="flex items-center gap-2">
-                  <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12.5 3C12.5 3 6.5 7.5 6.5 13C6.5 16.866 9.186 20 12.5 20C15.814 20 18.5 16.866 18.5 13C18.5 7.5 12.5 3 12.5 3Z" stroke="#1a365d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M12.5 20V22.5" stroke="#1a365d" strokeWidth="1.5" strokeLinecap="round"/>
-                    <path d="M9.5 20H15.5" stroke="#1a365d" strokeWidth="1.5" strokeLinecap="round"/>
-                    <path d="M9.5 13C9.5 13 10.5 15 12.5 15C14.5 15 15.5 13 15.5 13" stroke="#1a365d" strokeWidth="1.5" strokeLinecap="round"/>
-                  </svg>
-                  <p
-                    className="font-jetbrains font-bold text-[16px] text-[#1a365d]"
-                  >
-                    {isLoading
-                      ? "···"
-                      : nextMilestone
-                        ? `${nextMilestone.label} (−${nextMilestone.daysLeft}d)`
-                        : "¡Ciprés de Diamante alcanzado!"}
-                  </p>
+                <div className="flex items-start gap-3 mb-3 sm:mb-4 min-w-0">
+                  <div className="shrink-0 w-9 h-9 rounded-full bg-sky-50 dark:bg-sky-900/25 border border-sky-100 dark:border-sky-800/40 flex items-center justify-center text-[#1a365d] dark:text-sky-300">
+                    <svg width="20" height="20" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12.5 3C12.5 3 6.5 7.5 6.5 13C6.5 16.866 9.186 20 12.5 20C15.814 20 18.5 16.866 18.5 13C18.5 7.5 12.5 3 12.5 3Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M12.5 20V22.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                      <path d="M9.5 20H15.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                      <path d="M9.5 13C9.5 13 10.5 15 12.5 15C14.5 15 15.5 13 15.5 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-jetbrains font-bold text-[14px] sm:text-[15px] rs-text-heading leading-snug wrap-break-word">
+                      {isLoading
+                        ? "···"
+                        : nextMilestone
+                          ? nextMilestone.label
+                          : "¡Ciprés de Diamante alcanzado!"}
+                    </p>
+                    <p className="font-jetbrains text-[11px] uppercase tracking-[1px] rs-text-caption mt-1">
+                      {isLoading
+                        ? "Calculando..."
+                        : nextMilestone
+                          ? `Faltan ${nextMilestone.daysLeft} días`
+                          : "Hito máximo completado"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="w-full h-2 rounded-full bg-sky-100/80 dark:bg-sky-950/40 overflow-hidden">
+                  <div
+                    className="h-full bg-linear-to-r from-sky-400 to-blue-500 transition-all duration-300"
+                    style={{ width: `${isLoading ? 0 : nextMilestoneProgressPercent}%` }}
+                  />
+                </div>
+
+                <div className="mt-2 flex items-center justify-between font-jetbrains text-[10px] uppercase tracking-[0.9px] rs-text-caption">
+                  <span>{isLoading ? "--" : `${sobrietyDays}d`}</span>
+                  <span>{isLoading ? "--" : `${nextMilestoneTargetDays}d`}</span>
                 </div>
               </div>
             </div>

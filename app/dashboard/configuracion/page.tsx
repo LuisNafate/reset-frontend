@@ -16,7 +16,6 @@ export default function ConfiguracionPage() {
     isDeleting,
     error,
     peerError,
-    saved,
     sponsorCode,
     setSponsorCode,
     sponsorshipState,
@@ -25,11 +24,7 @@ export default function ConfiguracionPage() {
     handleRequestSponsorship,
     handleTerminateSponsorship,
     handleDeleteAccount,
-    setUsername,
-    handleUpdateProfile,
-    handleRemovePeer,
     handleAddPeer,
-    handleToggleEmergencyNotifs,
     handleRelapse,
   } = useConfiguracion();
 
@@ -39,7 +34,6 @@ export default function ConfiguracionPage() {
   const [showDeleteSponsorConfirm, setShowDeleteSponsorConfirm] = useState(false);
   // Estado local para confirmación de relapso (Padrino -> Adicto)
   const [showRelapseConfirm, setShowRelapseConfirm] = useState(false);
-  const [newAddictionName, setNewAddictionName] = useState("");
 
   // Estado local del formulario de "Añadir Par"
   const [showAddPeer, setShowAddPeer] = useState(false);
@@ -94,26 +88,21 @@ export default function ConfiguracionPage() {
 
           {/* Grid perfil: 1 columna en móvil, 2 en sm+ */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
-            {/* Username */}
+            {/* Nombre de usuario — solo lectura */}
             <div className="flex flex-col gap-1.5">
               <label
                 className="font-jetbrains text-[11px] tracking-[1.5px] uppercase rs-text-caption"
               >
                 Nombre de Usuario
               </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="font-jetbrains w-full h-11 border border-(--ui-border) bg-(--surface-input) rounded-sm px-4 text-[15px] rs-text-body outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 transition-all"
-                />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5">
-                    <path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
+              <div
+                className="font-jetbrains w-full h-11 border border-(--ui-border) bg-(--surface-card-inner) rounded-sm px-4 text-[14px] rs-text-body flex items-center opacity-80 select-none cursor-default"
+              >
+                {username || "Sin nombre"}
               </div>
+              <p className="font-jetbrains text-[11px] tracking-[0.5px] rs-text-caption">
+                El cambio de nombre no está disponible en esta versión.
+              </p>
             </div>
 
             {/* Addiction type — solo lectura */}
@@ -137,18 +126,6 @@ export default function ConfiguracionPage() {
           {error && (
             <p className="font-jetbrains text-[12px] text-red-400 mb-3">{error}</p>
           )}
-          {saved && (
-            <p className="font-jetbrains text-[12px] text-teal-500 mb-3">Guardado correctamente ✓</p>
-          )}
-          <div className="flex justify-end">
-            <button
-              onClick={handleUpdateProfile}
-              disabled={isSaving}
-              className="font-jetbrains h-10.5 px-6 bg-slate-800 hover:bg-slate-700 disabled:opacity-60 text-white rounded-xl transition-colors text-[11px] tracking-[2px] uppercase"
-            >
-              Actualizar Perfil
-            </button>
-          </div>
         </div>
 
         {/* ── Padrino de Apoyo (Solo para Adictos) ── */}
@@ -419,7 +396,7 @@ export default function ConfiguracionPage() {
           </p>
 
           {/* Cabecera de tabla — ocultar columna email en móvil */}
-          <div className="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_1fr_auto] gap-4 pb-2 mb-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-2 mb-1">
             <p
               className="font-jetbrains text-[11px] tracking-[1px] uppercase rs-text-caption"
             >
@@ -436,7 +413,7 @@ export default function ConfiguracionPage() {
           {peers.map((peer) => (
             <div
               key={peer.id}
-              className="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_1fr_auto] gap-4 py-3 border-t border-slate-50 dark:border-slate-700/20 items-center"
+              className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-3 border-t border-slate-50 dark:border-slate-700/20 items-center"
             >
               <p
                 className="font-jetbrains text-[14px] rs-text-body"
@@ -449,14 +426,6 @@ export default function ConfiguracionPage() {
               >
                 {peer.email}
               </p>
-              <button
-                onClick={() => handleRemovePeer(peer.id)}
-                className="text-slate-300 hover:text-red-400 transition-colors"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
             </div>
           ))}
 

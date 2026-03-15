@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import {
@@ -81,7 +81,7 @@ export function useForo() {
 
   // ── Carga de posts ─────────────────────────────────────────────────────────
 
-  const loadPosts = () => {
+  const loadPosts = useCallback(() => {
     setIsLoading(true);
     setError(null);
     Promise.all([getForoPosts(1, 10), getForoCategories()])
@@ -89,8 +89,8 @@ export function useForo() {
         setPosts(applyLikedState(p));
         setCategories(c);
       })
-      .catch((err: any) => {
-        const msg: string = err?.message ?? "";
+      .catch((err: unknown) => {
+        const msg = err instanceof Error ? err.message : String(err ?? "");
         if (msg.toLowerCase().includes("token") || msg.includes("401") || msg.includes("nicia sesión")) {
           router.push("/login");
         } else {
@@ -98,9 +98,9 @@ export function useForo() {
         }
       })
       .finally(() => setIsLoading(false));
-  };
+  }, [router]);
 
-  useEffect(() => { loadPosts(); }, []);
+  useEffect(() => { loadPosts(); }, [loadPosts]);
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) =>
@@ -146,7 +146,11 @@ export function useForo() {
   const handleToggleLike = async (id: string) => {
     const wasLiked = likedByMe.current.has(id);
     // Actualizar ref local de likes propios
-    wasLiked ? likedByMe.current.delete(id) : likedByMe.current.add(id);
+    if (wasLiked) {
+      likedByMe.current.delete(id);
+    } else {
+      likedByMe.current.add(id);
+    }
     // Actualización optimista: ±1 exacto sin refetch del servidor
     setPosts((prev) =>
       prev.map((p) =>
@@ -162,7 +166,11 @@ export function useForo() {
       persistLikes();
     } catch {
       // Revertir si falla
-      wasLiked ? likedByMe.current.add(id) : likedByMe.current.delete(id);
+      if (wasLiked) {
+        likedByMe.current.add(id);
+      } else {
+        likedByMe.current.delete(id);
+      }
       setPosts((prev) =>
         prev.map((p) =>
           p.id === id
@@ -171,12 +179,6 @@ export function useForo() {
         )
       );
     }
-  };
-
-  const handleToggleBookmark = (id: string) => {
-    setPosts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, bookmarked: !p.bookmarked } : p))
-    );
   };
 
   // ── Abrir/cerrar detalle del post ──────────────────────────────────────────
@@ -325,7 +327,6 @@ export function useForo() {
     toggleTag,
     handlePublish,
     handleToggleLike,
-    handleToggleBookmark,
     handleDeletePost,
     loadPosts,
     // Detalle / comentarios

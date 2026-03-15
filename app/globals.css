@@ -16,6 +16,7 @@
   --color-primary: #1a365d;
   --color-accent: #0284c7;
   --color-accent-companion: #0d9488;
+  --color-warning: #b45309;
   --color-text-primary: #0f172a;
   --color-text-secondary: #1e293b;
   /* Aumentado de #475569 → más oscuro para cumplir WCAG AA en pantallas de baja calidad */
@@ -54,6 +55,7 @@
   --color-primary: #93c5fd;
   --color-accent: #38bdf8;
   --color-accent-companion: #2dd4bf;
+  --color-warning: #fbbf24;
   --color-text-primary: #e8edf6;
   --color-text-secondary: #d1dae8;
   /* En oscuro: texto muted más brillante para no perderse */
@@ -379,6 +381,51 @@ select:focus {
 /* Bordes */
 .rs-border        { border-color: var(--ui-border); }
 .rs-border-subtle { border-color: var(--ui-border-subtle); }
+
+/* Tags / badges del foro con contraste consistente en ambos temas */
+.rs-badge {
+  display: inline-flex;
+  align-items: center;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 9999px;
+  padding: 0.15rem 0.5rem;
+  font-family: var(--font-jetbrains), 'Courier New', monospace;
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.rs-badge-default {
+  background-color: color-mix(in srgb, var(--ui-text-caption) 16%, transparent);
+  border-color: color-mix(in srgb, var(--ui-text-caption) 36%, transparent);
+  color: var(--ui-text-body);
+}
+
+.rs-badge-blue {
+  background-color: color-mix(in srgb, var(--color-accent) 18%, transparent);
+  border-color: color-mix(in srgb, var(--color-accent) 42%, transparent);
+  color: color-mix(in srgb, var(--color-accent) 72%, var(--ui-text-heading) 28%);
+}
+
+.rs-badge-green {
+  background-color: color-mix(in srgb, var(--color-accent-companion) 18%, transparent);
+  border-color: color-mix(in srgb, var(--color-accent-companion) 42%, transparent);
+  color: color-mix(in srgb, var(--color-accent-companion) 72%, var(--ui-text-heading) 28%);
+}
+
+.rs-badge-red {
+  background-color: color-mix(in srgb, var(--color-emergency) 16%, transparent);
+  border-color: color-mix(in srgb, var(--color-emergency) 40%, transparent);
+  color: color-mix(in srgb, var(--color-emergency) 72%, var(--ui-text-heading) 28%);
+}
+
+.rs-badge-yellow {
+  background-color: color-mix(in srgb, var(--color-warning) 18%, transparent);
+  border-color: color-mix(in srgb, var(--color-warning) 42%, transparent);
+  color: color-mix(in srgb, var(--color-warning) 74%, var(--ui-text-heading) 26%);
+}
 
 /* ── Tarjeta de contenido — fondo + borde adaptativos ──────────────────────
  * Reemplaza: bg-white dark:bg-[#0d1f35] border-slate-200 dark:border-slate-700/40

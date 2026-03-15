@@ -6,13 +6,14 @@
  * sobriedad del usuario.
  *
  * Etapas:
- *  0  (0–2 días)   → Semilla
- *  1  (3–6 días)   → Germinando
- *  2  (7–13 días)  → Primer Brote
- *  3  (14–20 días) → Planta Joven
- *  4  (21–27 días) → Creciendo
- *  5  (28–29 días) → Casi Lista
- *  6  (30+ días)   → Plena Floración  ← HITO VISUAL
+ *  0  (0 días)     → Semilla
+ *  1  (1 día)      → Semilla Viva
+ *  2  (2–6 días)   → Germinando
+ *  3  (7–13 días)  → Primer Brote
+ *  4  (14–20 días) → Planta Joven
+ *  5  (21–27 días) → Creciendo
+ *  6  (28–29 días) → Casi Lista
+ *  7  (30+ días)   → Plena Floración  ← HITO VISUAL
  */
 import { useMemo } from "react";
 
@@ -21,18 +22,20 @@ interface PlantStageProps {
   className?: string;
 }
 
-function getStageIndex(days: number): 0 | 1 | 2 | 3 | 4 | 5 | 6 {
-  if (days < 3)  return 0;
-  if (days < 7)  return 1;
-  if (days < 14) return 2;
-  if (days < 21) return 3;
-  if (days < 28) return 4;
-  if (days < 30) return 5;
-  return 6;
+function getStageIndex(days: number): 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 {
+  if (days < 1)  return 0;
+  if (days < 2)  return 1;
+  if (days < 7)  return 2;
+  if (days < 14) return 3;
+  if (days < 21) return 4;
+  if (days < 28) return 5;
+  if (days < 30) return 6;
+  return 7;
 }
 
 export const PLANT_STAGE_LABELS = [
   "Semilla",
+  "Semilla Viva",
   "Germinando",
   "Primer Brote",
   "Planta Joven",
@@ -48,7 +51,7 @@ export function getPlantLabel(days: number): string {
 
 export default function PlantStage({ days, className = "" }: PlantStageProps) {
   const stage = useMemo(() => getStageIndex(days), [days]);
-  const isMilestone = stage === 6;
+  const isMilestone = stage === 7;
 
   return (
     <div className={`relative flex items-center justify-center ${className}`}>
@@ -77,12 +80,13 @@ export default function PlantStage({ days, className = "" }: PlantStageProps) {
         }}
       >
         {stage === 0 && <Stage0 />}
-        {stage === 1 && <Stage1 />}
-        {stage === 2 && <Stage2 />}
-        {stage === 3 && <Stage3 />}
-        {stage === 4 && <Stage4 />}
-        {stage === 5 && <Stage5 />}
-        {stage === 6 && <Stage6 />}
+        {stage === 1 && <StageDay1 />}
+        {stage === 2 && <Stage1 />}
+        {stage === 3 && <Stage2 />}
+        {stage === 4 && <Stage3 />}
+        {stage === 5 && <Stage4 />}
+        {stage === 6 && <Stage5 />}
+        {stage === 7 && <Stage6 />}
       </svg>
     </div>
   );
@@ -126,6 +130,24 @@ function Stage0() {
         d="M48 99C46 94 50 90 52 89C51 93 49 96 48 99Z"
         fill="#94a3b8" opacity="0.4"
       />
+    </>
+  );
+}
+
+// ── Etapa 1 (día 1): Semilla Viva ─────────────────────────────────────────
+
+function StageDay1() {
+  return (
+    <>
+      <GroundLine />
+      <SoilMound />
+      <ellipse cx="55" cy="106" rx="10" ry="13" fill="#e8edf2" stroke="#86efac" strokeWidth="1.5" />
+      <path
+        d="M55 93C55 93 62 99 62 106C62 114 55 120 55 120"
+        stroke="#86efac" strokeWidth="1" strokeLinecap="round" opacity="0.6"
+      />
+      {/* Señal mínima de vida en el día 1 */}
+      <path d="M55 97 Q54.5 94 55 90" stroke="#86efac" strokeWidth="2" strokeLinecap="round" />
     </>
   );
 }

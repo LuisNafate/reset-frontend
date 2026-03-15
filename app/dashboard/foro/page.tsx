@@ -25,7 +25,6 @@ export default function ForoPage() {
     toggleTag,
     handlePublish,
     handleToggleLike,
-    handleToggleBookmark,
     handleDeletePost,
     loadPosts,
     // Detalle
@@ -273,12 +272,6 @@ export default function ForoPage() {
                           <span className="text-[11px] uppercase tracking-[0.5px]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Eliminar</span>
                         </button>
                       )}
-                      {/* Guardar */}
-                      <button className="transition-colors" onClick={() => handleToggleBookmark(post.id)}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill={post.bookmarked ? "#0ea5e9" : "none"} stroke={post.bookmarked ? "#0ea5e9" : "#cbd5e1"} strokeWidth="1.5">
-                          <path d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -377,10 +370,12 @@ export default function ForoPage() {
                 {/* Tags */}
                 {openPost.tags.length > 0 && (
                   <div className="flex items-center gap-1.5 mt-3 flex-wrap">
-                    {openPost.tags.map((tag) => (
-                      <span key={tag} className="text-[7px] tracking-[1px] uppercase text-sky-400 bg-sky-50 dark:bg-sky-900/20 border border-sky-100 dark:border-sky-800/40 px-2 py-0.5 rounded-full" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                        {tag}
-                      </span>
+                    {openPost.tags.map((tag, idx) => (
+                      <Badge
+                        key={`${tag}-${idx}`}
+                        label={tag}
+                        variant="blue"
+                      />
                     ))}
                   </div>
                 )}
