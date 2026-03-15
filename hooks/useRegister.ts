@@ -24,6 +24,7 @@ export function useRegister() {
   const [addictionClassification, setAddictionClassification] = useState<"conductual" | "sustancia" | "">("")
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDeactivated, setIsDeactivated] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,7 +106,10 @@ export function useRegister() {
         ...(role === "user" && classificationLabel ? { classification: classificationLabel } : {}),
       });
       setIsSuccess(true);
-    } catch (err) {
+    } catch (err: any) {
+      if (err?.code === "ACCOUNT_DEACTIVATED") {
+        setIsDeactivated(true);
+      }
       setError(err instanceof Error ? err.message : "Error al crear la cuenta");
     } finally {
       setIsLoading(false);
@@ -128,6 +132,7 @@ export function useRegister() {
     setAddictionClassification,
     showConfirmPassword,
     setShowConfirmPassword,
+    isDeactivated,
     isSuccess,
     handleChange,
     handleNextStep,

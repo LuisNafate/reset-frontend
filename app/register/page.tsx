@@ -138,6 +138,7 @@ export default function RegisterPage() {
     setAddictionClassification,
     showConfirmPassword,
     setShowConfirmPassword,
+    isDeactivated,
     handleChange,
     handleNextStep,
     handleSubmit,
@@ -193,6 +194,71 @@ export default function RegisterPage() {
                   <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isDeactivated) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden safe-top-padding login-bg">
+        <div className="relative z-10 w-full max-w-105 px-4 py-8 animate-fade-in-up">
+          <div className="rounded-2xl overflow-hidden login-card">
+            <div
+              aria-hidden="true"
+              style={{
+                height: 2,
+                background: "linear-gradient(90deg, transparent 0%, #f87171 35%, #ef4444 50%, #f87171 65%, transparent 100%)",
+              }}
+            />
+            <div className="px-6 py-10 sm:px-9 text-center">
+              <div
+                className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 bg-red-50 dark:bg-red-900/30 text-red-500"
+                style={{ border: "1px solid #fecaca" }}
+              >
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+
+              <h2 className="text-2xl italic font-playfair mb-4" style={{ color: 'var(--ui-text-heading)' }}>
+                Cuenta Desactivada
+              </h2>
+
+              <p className="text-[13px] font-jetbrains rs-text-muted mb-8 leading-relaxed">
+                Parece que esta cuenta fue eliminada anteriormente. ¿Te gustaría recuperarla y reactivar tu proceso de sanación?
+              </p>
+
+              <div
+                className="mx-auto mb-8"
+                style={{
+                  height: 1,
+                  width: 52,
+                  background: "linear-gradient(90deg, transparent, #f87171, transparent)",
+                }}
+              />
+
+              <div className="flex flex-col gap-3">
+                <Link
+                  href={`/reactivate?email=${encodeURIComponent(form.email)}`}
+                  className="futuristic-btn w-full h-13 text-white rounded-xl flex items-center justify-center gap-3 font-jetbrains"
+                  style={{ fontSize: 11, letterSpacing: "2.5px", textTransform: "uppercase", background: "linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)" }}
+                >
+                  Sí, Reactivar Cuenta
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </Link>
+                <Link
+                  href="/login"
+                  className="w-full h-13 border border-(--ui-border) rs-text-muted rounded-xl flex items-center justify-center font-jetbrains"
+                  style={{ fontSize: 11, letterSpacing: "2.5px", textTransform: "uppercase" }}
+                >
+                  Cancelar
+                </Link>
+              </div>
             </div>
           </div>
         </div>

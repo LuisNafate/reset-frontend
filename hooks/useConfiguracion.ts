@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { getContacts, addContact } from "@/lib/api/emergency";
 import { requestSponsorship, terminateSponsorship } from "@/lib/api/sponsorship";
 import { useAuth } from "@/context/AuthContext";
-import { deleteAccount } from "@/lib/api/auth";
+import { deleteAccount, relapse, getProfile } from "@/lib/api/auth";
 import type { SupportPeer } from "@/types";
 
 // Estado del sponsorship del adicto (PENDING | ACTIVE | NONE)
@@ -199,6 +199,24 @@ export function useConfiguracion() {
     }
   };
 
+  // ── Relapso (PADRINO vuelve a ser ADICTO) ───────────────────────────────
+  const handleRelapse = async (addictionName: string, classification?: string) => {
+    setIsSaving(true);
+    setError(null);
+    try {
+      await relapse(addictionName, classification);
+      // Refrescar perfil completo para cambiar de modo PADRINO -> ADICTO
+      const freshProfile = await getProfile();
+      updateUser(freshProfile);
+      router.push("/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error al procesar el relapso");
+      throw err;
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return {
     username,
     addictionType,
@@ -225,5 +243,6 @@ export function useConfiguracion() {
     handleRemovePeer,
     handleAddPeer,
     handleToggleEmergencyNotifs,
+    handleRelapse,
   };
 }

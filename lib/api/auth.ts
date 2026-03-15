@@ -212,3 +212,29 @@ export async function deleteAccount(): Promise<void> {
     method: 'DELETE',
   });
 }
+
+/**
+ * Permite a un Padrino reportar un relapso y volver a ser Adicto.
+ * @param addictionName Nombre de la adicción.
+ * @param classification Categoría de la adicción (opcional).
+ */
+export async function relapse(addictionName: string, classification?: string): Promise<{ message: string; role: string }> {
+  const res: any = await apiRequest('/auth/relapse', {
+    method: 'POST',
+    body: JSON.stringify({ addictionName, classification }),
+  });
+  return res?.data ?? res;
+}
+/**
+ * Reactiva una cuenta desactivada.
+ */
+export async function reactivate(payload: LoginPayload): Promise<{ message: string }> {
+  const res: any = await apiRequest('/auth/reactivate', {
+    method: 'POST',
+    body: JSON.stringify({
+      email: payload.email,
+      password: payload.password,
+    }),
+  });
+  return res?.data ?? res;
+}

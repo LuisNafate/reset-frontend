@@ -109,3 +109,15 @@ export const terminateSponsorship = (
 export const getGodchildProfile = (): Promise<GodchildProfileResponse> =>
   apiRequest<GodchildProfileResponse>('/sponsorships/godchild/profile');
 
+/**
+ * Gradúa al ahijado activo como Padrino.
+ * Solo disponible para el PADRINO del ahijado.
+ * @param addictId UUID del ahijado a graduar.
+ */
+export const graduateAddict = (
+  addictId: string
+): Promise<{ message: string; sponsorCode: string }> =>
+  apiRequest<{ message: string; sponsorCode: string }>('/sponsorships/graduate', {
+    method: 'POST',
+    body: JSON.stringify({ addictId }),
+  });

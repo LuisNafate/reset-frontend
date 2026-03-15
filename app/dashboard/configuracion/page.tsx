@@ -30,12 +30,16 @@ export default function ConfiguracionPage() {
     handleRemovePeer,
     handleAddPeer,
     handleToggleEmergencyNotifs,
+    handleRelapse,
   } = useConfiguracion();
 
   // Estado local para confirmación de borrado de cuenta
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   // Estado local para confirmación de borrado de padrino
   const [showDeleteSponsorConfirm, setShowDeleteSponsorConfirm] = useState(false);
+  // Estado local para confirmación de relapso (Padrino -> Adicto)
+  const [showRelapseConfirm, setShowRelapseConfirm] = useState(false);
+  const [newAddictionName, setNewAddictionName] = useState("");
 
   // Estado local del formulario de "Añadir Par"
   const [showAddPeer, setShowAddPeer] = useState(false);
@@ -148,8 +152,9 @@ export default function ConfiguracionPage() {
           </div>
         </div>
 
-        {/* ── Padrino de Apoyo ── */}
-        <div className="border border-(--ui-border) rounded-sm bg-(--surface-card) mb-6 p-5 sm:p-8">
+        {/* ── Padrino de Apoyo (Solo para Adictos) ── */}
+        {user?.role === 'ADICTO' && (
+          <div className="border border-(--ui-border) rounded-sm bg-(--surface-card) mb-6 p-5 sm:p-8">
           <div className="flex items-center justify-between gap-2 mb-6">
             <div className="flex items-center gap-2">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="1.5">
@@ -253,7 +258,7 @@ export default function ConfiguracionPage() {
               <div className="flex items-start gap-4 p-4 bg-teal-50 dark:bg-teal-900/20 border border-teal-100 dark:border-teal-800/40 rounded-lg mb-4">
                 <div className="shrink-0 w-10 h-10 rounded-full bg-teal-100 dark:bg-teal-900/40 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold overflow-hidden">
                   {user?.sponsor?.avatarUrl ? (
-                    <img src={user.sponsor.avatarUrl} alt={user.sponsor.name} className="w-full h-full object-cover" />
+                    <img src={user?.sponsor?.avatarUrl} alt={user?.sponsor?.name ?? "Avatar"} className="w-full h-full object-cover" />
                   ) : (
                     user?.sponsor?.name?.charAt(0).toUpperCase() ?? 'P'
                   )}
@@ -282,6 +287,31 @@ export default function ConfiguracionPage() {
             </div>
           )}
         </div>
+        )}
+
+        {/* ── Reportar Recaída (Solo para Padrinos) ── */}
+        {user?.role === 'PADRINO' && (
+          <div className="border border-red-200 dark:border-red-900/40 rounded-sm bg-red-50/30 dark:bg-red-900/10 mb-6 p-5 sm:p-8">
+            <div className="flex items-center gap-2 mb-4">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2">
+                <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <p className="font-jetbrains text-[12px] tracking-[2px] uppercase text-red-500 font-bold">He Recaído / Necesito Ayuda</p>
+            </div>
+            <p className="font-jetbrains text-[13px] rs-text-caption mb-5 leading-relaxed">
+              Si has tenido un desliz, no te preocupes. Reset está aquí para apoyarte. 
+              Al reportar una recaída, volverás a iniciar tu proceso como Adicto y se notificarán tus contactos de emergencia si es necesario.
+            </p>
+            <div className="flex justify-end">
+              <button 
+                onClick={() => setShowRelapseConfirm(true)}
+                className="font-jetbrains h-11 px-6 bg-red-500 hover:bg-red-600 text-white rounded-sm transition-colors text-[11px] tracking-[1.5px] uppercase shadow-lg shadow-red-500/20"
+              >
+                Volver a modo Adicto
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Pares de Apoyo */}
           <div className="border border-(--ui-border) rounded-sm bg-(--surface-card) mb-6 p-5 sm:p-8">
@@ -541,6 +571,92 @@ export default function ConfiguracionPage() {
             Oasis de Sobriedad — Gestión de Privacidad
           </p>
           <div className="flex items-center gap-4">
+          </div>
+        </div>
+      </div>
+      {/* Modal de Confirmación para Relapso */}
+      <RelapseModal 
+        isOpen={showRelapseConfirm}
+        onClose={() => setShowRelapseConfirm(false)}
+        onConfirm={async (name, cat) => {
+          await handleRelapse(name, cat);
+          setShowRelapseConfirm(false);
+        }}
+        isLoading={isSaving}
+      />
+    </div>
+  );
+}
+
+// ── Componente Interno: Modal de Relapso ────────────────────────────────
+function RelapseModal({ isOpen, onClose, onConfirm, isLoading }: { 
+  isOpen: boolean, 
+  onClose: () => void, 
+  onConfirm: (name: string, category: string) => Promise<void>,
+  isLoading: boolean
+}) {
+  const [name, setName] = useState("");
+  const [cat, setCat] = useState("Sustancias");
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="bg-(--surface-card) border border-(--ui-border) w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="p-6 sm:p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-950/40 flex items-center justify-center text-red-500">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h3 className="font-playfair text-xl font-bold rs-text-heading">Reportar Recaída</h3>
+          </div>
+
+          <p className="font-jetbrains text-[13px] rs-text-caption mb-6 leading-relaxed">
+            Para volver a iniciar tu proceso, por favor indica qué adicción estarás tratando de ahora en adelante.
+          </p>
+
+          <div className="space-y-4 mb-8">
+            <div className="flex flex-col gap-1.5">
+              <label className="font-jetbrains text-[10px] tracking-[2px] uppercase rs-text-caption">Nombre de la Adicción</label>
+              <input 
+                type="text" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Ej. Alcohol, Tabaco, Redes Sociales"
+                className="font-jetbrains h-11 w-full border border-(--ui-border) bg-(--surface-input) rounded-sm px-4 rs-text-body outline-none focus:border-red-400 focus:ring-1 focus:ring-red-100 transition-all text-[13px]"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="font-jetbrains text-[10px] tracking-[2px] uppercase rs-text-caption">Categoría</label>
+              <select 
+                value={cat}
+                onChange={(e) => setCat(e.target.value)}
+                className="font-jetbrains h-11 w-full border border-(--ui-border) bg-(--surface-input) rounded-sm px-4 rs-text-body outline-none focus:border-red-400 transition-all text-[13px]"
+              >
+                <option value="Sustancias">Sustancias</option>
+                <option value="Comportamental">Comportamental</option>
+                <option value="Tecnología">Tecnología</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <button 
+              onClick={onClose}
+              className="flex-1 font-jetbrains h-11 border border-(--ui-border) rs-text-caption hover:bg-(--surface-card-inner) rounded-sm transition-colors text-[10px] tracking-[2px] uppercase"
+            >
+              Cancelar
+            </button>
+            <button 
+              onClick={() => onConfirm(name, cat)}
+              disabled={isLoading || !name.trim()}
+              className="flex-2 font-jetbrains h-11 bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white rounded-sm transition-colors text-[10px] tracking-[2px] uppercase"
+            >
+              {isLoading ? "Procesando..." : "Confirmar Recaída"}
+            </button>
           </div>
         </div>
       </div>

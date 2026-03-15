@@ -19,10 +19,8 @@ export default function MiCuentaPage() {
     sponsorshipActionError,
     handleChange,
     handleSave,
-    handleTerminateSponsorship,
   } = useMiCuenta();
   const { logout } = useSession();
-  const [showTerminateConfirm, setShowTerminateConfirm] = useState(false);
 
   if (isLoading) {
     return (
@@ -234,16 +232,6 @@ export default function MiCuentaPage() {
                   >
                     {supportedUser.status}
                   </span>
-                  {activeSponsorshipId && (
-                    <button
-                      type="button"
-                      onClick={() => setShowTerminateConfirm(true)}
-                      className="text-[11px] tracking-[1px] uppercase text-red-400 hover:text-red-500 transition-colors px-3 py-1.5 border border-red-100 dark:border-red-900/30 rounded-sm hover:bg-red-50 dark:hover:bg-red-950/20"
-                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                    >
-                      Terminar
-                    </button>
-                  )}
                 </div>
               </div>
             ))
@@ -268,41 +256,6 @@ export default function MiCuentaPage() {
           </button>
         </div>
 
-        {/* Modal de Confirmación de Término de Apadrinamiento */}
-        {showTerminateConfirm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-            <div className="bg-(--surface-card) border border-(--ui-border) rounded-2xl max-w-sm w-full p-8 shadow-2xl animate-scale-in">
-              <div className="w-12 h-12 rounded-full bg-red-50 dark:bg-red-950/30 flex items-center justify-center mb-6 mx-auto">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2">
-                  <path d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <h3 className="text-xl text-center rs-text-heading mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>¿Terminar apadrinamiento?</h3>
-              <p className="text-[12px] text-center rs-text-muted mb-8 leading-relaxed" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                Se terminará la conexión con tu ahijado de inmediato. Dejarás de recibir sus alertas y ver su progreso.
-              </p>
-              <div className="flex flex-col gap-3">
-                <button
-                  onClick={() => {
-                    handleTerminateSponsorship();
-                    setShowTerminateConfirm(false);
-                  }}
-                  className="w-full h-12 bg-red-500 hover:bg-red-600 text-white rounded-xl text-[11px] tracking-[2px] uppercase transition-all shadow-lg shadow-red-500/20"
-                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                >
-                  Sí, terminar conexión
-                </button>
-                <button
-                  onClick={() => setShowTerminateConfirm(false)}
-                  className="w-full h-12 border border-(--ui-border) rs-text-body rs-hover-card rounded-xl text-[11px] tracking-[2px] uppercase transition-all"
-                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                >
-                  Cancelar
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -44,7 +44,9 @@ function formatRelativeDate(isoDate: string): string {
 // ─── Componente ───────────────────────────────────────────────────────────────
 
 export default function MonitoreoPage() {
-  const { isLoading, godchildFound, godchild, stats, recentLogs, error } = useMonitoreo();
+  const { isLoading, godchildFound, godchild, stats, recentLogs, error, handleGraduateAddict } = useMonitoreo();
+  const [showGraduateConfirm, setShowGraduateConfirm] = React.useState(false);
+  const [isGraduating, setIsGraduating] = React.useState(false);
   const tipP = TIPS_PADRINO[new Date().getDay() % TIPS_PADRINO.length];
 
   // ── Estado de carga ──────────────────────────────────────────────────────────
@@ -391,6 +393,37 @@ export default function MonitoreoPage() {
           </Link>
         </div>
 
+        {/* ── Zona de Graduación (Nuevo) ── */}
+        <div className="border border-sky-100 dark:border-sky-900/30 bg-sky-50 dark:bg-sky-900/10 rounded-sm p-6 mb-6">
+          <div className="flex items-start gap-4">
+            <div className="shrink-0 w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900/40 flex items-center justify-center text-sky-600">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4.26 10.147L12 15l7.74-4.853a1.5 1.5 0 000-2.294L12 3 4.26 7.853a1.5 1.5 0 000 2.294z" />
+                <path d="M4.26 10.147L12 15l7.74-4.853v4.353a1.5 1.5 0 01-1.5 1.5H5.76a1.5 1.5 0 01-1.5-1.5v-4.353z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-[11px] tracking-[1.5px] uppercase text-sky-600 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                Graduación y Liderazgo
+              </p>
+              <h3 className="text-[18px] font-normal rs-text-heading mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Graduar a {godchildName} como Padrino
+              </h3>
+              <p className="text-[12px] rs-text-caption leading-relaxed mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Si consideras que {godchildName} ha alcanzado la madurez necesaria en su proceso para guiar a otros, puedes graduarlo. 
+                Esto le permitirá convertirse en Padrino y terminará vuestro vínculo formal actual de apadrinamiento.
+              </p>
+              <button 
+                onClick={() => setShowGraduateConfirm(true)}
+                className="h-10 px-6 bg-sky-500 hover:bg-sky-600 text-white rounded-sm transition-colors text-[11px] tracking-[1.5px] uppercase shadow-lg shadow-sky-500/20"
+                style={{ fontFamily: "'JetBrains Mono', monospace" }}
+              >
+                Iniciar Graduación
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Protocolo de emergencia */}
         <div className="border border-red-100 dark:border-red-900/30 bg-red-50 dark:bg-red-900/10 rounded-sm p-6">
           <div className="flex items-start gap-3">
@@ -411,6 +444,66 @@ export default function MonitoreoPage() {
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Modal de Graduación */}
+        <GraduationModal 
+          isOpen={showGraduateConfirm}
+          onClose={() => setShowGraduateConfirm(false)}
+          onConfirm={async () => {
+             setIsGraduating(true);
+             await handleGraduateAddict();
+             setIsGraduating(false);
+             setShowGraduateConfirm(false);
+          }}
+          godchildName={godchildName}
+          isLoading={isGraduating}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ── Componente Interno: Modal de Graduación ─────────────────────────────
+function GraduationModal({ isOpen, onClose, onConfirm, godchildName, isLoading }: { 
+  isOpen: boolean, 
+  onClose: () => void, 
+  onConfirm: () => Promise<void>,
+  godchildName: string,
+  isLoading: boolean
+}) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+      <div className="bg-(--surface-card) border border-(--ui-border) rounded-xl max-w-sm w-full p-8 shadow-2xl">
+        <div className="w-12 h-12 rounded-full bg-sky-50 flex items-center justify-center mb-6 mx-auto">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="2">
+            <path d="M4.26 10.147L12 15l7.74-4.853a1.5 1.5 0 000-2.294L12 3 4.26 7.853a1.5 1.5 0 000 2.294z" />
+            <path d="M4.26 10.147L12 15l7.74-4.853v4.353a1.5 1.5 0 01-1.5 1.5H5.76a1.5 1.5 0 01-1.5-1.5v-4.353z" />
+          </svg>
+        </div>
+        <h3 className="font-playfair text-xl text-center rs-text-heading mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>¿Graduar a {godchildName}?</h3>
+        <p className="font-jetbrains text-[12px] text-center rs-text-muted mb-8 leading-relaxed" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+          Esta acción promoverá a {godchildName} al rol de Padrino. Vuestro vínculo actual se cerrará y él podrá empezar a apadrinar a otros. Es un paso irreversible.
+        </p>
+        <div className="flex flex-col gap-3">
+          <button
+            onClick={onConfirm}
+            disabled={isLoading}
+            className="w-full h-12 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-jetbrains text-[11px] tracking-[2px] uppercase transition-all shadow-lg shadow-sky-500/20 disabled:opacity-60"
+            style={{ fontFamily: "'JetBrains Mono', monospace" }}
+          >
+            {isLoading ? "Graduando…" : "Sí, graduar y promover"}
+          </button>
+          <button
+            onClick={onClose}
+            disabled={isLoading}
+            className="w-full h-12 border border-(--ui-border) rs-text-body rs-hover-card rounded-xl font-jetbrains text-[11px] tracking-[2px] uppercase transition-all"
+            style={{ fontFamily: "'JetBrains Mono', monospace" }}
+          >
+            Cancelar
+          </button>
         </div>
       </div>
     </div>
