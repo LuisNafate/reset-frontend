@@ -16,7 +16,7 @@ export interface SponsorshipState {
 }
 
 export function useConfiguracion() {
-  const { user, updateUser, clearAuth, refreshProfile } = useAuth();
+  const { user, updateUser, clearAuth } = useAuth();
   const router = useRouter();
 
   // Precarga el nombre del usuario autenticado
@@ -162,7 +162,6 @@ export function useConfiguracion() {
         status: 'PENDING',
         sponsorshipId: res.sponsorship?.id,
       });
-      await refreshProfile();
       setSponsorCode("");
     } catch (err) {
       setSponsorshipError(err instanceof Error ? err.message : "No se pudo enviar la solicitud.");
@@ -178,7 +177,6 @@ export function useConfiguracion() {
     setSponsorshipError(null);
     try {
       await terminateSponsorship(sponsorshipState.sponsorshipId);
-      await refreshProfile();
       setSponsorshipState({ status: 'NONE' });
     } catch (err) {
       setSponsorshipError(err instanceof Error ? err.message : "No se pudo terminar el apadrinamiento.");

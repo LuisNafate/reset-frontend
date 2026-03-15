@@ -14,7 +14,6 @@ import {
   acceptSponsorship,
   rejectSponsorship,
 } from '@/lib/api/sponsorship';
-import { useAuth } from '@/context/AuthContext';
 import type { NotificationItem } from '@/lib/api/notifications';
 
 const POLL_INTERVAL_MS = 30_000;
@@ -34,33 +33,19 @@ export interface UseNotificationsResult {
 export function useNotifications(): UseNotificationsResult {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { refreshProfile } = useAuth();
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const load = useCallback(async (showLoading = false) => {
     if (showLoading) setIsLoading(true);
     try {
       const data = await getNotifications();
-      const newNotifs = Array.isArray(data) ? data : [];
-      
-      // Si hay notificaciones de sistema de apadrinamiento nuevas y no leídas,
-      // refrescamos el perfil por si cambió el estado (padrino/ahijado).
-      const hasNewSponsorshipNotif = newNotifs.some(n => 
-        !n.isRead && 
-        (n.type === 'SPONSORSHIP_ACCEPTED' || n.type === 'SPONSORSHIP_REJECTED' || n.type === 'SPONSORSHIP_REQUEST')
-      );
-      
-      if (hasNewSponsorshipNotif) {
-        refreshProfile();
-      }
-
-      setNotifications(newNotifs);
+      setNotifications(Array.isArray(data) ? data : []);
     } catch {
       // Silencioso — el contador simplemente no se actualiza si falla
     } finally {
       setIsLoading(false);
     }
-  }, [refreshProfile]);
+  }, []);
 
   // Carga inicial + polling
   useEffect(() => {
@@ -98,18 +83,16 @@ export function useNotifications(): UseNotificationsResult {
     setNotifications((prev) =>
       prev.map((n) => (n._id === notifId ? { ...n, isRead: true } : n))
     );
-    await refreshProfile();
     await load();
-  }, [load, refreshProfile]);
+  }, [load]);
 
   const handleRejectSponsorship = useCallback(async (notifId: string) => {
     await rejectSponsorship();
     setNotifications((prev) =>
       prev.map((n) => (n._id === notifId ? { ...n, isRead: true } : n))
     );
-    await refreshProfile();
     await load();
-  }, [load, refreshProfile]);
+  }, [load]);
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
