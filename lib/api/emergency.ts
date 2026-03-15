@@ -10,7 +10,6 @@ export interface EmergencyContactPayload {
   contactName: string;
   relationship: string;
   email?: string;
-  phone?: string;
   customRelationship?: string;
   priorityOrder?: number;
 }

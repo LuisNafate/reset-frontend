@@ -214,7 +214,5 @@ export interface MessageLibraryItem {
 export interface CompanionProfile {
   name: string;
   email: string;
-  phone: string;
   emailAlerts: boolean;
-  smsAlerts: boolean;
 }

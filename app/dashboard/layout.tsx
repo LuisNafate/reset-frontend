@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Playfair_Display } from "next/font/google";
 import { usePathname } from "next/navigation";
 import UserSidebar from "@/components/features/dashboard/UserSidebar";
 import { useBackButton } from "@/hooks/useBackButton";
@@ -9,6 +10,14 @@ import { getRouteLabel } from "@/lib/navigation";
 import { useAuth } from "@/context/AuthContext";
 import NotificationBell from "@/components/ui/NotificationBell";
 import { getAvatarUrl } from "@/lib/avatar";
+
+const playfairBold = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["700"],
+  style: ["normal", "italic"],
+  variable: "--font-playfair", // Using the same variable name to complement the root
+  display: "swap",
+});
 
 export default function DashboardLayout({
   children,
@@ -26,7 +35,7 @@ export default function DashboardLayout({
     : "U";
 
   return (
-    <div className="flex h-fill bg-(--surface-main)">
+    <div className={`flex h-fill bg-(--surface-main) ${playfairBold.variable}`}>
       {/* Overlay semitransparente en móvil cuando el sidebar está abierto */}
       {sidebarOpen && (
         <div

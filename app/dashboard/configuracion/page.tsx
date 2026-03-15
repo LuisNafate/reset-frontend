@@ -44,7 +44,6 @@ export default function ConfiguracionPage() {
   // Estado local del formulario de "Añadir Par"
   const [showAddPeer, setShowAddPeer] = useState(false);
   const [peerName, setPeerName] = useState("");
-  const [peerPhone, setPeerPhone] = useState("");
   const [peerRelationship, setPeerRelationship] = useState("");
   const [peerEmail, setPeerEmail] = useState("");
   const [isAddingPeer, setIsAddingPeer] = useState(false);
@@ -357,16 +356,6 @@ export default function ConfiguracionPage() {
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="font-jetbrains text-[11px] tracking-[1px] uppercase rs-text-caption">Teléfono (opcional)</label>
-                  <input
-                    type="tel"
-                    value={peerPhone}
-                    onChange={(e) => setPeerPhone(e.target.value)}
-                    placeholder="+52 55 1234 5678"
-                    className="font-jetbrains h-10 border border-(--ui-border) bg-(--surface-input) rounded-sm px-3 rs-text-body text-[13px] outline-none focus:border-sky-300 focus:ring-1 focus:ring-sky-100 transition-all"
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
                   <label className="font-jetbrains text-[11px] tracking-[1px] uppercase rs-text-caption">Relación *</label>
                   <select
                     value={peerRelationship}
@@ -408,11 +397,11 @@ export default function ConfiguracionPage() {
                   disabled={isAddingPeer || !peerName.trim() || !peerEmail.trim() || !peerRelationship.trim()}
                   onClick={async () => {
                     setIsAddingPeer(true);
-                    const ok = await handleAddPeer({ contactName: peerName.trim(), phone: peerPhone.trim(), relationship: peerRelationship.trim(), email: peerEmail.trim() || undefined });
+                    const ok = await handleAddPeer({ contactName: peerName.trim(), relationship: peerRelationship.trim(), email: peerEmail.trim() || undefined });
                     setIsAddingPeer(false);
                     if (ok) {
                       setShowAddPeer(false);
-                      setPeerName(""); setPeerPhone(""); setPeerRelationship(""); setPeerEmail("");
+                      setPeerName(""); setPeerRelationship(""); setPeerEmail("");
                     }
                   }}
                   className="font-jetbrains h-9 px-5 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-white rounded-sm text-[11px] tracking-[1px] uppercase transition-colors"

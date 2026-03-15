@@ -72,7 +72,6 @@ export default function MiCuentaPage() {
             {([
               { label: "Nombre Completo", field: "name", value: profile.name, type: "text" },
               { label: "Correo Electrónico", field: "email", value: profile.email, type: "email" },
-              { label: "Teléfono (para SMS)", field: "phone", value: profile.phone, type: "tel" },
             ] as const).map(({ label, field, value, type }) => (
               <div key={label} className="flex flex-col gap-1.5">
                 <label

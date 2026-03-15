@@ -111,7 +111,6 @@ export function useConfiguracion() {
    */
   const handleAddPeer = async (data: {
     contactName: string;
-    phone?: string;
     relationship: string;
     email?: string;
   }): Promise<boolean> => {
@@ -121,7 +120,6 @@ export function useConfiguracion() {
         contactName: data.contactName,
         relationship: data.relationship,
         email: data.email,
-        phone: data.phone,
         priorityOrder: 1,
       });
       // Recargar lista

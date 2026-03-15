@@ -7,7 +7,7 @@ import CapacitorProvider from "@/components/CapacitorProvider";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["400"],
   style: ["normal", "italic"],
   variable: "--font-playfair",
   display: "swap",
@@ -16,7 +16,6 @@ const playfair = Playfair_Display({
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "700"],
-  style: ["normal", "italic"],
   variable: "--font-jetbrains",
   display: "swap",
 });

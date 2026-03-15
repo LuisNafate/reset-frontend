@@ -11,9 +11,7 @@ export function useMiCuenta() {
   const [profile, setProfile] = useState<CompanionProfile>({
     name: user?.name ?? "",
     email: user?.email ?? "",
-    phone: "",
     emailAlerts: false,
-    smsAlerts: false,
   });
   const [supportedUsers, setSupportedUsers] = useState<SupportedUser[]>([]);
   const [activeSponsorshipId, setActiveSponsorshipId] = useState<string | null>(null);
