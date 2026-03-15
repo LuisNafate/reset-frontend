@@ -54,13 +54,9 @@ export function useLogin() {
       const loginResult = await login({
         email: form.email,
         password: form.password,
-        rememberMe: form.rememberMe,
       });
 
-      console.log("[useLogin] loginResult:", loginResult);
-
       if (loginResult.code === '2FA_REQUIRED') {
-        console.log("[useLogin] Setting mfaToken:", loginResult.mfaToken);
         setMfaToken(loginResult.mfaToken || null);
         setIsLoading(false);
         return; // Detener flujo para mostrar OTP
@@ -100,7 +96,11 @@ export function useLogin() {
     setIsLoading(true);
     setError(null);
     try {
-      const verifyResult = await verify2FA({ mfaToken, code: otpCode });
+      const verifyResult = await verify2FA({ 
+        mfaToken, 
+        code: otpCode,
+        rememberMe: form.rememberMe
+      });
       const profileResult = await getProfile();
       saveAuth(verifyResult.accessToken, profileResult);
       router.push(profileResult.role === "PADRINO" ? "/acompanante" : "/dashboard");

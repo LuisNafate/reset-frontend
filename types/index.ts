@@ -26,6 +26,7 @@ export interface SponsorData {
   name: string;
   email: string;
   avatarUrl?: string | null;
+  sponsorshipId?: string;
 }
 
 export interface User {

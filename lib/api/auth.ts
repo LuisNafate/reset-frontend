@@ -38,6 +38,7 @@ export interface AuthBasicResult {
 export interface Verify2FAPayload {
   mfaToken: string;
   code: string;
+  rememberMe?: boolean;
 }
 
 /**
@@ -77,12 +78,9 @@ export async function login(payload: LoginPayload): Promise<AuthBasicResult> {
       rememberMe: payload.rememberMe,
     }),
   });
-  console.log("[AuthService] Login Response Raw:", res);
   const data = res?.data ?? res;
-  console.log("[AuthService] Unwrapped Data:", data);
 
   if (data?.code === '2FA_REQUIRED' || res?.code === '2FA_REQUIRED') {
-    console.log("[AuthService] 2FA Required detected");
     return {
       accessToken: '',
       user: { id: '', name: '', email: '', role: 'ADICTO', sponsorCode: null },
@@ -115,7 +113,11 @@ export async function login(payload: LoginPayload): Promise<AuthBasicResult> {
 export async function verify2FA(payload: Verify2FAPayload): Promise<AuthBasicResult> {
   const res: any = await apiRequest('/auth/verify-2fa', {
     method: 'POST',
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      mfaToken: payload.mfaToken,
+      code: payload.code,
+      rememberMe: payload.rememberMe,
+    }),
   });
 
   const data = res?.data ?? res;
@@ -167,6 +169,7 @@ export async function getProfile(): Promise<AuthProfileResult> {
       name: data.sponsor.name,
       email: data.sponsor.email,
       avatarUrl: data.sponsor.avatarUrl ?? data.sponsor.avatar_url ?? null,
+      sponsorshipId: data.sponsor.sponsorshipId ?? data.sponsor.sponsorship_id ?? null,
     } : null,
   };
 }

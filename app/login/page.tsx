@@ -307,24 +307,6 @@ export default function LoginPage() {
                   </div>
                 </div>
 
-                {/* Recordar dispositivo */}
-                <div className="flex items-center gap-2 -mt-1 px-1">
-                  <input
-                    type="checkbox"
-                    id="rememberMe"
-                    name="rememberMe"
-                    checked={form.rememberMe}
-                    onChange={handleChange}
-                    className="w-4 h-4 rounded border-slate-300 text-sky-500 focus:ring-sky-500 cursor-pointer"
-                  />
-                  <label 
-                    htmlFor="rememberMe" 
-                    className="text-[11px] uppercase tracking-wider font-jetbrains cursor-pointer select-none"
-                    style={{ color: 'var(--ui-text-muted)' }}
-                  >
-                    Recordar en este dispositivo
-                  </label>
-                </div>
 
                 {/* Error */}
                 {error && (
@@ -373,6 +355,25 @@ export default function LoginPage() {
                     style={{ fontSize: 20 }}
                     autoFocus
                   />
+                </div>
+
+                {/* Recordar dispositivo (MUESTRA AQUÍ) */}
+                <div className="flex items-center justify-center gap-2 -mt-2">
+                  <input
+                    type="checkbox"
+                    id="rememberMe2FA"
+                    name="rememberMe"
+                    checked={form.rememberMe}
+                    onChange={handleChange}
+                    className="w-4 h-4 rounded border-slate-300 text-sky-500 focus:ring-sky-500 cursor-pointer"
+                  />
+                  <label 
+                    htmlFor="rememberMe2FA" 
+                    className="text-[11px] uppercase tracking-wider font-jetbrains cursor-pointer select-none"
+                    style={{ color: 'var(--ui-text-muted)' }}
+                  >
+                    Recordar en este dispositivo
+                  </label>
                 </div>
 
                 {error && (

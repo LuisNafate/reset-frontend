@@ -212,7 +212,7 @@ export default function NotificationBell({ variant = 'blue' }: Props) {
       {open && (
         <div
           ref={panelRef}
-          className="absolute right-0 top-full mt-2 w-72 max-w-[min(288px,calc(100vw-1rem))] rs-surface-card border rs-border rounded-xl shadow-xl z-50 overflow-hidden"
+          className="absolute right-0 md:left-full md:right-auto md:ml-2 top-0 mt-0 w-72 max-w-[min(288px,calc(100vw-1rem))] rs-surface-card border rs-border rounded-xl shadow-xl z-50 overflow-hidden"
         >
           {/* Header del panel */}
           <div className="flex items-center justify-between px-4 py-3 border-b rs-border-subtle">

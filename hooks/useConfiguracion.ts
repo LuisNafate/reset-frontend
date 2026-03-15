@@ -16,7 +16,7 @@ export interface SponsorshipState {
 }
 
 export function useConfiguracion() {
-  const { user, updateUser, clearAuth } = useAuth();
+  const { user, updateUser, clearAuth, refreshProfile } = useAuth();
   const router = useRouter();
 
   // Precarga el nombre del usuario autenticado
@@ -46,6 +46,20 @@ export function useConfiguracion() {
   useEffect(() => {
     if (user?.addiction?.custom_name) setAddictionType(user.addiction.custom_name);
   }, [user?.addiction?.custom_name]);
+
+  // Sincronizar estado de apadrinamiento con el perfil del usuario
+  useEffect(() => {
+    if (user?.sponsor) {
+      setSponsorshipState({
+        status: 'ACTIVE',
+        sponsorshipId: user.sponsor.sponsorshipId,
+      });
+    } else {
+      // Si no hay sponsor en el usuario, pero tampoco estamos en carga inicial,
+      // reseteamos a NONE (a menos que estemos esperando una solicitud PENDING local)
+      setSponsorshipState((prev) => (prev.status === 'ACTIVE' ? { status: 'NONE' } : prev));
+    }
+  }, [user?.sponsor]);
 
   // Cargar contactos de emergencia (= pares de apoyo en la UI)
   useEffect(() => {
@@ -148,6 +162,7 @@ export function useConfiguracion() {
         status: 'PENDING',
         sponsorshipId: res.sponsorship?.id,
       });
+      await refreshProfile();
       setSponsorCode("");
     } catch (err) {
       setSponsorshipError(err instanceof Error ? err.message : "No se pudo enviar la solicitud.");
@@ -163,6 +178,7 @@ export function useConfiguracion() {
     setSponsorshipError(null);
     try {
       await terminateSponsorship(sponsorshipState.sponsorshipId);
+      await refreshProfile();
       setSponsorshipState({ status: 'NONE' });
     } catch (err) {
       setSponsorshipError(err instanceof Error ? err.message : "No se pudo terminar el apadrinamiento.");

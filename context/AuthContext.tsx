@@ -41,6 +41,8 @@ interface AuthCtx {
    * un flash de "no autenticado" en móvil cuando el token sí existe en storage.
    */
   isRestoring: boolean;
+  /** Forza la recarga del perfil desde el servidor */
+  refreshProfile: () => Promise<void>;
 }
 
 // ─── Contexto ────────────────────────────────────────────────────────────────
@@ -118,8 +120,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const refreshProfile = async () => {
+    try {
+      const profile = await getProfile();
+      setUser(profile);
+      storageSave(STORAGE_KEYS.USER, JSON.stringify(profile)).catch(() => {});
+    } catch (err) {
+      console.error("Error al refrescar perfil:", err);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, saveAuth, clearAuth, updateUser, isRestoring }}>
+    <AuthContext.Provider value={{ user, saveAuth, clearAuth, updateUser, isRestoring, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );
