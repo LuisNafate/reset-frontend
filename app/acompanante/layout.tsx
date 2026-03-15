@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import CompanionSidebar from "@/components/features/dashboard/CompanionSidebar";
@@ -24,6 +24,11 @@ export default function AcompananteLayout({
   const initials = user?.name
     ? user.name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase()).join("")
     : "P";
+
+  // Al navegar en móvil, cerramos el menú para evitar overlays persistentes.
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
 
   return (
     <div className="flex h-fill bg-(--surface-main)">

@@ -76,9 +76,9 @@ export default function CompanionSidebar({ isOpen = false, onClose }: CompanionS
   return (
     <aside
       className={
-        `fixed left-0 top-0 h-full w-[288px] flex flex-col border-r border-slate-100 dark:border-slate-800/60 bg-white dark:bg-[#0f1e2e] z-30
+        `fixed left-0 top-0 h-full w-[288px] flex flex-col border-r border-slate-100 dark:border-slate-800/60 bg-white dark:bg-[#0f1e2e] z-50
         transition-transform duration-300 ease-in-out
-        ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`
+        ${isOpen ? "translate-x-0 pointer-events-auto" : "-translate-x-full pointer-events-none"} md:translate-x-0 md:pointer-events-auto`
       }
       style={{ boxShadow: "1px 0 0 0 #f1f5f9" }}
     >
@@ -127,6 +127,8 @@ export default function CompanionSidebar({ isOpen = false, onClose }: CompanionS
             <Link
               key={item.href}
               href={item.href}
+              onClick={onClose}
+              aria-current={active ? "page" : undefined}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all relative group ${
                 active
                   ? "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20"
