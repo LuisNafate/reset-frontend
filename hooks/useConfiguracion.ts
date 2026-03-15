@@ -6,6 +6,7 @@ import { getContacts, addContact } from "@/lib/api/emergency";
 import { requestSponsorship, terminateSponsorship } from "@/lib/api/sponsorship";
 import { useAuth } from "@/context/AuthContext";
 import { deleteAccount, relapse, getProfile } from "@/lib/api/auth";
+import { updateProfile } from "@/lib/api/profile";
 import type { SupportPeer } from "@/types";
 
 // Estado del sponsorship del adicto (PENDING | ACTIVE | NONE)

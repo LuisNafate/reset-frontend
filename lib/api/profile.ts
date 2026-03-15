@@ -15,11 +15,13 @@ export async function getProfile(): Promise<{ username: string; addictionType: s
 }
 
 /**
- * El endpoint PATCH /profile no existe en la API actual.
- * No-op hasta que el backend lo implemente.
+ * Actualiza el perfil de usuario (nombre).
  */
-export async function updateProfile(_data: ProfileUpdateData): Promise<void> {
-  void _data;
+export async function updateProfile(data: { name: string }): Promise<void> {
+  await apiRequest('/auth/profile', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
 }
 
 /** @deprecated Usar emergency.ts → getContacts() */
