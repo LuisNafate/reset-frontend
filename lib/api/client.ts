@@ -10,8 +10,19 @@ const REQUEST_TIMEOUT_MS = 15_000;
 
 let authToken: string | null = null;
 
+/**
+ * Establece el token en memoria para peticiones síncronas y lo guarda en cookies
+ * para que el Middleware de Next.js pueda leerlo.
+ */
 export function setToken(token: string | null) {
   authToken = token;
+  if (typeof window !== 'undefined') {
+    if (token) {
+      document.cookie = `reset_token=${token}; path=/; max-age=2592000; samesite=lax`;
+    } else {
+      document.cookie = `reset_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+    }
+  }
 }
 
 export function getToken(): string | null {

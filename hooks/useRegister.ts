@@ -24,6 +24,7 @@ export function useRegister() {
   const [addictionClassification, setAddictionClassification] = useState<"conductual" | "sustancia" | "">("")
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -103,7 +104,7 @@ export function useRegister() {
         ...(role === "user" && addictionLabel ? { addictionName: addictionLabel } : {}),
         ...(role === "user" && classificationLabel ? { classification: classificationLabel } : {}),
       });
-      router.push("/login");
+      setIsSuccess(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al crear la cuenta");
     } finally {
@@ -127,6 +128,7 @@ export function useRegister() {
     setAddictionClassification,
     showConfirmPassword,
     setShowConfirmPassword,
+    isSuccess,
     handleChange,
     handleNextStep,
     handleSubmit,

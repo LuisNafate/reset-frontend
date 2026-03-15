@@ -235,41 +235,14 @@ export default function MiCuentaPage() {
                     {supportedUser.status}
                   </span>
                   {activeSponsorshipId && (
-                    showTerminateConfirm ? (
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="text-[11px] tracking-[0.5px] rs-text-caption"
-                          style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                        >
-                          ¿Terminar?
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => { handleTerminateSponsorship(); setShowTerminateConfirm(false); }}
-                          className="text-[11px] tracking-[1px] uppercase text-white bg-red-500 hover:bg-red-600 px-2 py-0.5 rounded transition-colors"
-                          style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                        >
-                          Sí
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setShowTerminateConfirm(false)}
-                          className="text-[11px] tracking-[1px] uppercase rs-text-muted hover:rs-text-body transition-colors"
-                          style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                        >
-                          No
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => setShowTerminateConfirm(true)}
-                        className="text-[11px] tracking-[1px] uppercase text-red-400 hover:text-red-500 transition-colors"
-                        style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                      >
-                        Terminar
-                      </button>
-                    )
+                    <button
+                      type="button"
+                      onClick={() => setShowTerminateConfirm(true)}
+                      className="text-[11px] tracking-[1px] uppercase text-red-400 hover:text-red-500 transition-colors px-3 py-1.5 border border-red-100 dark:border-red-900/30 rounded-sm hover:bg-red-50 dark:hover:bg-red-950/20"
+                      style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                    >
+                      Terminar
+                    </button>
                   )}
                 </div>
               </div>
@@ -277,50 +250,6 @@ export default function MiCuentaPage() {
           )}
         </div>
 
-        {/* Alert preferences */}
-        <div className="border border-(--ui-border) bg-(--surface-card) rounded-sm p-8 mb-6">
-          <div className="flex items-center gap-2 mb-5">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0d9488" strokeWidth="1.5">
-              <path d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <p
-              className="text-[11px] tracking-[2px] uppercase text-teal-600"
-              style={{ fontFamily: "'JetBrains Mono', monospace" }}
-            >
-              Preferencias de Alerta
-            </p>
-          </div>
-
-          <p
-            className="text-[13px] rs-text-caption mb-5 leading-relaxed"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            Elige cómo quieres recibir notificaciones cuando tu ahijado active el protocolo de emergencia.
-          </p>
-
-          {[
-            { label: "Notificaciones por Email", sub: "Recibe un correo cuando se active la alarma.", field: "emailAlerts" as const, checked: profile.emailAlerts },
-            { label: "Notificaciones por SMS", sub: `Mensaje al número ${profile.phone}.`, field: "smsAlerts" as const, checked: profile.smsAlerts },
-          ].map(({ label, sub, checked, field }) => (
-            <div key={label} className="flex items-center gap-4 py-4 border-t border-slate-50 dark:border-slate-700/20">
-              <div className="flex-1">
-                <p
-                  className="text-[11px] tracking-[1.5px] uppercase rs-text-muted mb-0.5"
-                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                >
-                  {label}
-                </p>
-                <p
-                  className="text-[11px] rs-text-caption"
-                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                >
-                  {sub}
-                </p>
-              </div>
-              <Toggle checked={checked} onChange={(v) => handleChange(field, v)} color="teal" />
-            </div>
-          ))}
-        </div>
 
         {/* Footer */}
         <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-700/30">
@@ -338,6 +267,42 @@ export default function MiCuentaPage() {
             Cerrar Sesión
           </button>
         </div>
+
+        {/* Modal de Confirmación de Término de Apadrinamiento */}
+        {showTerminateConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+            <div className="bg-(--surface-card) border border-(--ui-border) rounded-2xl max-w-sm w-full p-8 shadow-2xl animate-scale-in">
+              <div className="w-12 h-12 rounded-full bg-red-50 dark:bg-red-950/30 flex items-center justify-center mb-6 mx-auto">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2">
+                  <path d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <h3 className="text-xl text-center rs-text-heading mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>¿Terminar apadrinamiento?</h3>
+              <p className="text-[12px] text-center rs-text-muted mb-8 leading-relaxed" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                Se terminará la conexión con tu ahijado de inmediato. Dejarás de recibir sus alertas y ver su progreso.
+              </p>
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={() => {
+                    handleTerminateSponsorship();
+                    setShowTerminateConfirm(false);
+                  }}
+                  className="w-full h-12 bg-red-500 hover:bg-red-600 text-white rounded-xl text-[11px] tracking-[2px] uppercase transition-all shadow-lg shadow-red-500/20"
+                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                >
+                  Sí, terminar conexión
+                </button>
+                <button
+                  onClick={() => setShowTerminateConfirm(false)}
+                  className="w-full h-12 border border-(--ui-border) rs-text-body rs-hover-card rounded-xl text-[11px] tracking-[2px] uppercase transition-all"
+                  style={{ fontFamily: "'JetBrains Mono', monospace" }}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -131,6 +131,7 @@ export default function RegisterPage() {
     addictionClassification,
     isLoading,
     error,
+    isSuccess,
     setRole,
     setSelectedAddiction,
     setOtherDescription,
@@ -141,6 +142,63 @@ export default function RegisterPage() {
     handleNextStep,
     handleSubmit,
   } = useRegister();
+
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden safe-top-padding login-bg">
+        <div className="relative z-10 w-full max-w-105 px-4 py-8 animate-fade-in-up">
+          <div className="rounded-2xl overflow-hidden login-card">
+            <div
+              aria-hidden="true"
+              style={{
+                height: 2,
+                background: "linear-gradient(90deg, transparent 0%, #7dd3fc 35%, #0ea5e9 50%, #7dd3fc 65%, transparent 100%)",
+              }}
+            />
+            <div className="px-6 py-10 sm:px-9 text-center">
+              <div
+                className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 bg-sky-50 dark:bg-sky-900/30 text-sky-500"
+                style={{ border: "1px solid #bae6fd" }}
+              >
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+
+              <h2 className="text-2xl italic font-playfair mb-4" style={{ color: 'var(--ui-text-heading)' }}>
+                ¡Casi listo!
+              </h2>
+
+              <p className="text-[13px] font-jetbrains rs-text-muted mb-8 leading-relaxed">
+                Hemos enviado un enlace de verificación a <span className="text-sky-500 font-bold">{form.email}</span>. 
+                Por favor, revisa tu bandeja de entrada (y la carpeta de spam) para confirmar tu cuenta.
+              </p>
+
+              <div
+                className="mx-auto mb-8"
+                style={{
+                  height: 1,
+                  width: 52,
+                  background: "linear-gradient(90deg, transparent, #7dd3fc, transparent)",
+                }}
+              />
+
+              <Link
+                href="/login"
+                className="futuristic-btn w-full h-13 text-white rounded-xl flex items-center justify-center gap-3 font-jetbrains"
+                style={{ fontSize: 11, letterSpacing: "2.5px", textTransform: "uppercase" }}
+              >
+                Ir al Inicio de Sesión
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
