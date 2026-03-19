@@ -6,44 +6,37 @@ const SECCIONES = [
   {
     titulo: "Bienvenida al Espacio",
     contenido:
-      // TODO — redactar texto de bienvenida e intención del foro
-      "[TODO — Descripción de qué es la comunidad ReSet, su propósito y espíritu de acompañamiento mutuo.]",
+      "La comunidad ReSet es un espacio de acompañamiento entre personas que atraviesan procesos reales de recuperación. Aquí compartimos avances, dudas y momentos difíciles desde la empatía, sin juicios y con foco en el cuidado mutuo.",
   },
   {
     titulo: "Normas de Respeto",
     contenido:
-      // TODO — listar normas de convivencia concretas
-      "[TODO — Listado de normas: no juicios, lenguaje respetuoso, no compartir información personal sin consentimiento, etc.]",
+      "Mantén siempre un trato respetuoso. No se permiten ataques personales, burlas, humillaciones ni presión hacia otros usuarios. Evita compartir datos personales de terceros sin su consentimiento y cuida el lenguaje en todo momento.",
   },
   {
     titulo: "Qué Publicar",
     contenido:
-      // TODO — describir tipos de contenido aceptables
-      "[TODO — Ejemplos de publicaciones bienvenidas: experiencias personales, hitos de sobriedad, pedidos de apoyo, reflexiones.]",
+      "Puedes publicar experiencias personales, hitos de sobriedad, estrategias que te funcionaron, reflexiones del día y solicitudes de apoyo emocional. Busca que tus publicaciones aporten acompañamiento y claridad a la conversación.",
   },
   {
     titulo: "Qué Evitar",
     contenido:
-      // TODO — detallar conductas no permitidas
-      "[TODO — Conductas no permitidas: promoción de consumo, lenguaje agresivo, spam, publicidad, información médica sin respaldo.]",
+      "No está permitido promover consumo, compartir instrucciones de riesgo, difundir spam o publicidad, ni publicar contenido agresivo o discriminatorio. Tampoco uses el foro para diagnósticos médicos o recomendaciones profesionales sin respaldo.",
   },
   {
     titulo: "Anonimato y Privacidad",
     contenido:
-      // TODO — política de anonimato y protección de identidad
-      "[TODO — Cómo funciona el modo anónimo, qué datos se muestran, cómo reportar violaciones de privacidad.]",
+      "ReSet permite publicar de forma anónima para proteger tu identidad. Evita incluir información que te identifique a ti o a otras personas (teléfonos, direcciones, correos, redes sociales). Si detectas una vulneración de privacidad, repórtala de inmediato.",
   },
   {
     titulo: "Sistema de Denuncias",
     contenido:
-      // TODO — explicar el proceso de denuncia de publicaciones
-      "[TODO — Cómo funciona el botón de denuncia, qué sucede tras una denuncia, tiempos de revisión.]",
+      "Si una publicación incumple estas pautas, usa la opción de denuncia desde el contenido. El equipo de moderación revisa cada caso y puede ocultar contenido, emitir advertencias o restringir cuentas según la gravedad.",
   },
   {
     titulo: "Contacto con el Equipo",
     contenido:
-      // TODO — información de contacto para soporte de comunidad
-      "[TODO — Canal de contacto para reportar problemas graves o solicitar ayuda inmediata.]",
+      "Para situaciones delicadas o reportes urgentes, escríbenos desde la sección de contacto dentro de la app. Si estás en una emergencia inmediata, prioriza comunicarte con tus contactos de confianza o servicios locales de ayuda.",
   },
 ];
 

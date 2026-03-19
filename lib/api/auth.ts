@@ -1,6 +1,45 @@
 import { User, AddictionData } from '@/types';
 import { apiRequest, setToken } from './client';
 
+type ApiRecord = Record<string, unknown>;
+
+function isRecord(value: unknown): value is ApiRecord {
+  return typeof value === 'object' && value !== null;
+}
+
+function asRecord(value: unknown): ApiRecord {
+  return isRecord(value) ? value : {};
+}
+
+function unwrapData(value: unknown): unknown {
+  if (!isRecord(value) || !('data' in value)) return value;
+  const data = (value as { data?: unknown }).data;
+  return data ?? value;
+}
+
+function asString(value: unknown, fallback = ''): string {
+  return typeof value === 'string' ? value : fallback;
+}
+
+function asNullableString(value: unknown): string | null {
+  return typeof value === 'string' ? value : null;
+}
+
+function parseRole(value: unknown): 'ADICTO' | 'PADRINO' {
+  return value === 'PADRINO' ? 'PADRINO' : 'ADICTO';
+}
+
+function mapBasicUser(userRaw: unknown): Pick<User, 'id' | 'name' | 'email' | 'role' | 'sponsorCode'> {
+  const user = asRecord(userRaw);
+  return {
+    id: asString(user.id),
+    name: asString(user.name),
+    email: asString(user.email),
+    role: parseRole(user.role),
+    sponsorCode: asNullableString(user.sponsorCode ?? user.sponsor_code),
+  };
+}
+
 // ─── Payloads ────────────────────────────────────────────────────────────────
 
 export interface RegisterPayload {
@@ -70,7 +109,7 @@ export async function register(payload: RegisterPayload): Promise<void> {
  * Autentica al usuario y devuelve el token y datos básicos.
  */
 export async function login(payload: LoginPayload): Promise<AuthBasicResult> {
-  const res: any = await apiRequest('/auth/login', {
+  const res = await apiRequest<unknown>('/auth/login', {
     method: 'POST',
     body: JSON.stringify({
       email: payload.email,
@@ -78,32 +117,26 @@ export async function login(payload: LoginPayload): Promise<AuthBasicResult> {
       rememberMe: payload.rememberMe,
     }),
   });
-  const data = res?.data ?? res;
+  const data = asRecord(unwrapData(res));
+  const root = asRecord(res);
+  const responseCode = asString(data.code ?? root.code);
 
-  if (data?.code === '2FA_REQUIRED' || res?.code === '2FA_REQUIRED') {
+  if (responseCode === '2FA_REQUIRED') {
     return {
       accessToken: '',
       user: { id: '', name: '', email: '', role: 'ADICTO', sponsorCode: null },
       code: '2FA_REQUIRED',
-      mfaToken: data.mfaToken || res.mfaToken,
+      mfaToken: asString(data.mfaToken ?? root.mfaToken),
     };
   }
 
-  const token: string = data?.accessToken ?? '';
+  const token = asString(data.accessToken);
 
   if (token) setToken(token);
 
-  const apiUser = data?.user ?? {};
-
   return {
     accessToken: token,
-    user: {
-      id: apiUser.id ?? '',
-      name: apiUser.name ?? '',
-      email: apiUser.email ?? '',
-      role: (apiUser.role === 'PADRINO' ? 'PADRINO' : 'ADICTO') as 'ADICTO' | 'PADRINO',
-      sponsorCode: apiUser.sponsorCode ?? apiUser.sponsor_code ?? null,
-    },
+    user: mapBasicUser(data.user),
   };
 }
 
@@ -111,7 +144,7 @@ export async function login(payload: LoginPayload): Promise<AuthBasicResult> {
  * Verifica el código OTP para completar el login con 2FA.
  */
 export async function verify2FA(payload: Verify2FAPayload): Promise<AuthBasicResult> {
-  const res: any = await apiRequest('/auth/verify-2fa', {
+  const res = await apiRequest<unknown>('/auth/verify-2fa', {
     method: 'POST',
     body: JSON.stringify({
       mfaToken: payload.mfaToken,
@@ -120,22 +153,14 @@ export async function verify2FA(payload: Verify2FAPayload): Promise<AuthBasicRes
     }),
   });
 
-  const data = res?.data ?? res;
-  const token: string = data?.accessToken ?? '';
+  const data = asRecord(unwrapData(res));
+  const token = asString(data.accessToken);
 
   if (token) setToken(token);
 
-  const apiUser = data?.user ?? {};
-
   return {
     accessToken: token,
-    user: {
-      id: apiUser.id ?? '',
-      name: apiUser.name ?? '',
-      email: apiUser.email ?? '',
-      role: (apiUser.role === 'PADRINO' ? 'PADRINO' : 'ADICTO') as 'ADICTO' | 'PADRINO',
-      sponsorCode: apiUser.sponsorCode ?? apiUser.sponsor_code ?? null,
-    },
+    user: mapBasicUser(data.user),
   };
 }
 
@@ -143,35 +168,50 @@ export async function verify2FA(payload: Verify2FAPayload): Promise<AuthBasicRes
  * Obtiene el perfil completo del usuario.
  */
 export async function getProfile(): Promise<AuthProfileResult> {
-  const res: any = await apiRequest('/auth/profile', {
+  const res = await apiRequest<unknown>('/auth/profile', {
     method: 'GET',
   });
 
-  const data = res?.data ?? res;
+  const data = asRecord(unwrapData(res));
+  const addictionRaw = asRecord(data.addiction);
+  const sponsorRaw = asRecord(data.sponsor);
+
+  const addiction: AddictionData | null = isRecord(data.addiction)
+    ? {
+        custom_name: asString(addictionRaw.custom_name ?? addictionRaw.customName),
+        classification: asString(addictionRaw.classification),
+        is_active: Boolean(addictionRaw.is_active ?? addictionRaw.isActive),
+        registered_at: asString(addictionRaw.registered_at ?? addictionRaw.registeredAt),
+      }
+    : null;
+
+  const sponsorshipId =
+    asNullableString(sponsorRaw.sponsorshipId) ??
+    asNullableString(sponsorRaw.sponsorship_id) ??
+    undefined;
+
+  const sponsor = isRecord(data.sponsor)
+    ? {
+        id: asString(sponsorRaw.id),
+        name: asString(sponsorRaw.name),
+        email: asString(sponsorRaw.email),
+        avatarUrl: asNullableString(sponsorRaw.avatarUrl ?? sponsorRaw.avatar_url),
+        sponsorshipId,
+        status: sponsorRaw.status === 'PENDING' ? 'PENDING' as const : 'ACTIVE' as const,
+      }
+    : null;
   
   // Mapear la respuesta del backend al objeto User unificado
   return {
-    id: data.id,
-    name: data.name,
-    email: data.email,
-    role: (data.role === 'PADRINO' ? 'PADRINO' : 'ADICTO') as 'ADICTO' | 'PADRINO',
-    sponsorCode: data.sponsorCode ?? data.sponsor_code ?? null,
-    avatarUrl: data.avatarUrl ?? data.avatar_url ?? null,
-    createdAt: data.createdAt ?? data.created_at ?? '',
-    addiction: data.addiction ? {
-      custom_name: data.addiction.custom_name ?? data.addiction.customName,
-      classification: data.addiction.classification,
-      is_active: data.addiction.is_active ?? data.addiction.isActive,
-      registered_at: data.addiction.registered_at ?? data.addiction.registeredAt,
-    } : null,
-    sponsor: data.sponsor ? {
-      id: data.sponsor.id,
-      name: data.sponsor.name,
-      email: data.sponsor.email,
-      avatarUrl: data.sponsor.avatarUrl ?? data.sponsor.avatar_url ?? null,
-      sponsorshipId: data.sponsor.sponsorshipId ?? data.sponsor.sponsorship_id ?? null,
-      status: data.sponsor.status ?? 'ACTIVE',
-    } : null,
+    id: asString(data.id),
+    name: asString(data.name),
+    email: asString(data.email),
+    role: parseRole(data.role),
+    sponsorCode: asNullableString(data.sponsorCode ?? data.sponsor_code),
+    avatarUrl: asNullableString(data.avatarUrl ?? data.avatar_url),
+    createdAt: asString(data.createdAt ?? data.created_at),
+    addiction,
+    sponsor,
   };
 }
 
@@ -220,22 +260,29 @@ export async function deleteAccount(): Promise<void> {
  * @param classification Categoría de la adicción (opcional).
  */
 export async function relapse(addictionName: string, classification?: string): Promise<{ message: string; role: string }> {
-  const res: any = await apiRequest('/auth/relapse', {
+  const res = await apiRequest<unknown>('/auth/relapse', {
     method: 'POST',
     body: JSON.stringify({ addictionName, classification }),
   });
-  return res?.data ?? res;
+  const data = asRecord(unwrapData(res));
+  return {
+    message: asString(data.message, 'Relapso reportado.'),
+    role: asString(data.role),
+  };
 }
 /**
  * Reactiva una cuenta desactivada.
  */
 export async function reactivate(payload: LoginPayload): Promise<{ message: string }> {
-  const res: any = await apiRequest('/auth/reactivate', {
+  const res = await apiRequest<unknown>('/auth/reactivate', {
     method: 'POST',
     body: JSON.stringify({
       email: payload.email,
       password: payload.password,
     }),
   });
-  return res?.data ?? res;
+  const data = asRecord(unwrapData(res));
+  return {
+    message: asString(data.message, 'Cuenta reactivada.'),
+  };
 }

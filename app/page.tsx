@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { FaFacebookF, FaInstagram, FaTiktok, FaXTwitter } from "react-icons/fa6";
+import { FaFacebookF, FaInstagram } from "react-icons/fa6";
+import { FaYoutube } from "react-icons/fa";
 import { isNativePlatform } from "@/lib/platform";
 
 /* ─── Smooth Scroll (lento y fluido) ────────────────────────────────────── */
@@ -96,12 +97,10 @@ function AppMockup() {
       aria-hidden="true"
       style={{ paddingBottom: "32px", paddingRight: "72px" }}
     >
-      {/* ── Ventana web (principal) ── */}
       <div
         className="landing-hero-mockup relative bg-white border border-[#e2e8f0] rounded-xl overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.12),0_30px_60px_-30px_rgba(0,0,0,0.15)]"
         style={{ aspectRatio: "16/10" }}
       >
-        {/* Chrome bar */}
         <div className="flex gap-2 items-center h-8 px-4 bg-[#f8fafc] border-b border-[#e2e8f0]">
           <span className="size-2.5 rounded-full bg-[#fca5a5]" />
           <span className="size-2.5 rounded-full bg-[#fcd34d]" />
@@ -110,14 +109,11 @@ function AppMockup() {
             reset-app.tech/dashboard
           </span>
         </div>
-        {/* Layout */}
         <div className="flex gap-4 p-5 h-[calc(100%-32px)]">
-          {/* Sidebar */}
           <div className="flex flex-col gap-3 w-[90px] shrink-0">
             <div className="bg-[#f8fafc] border border-[#f1f5f9] rounded h-[66px]" />
             <div className="bg-[#f8fafc] border border-[#f1f5f9] rounded flex-1" />
           </div>
-          {/* Main content */}
           <div className="flex flex-col gap-4 flex-1 min-w-0">
             <div className="flex items-center justify-between">
               <div>
@@ -130,7 +126,6 @@ function AppMockup() {
               </div>
               <div className="size-8 rounded-full bg-[#f1f5f9]" />
             </div>
-            {/* Planta card */}
             <div className="flex-1 bg-[#f8fafc] border border-[#f1f5f9] rounded flex items-center justify-center relative overflow-hidden">
               <svg width="60" height="64" viewBox="0 0 56 60" fill="none" className="opacity-80">
                 <path d="M28 52 Q28 36 28 24" stroke="#0d9488" strokeWidth="2" strokeLinecap="round" />
@@ -152,16 +147,13 @@ function AppMockup() {
         </div>
       </div>
 
-      {/* ── Teléfono móvil (secundario, superpuesto abajo-derecha) ── */}
       <div
         className="landing-hero-mockup-mobile absolute right-0 bottom-0 bg-white border border-[#e2e8f0] rounded-[18px] overflow-hidden shadow-[0_20px_48px_-8px_rgba(0,0,0,0.18)]"
         style={{ width: "88px", aspectRatio: "9/19" }}
       >
-        {/* Notch */}
         <div className="flex justify-center pt-2 pb-1 bg-[#f8fafc] border-b border-[#f1f5f9]">
           <div className="w-[28px] h-[5px] bg-[#e2e8f0] rounded-full" />
         </div>
-        {/* Screen */}
         <div className="flex flex-col gap-1.5 p-2 bg-white h-[calc(100%-24px)]">
           <div className="flex items-center gap-1 mb-0.5">
             <div className="size-4 rounded-full bg-[#f1f5f9] shrink-0" />
@@ -183,7 +175,6 @@ function AppMockup() {
             <div className="flex-1 h-[18px] bg-[#f8fafc] border border-[#f1f5f9] rounded" />
             <div className="flex-1 h-[18px] bg-[#f8fafc] border border-[#f1f5f9] rounded" />
           </div>
-          {/* Bottom nav */}
           <div className="flex justify-around pt-1 border-t border-[#f1f5f9]">
             {["#0d9488", "#cbd5e1", "#cbd5e1"].map((c, i) => (
               <div key={i} className="size-2 rounded-sm" style={{ background: c }} />
@@ -192,7 +183,6 @@ function AppMockup() {
         </div>
       </div>
 
-      {/* ── Badge flotante — días ── */}
       <div className="landing-hero-badge absolute -bottom-2 left-0 bg-white border border-[#e2e8f0] rounded-xl px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.1)] flex items-center gap-3">
         <div className="flex flex-col items-center">
           <span className="font-playfair text-2xl text-[#0f172a] leading-none">47</span>
@@ -224,7 +214,6 @@ function CommunityMockup() {
           <h4 className="font-playfair text-[20px] text-[#0f172a]">Comunidad ReSet</h4>
           <span className="font-jetbrains text-[11px] text-[#94a3b8]">En línea: 1,402</span>
         </div>
-        {/* Mensaje */}
         <div className="flex gap-4 mb-6">
           <div className="size-10 rounded-full bg-[#f1f5f9] shrink-0" />
           <div className="flex-1">
@@ -243,7 +232,6 @@ function CommunityMockup() {
             </div>
           </div>
         </div>
-        {/* Input reply mockup */}
         <div className="flex gap-4 bg-[rgba(248,250,252,0.3)] border-l-2 border-[#0d9488] pl-4 pr-4 py-4">
           <div className="size-10 rounded-full bg-[#f1f5f9] shrink-0" />
           <div className="flex-1">
@@ -325,7 +313,6 @@ function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-8">
             {NAV_ITEMS.map(({ label, href }) => (
               <a
@@ -346,7 +333,6 @@ function Navbar() {
             >
               Entrar
             </Link>
-            {/* Hamburger — solo mobile */}
             <button
               className="md:hidden flex flex-col justify-center gap-[5px] p-2 ml-1"
               onClick={() => setOpen(true)}
@@ -360,7 +346,6 @@ function Navbar() {
         </div>
       </header>
 
-      {/* Overlay backdrop */}
       <div
         onClick={() => setOpen(false)}
         aria-hidden="true"
@@ -368,7 +353,6 @@ function Navbar() {
         style={{ opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none" }}
       />
 
-      {/* Sidebar drawer */}
       <aside
         className="md:hidden fixed top-0 right-0 h-full w-72 z-[70] bg-white shadow-2xl flex flex-col"
         style={{
@@ -377,7 +361,6 @@ function Navbar() {
         }}
         aria-label="Menú de navegación"
       >
-        {/* Sidebar header */}
         <div className="flex items-center justify-between px-6 h-[60px] border-b border-[#f1f5f9] shrink-0">
           <span className="font-playfair italic text-[20px] text-[#0f172a]">ReSet</span>
           <button
@@ -391,7 +374,6 @@ function Navbar() {
           </button>
         </div>
 
-        {/* Nav items */}
         <nav className="flex flex-col flex-1 py-4 px-4 overflow-y-auto">
           {NAV_ITEMS.map(({ label, href }, i) => (
             <a
@@ -414,7 +396,6 @@ function Navbar() {
           ))}
         </nav>
 
-        {/* CTA */}
         <div className="px-6 py-6 border-t border-[#f1f5f9] shrink-0">
           <Link
             href="/login"
@@ -499,7 +480,6 @@ function HeroSection() {
       }}
     >
       <div className="max-w-[1280px] mx-auto px-4 sm:px-8 py-12 sm:py-24 flex items-center gap-16 w-full">
-        {/* Copy */}
         <div className="flex-1 min-w-0 flex flex-col gap-6">
           <p className="landing-hero-label font-jetbrains text-[12px] uppercase tracking-[5px] text-[#0d9488]">
             — Tu espacio de acompañamiento
@@ -532,7 +512,6 @@ function HeroSection() {
               <span>Crear cuenta</span>
             </Link>
           </div>
-          {/* Indicador multiplataforma */}
           <div className="landing-hero-ctas flex items-center gap-3 pt-1">
             <span className="font-jetbrains text-[11px] text-[#94a3b8] uppercase tracking-[2px]">
               Disponible en web y móvil
@@ -546,7 +525,6 @@ function HeroSection() {
           </div>
         </div>
 
-        {/* Mockup visual */}
         <div className="hidden lg:flex flex-1 justify-end items-center min-w-0">
           <AppMockup />
         </div>
@@ -705,7 +683,6 @@ function HerbarioSection() {
 
   return (
     <section id="herramientas" className="py-24 bg-[#0f172a] overflow-hidden relative">
-      {/* Formas decorativas */}
       <div className="absolute inset-0 opacity-5 pointer-events-none" aria-hidden="true">
         <div className="absolute top-8 left-12 w-32 h-32 border border-white rounded-full" />
         <div className="absolute bottom-8 right-24 w-48 h-48 border border-white rounded-full" />
@@ -771,7 +748,6 @@ function MobileSection() {
       id="movil"
       className="py-12 sm:py-20 bg-white border-y border-[#f1f5f9] overflow-hidden relative"
     >
-      {/* Fondo decorativo sutil */}
       <div
         className="absolute inset-0 pointer-events-none opacity-30"
         aria-hidden="true"
@@ -784,10 +760,8 @@ function MobileSection() {
       <div className="max-w-[1280px] mx-auto px-4 sm:px-8 relative">
         <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-20">
 
-          {/* Ícono de teléfono SVG */}
           <div className="reveal shrink-0 flex items-center justify-center">
             <div className="relative">
-              {/* Teléfono grande decorativo */}
               <svg
                 width="120"
                 height="200"
@@ -799,20 +773,15 @@ function MobileSection() {
                 <rect x="4" y="4" width="112" height="192" rx="20" fill="white" stroke="#e2e8f0" strokeWidth="2" />
                 <rect x="4" y="4" width="112" height="192" rx="20" stroke="#0d9488" strokeWidth="1.5" strokeDasharray="6 4" opacity="0.4" />
                 <rect x="12" y="28" width="96" height="144" rx="4" fill="#f8fafc" />
-                {/* Planta */}
                 <line x1="60" y1="140" x2="60" y2="100" stroke="#0d9488" strokeWidth="2.5" strokeLinecap="round" />
                 <path d="M60 122 Q50 115 45 105 Q53 104 60 116" fill="#0d9488" opacity="0.7" />
                 <path d="M60 116 Q70 109 75 99 Q67 100 60 112" fill="#0d9488" opacity="0.7" />
                 <ellipse cx="60" cy="143" rx="12" ry="4" fill="#e2e8f0" />
-                {/* Barra de progreso */}
                 <rect x="20" y="156" width="80" height="4" rx="2" fill="#e2e8f0" />
                 <rect x="20" y="156" width="60" height="4" rx="2" fill="#0d9488" />
-                {/* Notch */}
                 <rect x="44" y="10" width="32" height="6" rx="3" fill="#e2e8f0" />
-                {/* Home indicator */}
                 <rect x="48" y="186" width="24" height="3" rx="1.5" fill="#e2e8f0" />
               </svg>
-              {/* Pulso animado */}
               <div
                 className="absolute inset-[-8px] rounded-[28px] border border-[#0d9488] opacity-20 animate-pulse"
                 aria-hidden="true"
@@ -820,7 +789,6 @@ function MobileSection() {
             </div>
           </div>
 
-          {/* Texto */}
           <div className="flex-1 flex flex-col gap-5 reveal-right text-center lg:text-left">
             <p className="font-jetbrains text-[12px] uppercase tracking-[5px] text-[#0d9488]">
               — Acceso multiplataforma
@@ -854,7 +822,6 @@ function MobileSection() {
               ))}
             </ul>
 
-            {/* CTAs móvil */}
             <div className="flex flex-wrap items-center gap-4 pt-2 justify-center lg:justify-start">
               <Link
                 href="/download"
@@ -893,12 +860,10 @@ function ComunidadSection() {
       style={{ background: "rgba(248,250,252,0.5)" }}
     >
       <div className="max-w-[1280px] mx-auto px-4 sm:px-8 flex items-center gap-10 lg:gap-16 flex-col lg:flex-row">
-        {/* Mockup */}
         <div className="flex-1 min-w-0 flex justify-center">
           <CommunityMockup />
         </div>
 
-        {/* Texto */}
         <div className="flex-1 min-w-0 flex flex-col gap-6 reveal-right">
           <p className="font-jetbrains text-[12px] uppercase tracking-[5px] text-[#0d9488]">
             — Espacios de encuentro
@@ -952,7 +917,6 @@ function Footer() {
     <footer className="bg-white border-t border-[#f1f5f9] pt-12 sm:pt-24 pb-12">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12 mb-12">
-          {/* Brand */}
           <div className="md:col-span-1 flex flex-col gap-5">
             <div>
               <p className="font-playfair italic text-[24px] text-[#0f172a] leading-none">ReSet</p>
@@ -973,7 +937,6 @@ function Footer() {
               reset-app.tech
             </a>
             
-            {/* Social Icons */}
             <div className="flex gap-3 flex-wrap mt-2 justify-center md:justify-start">
               <a
                 href="https://www.instagram.com/resetapp.tech?igsh=MWFyMzYxOXZkM2IxYg=="
@@ -992,24 +955,16 @@ function Footer() {
               </a>
 
               <a
-                href="https://www.tiktok.com/@resetapp.tech"
+                href="https://youtube.com/@resetofficial51?si=EonF_O7K26Ghk-AL"
                 className="size-9 rounded-full border border-[#e2e8f0] text-[#94a3b8] hover:border-[#0d9488] hover:text-[#0d9488] transition-colors flex items-center justify-center"
-                aria-label="Síguenos en TikTok"
+                aria-label="Síguenos en YouTube"
               >
-                <FaTiktok size={18} aria-hidden="true" />
+                <FaYoutube size={18} aria-hidden="true" />
               </a>
 
-              <a
-                href="https://twitter.com/resetapp"
-                className="size-9 rounded-full border border-[#e2e8f0] text-[#94a3b8] hover:border-[#0d9488] hover:text-[#0d9488] transition-colors flex items-center justify-center"
-                aria-label="Síguenos en X (Twitter)"
-              >
-                <FaXTwitter size={18} aria-hidden="true" />
-              </a>
             </div>
           </div>
 
-          {/* Producto */}
           <div>
             <h5 className="font-jetbrains text-[11px] uppercase tracking-[1px] text-[#0f172a] mb-6">
               Producto
@@ -1029,7 +984,6 @@ function Footer() {
             </ul>
           </div>
 
-          {/* Compañía */}
           <div>
             <h5 className="font-jetbrains text-[11px] uppercase tracking-[1px] text-[#0f172a] mb-6">
               Compañía
@@ -1051,7 +1005,6 @@ function Footer() {
 
         </div>
 
-        {/* Bottom */}
         <div className="border-t border-[#f8fafc] pt-8 sm:pt-12 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="font-jetbrains text-[11px] uppercase tracking-[1px] text-[#94a3b8]">
             © 2026 Hanging Lines. Todos los derechos reservados.

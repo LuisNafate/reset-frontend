@@ -40,8 +40,8 @@ export function useNotifications(): UseNotificationsResult {
     try {
       const data = await getNotifications();
       setNotifications(Array.isArray(data) ? data : []);
-    } catch {
-      // Silencioso — el contador simplemente no se actualiza si falla
+    } catch (err) {
+      console.warn('No se pudieron cargar las notificaciones', err);
     } finally {
       setIsLoading(false);
     }
@@ -63,8 +63,8 @@ export function useNotifications(): UseNotificationsResult {
     );
     try {
       await markOneRead(id);
-    } catch {
-      // Si falla, la próxima recarga corregirá el estado
+    } catch (err) {
+      console.warn('No se pudo marcar notificación como leída', err);
     }
   }, []);
 
@@ -72,8 +72,8 @@ export function useNotifications(): UseNotificationsResult {
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
     try {
       await markAllRead();
-    } catch {
-      // Ídem
+    } catch (err) {
+      console.warn('No se pudieron marcar todas las notificaciones como leídas', err);
     }
   }, []);
 

@@ -45,7 +45,6 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,   // evita el zoom accidental en inputs (UX móvil)
   viewportFit: "cover",
 };
 

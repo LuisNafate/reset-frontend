@@ -43,7 +43,9 @@ export default function InicioPage() {
   useEffect(() => {
     getMyNotes()
       .then(setEncouragementNotes)
-      .catch(() => { /* silencious — no notes section visible */ })
+      .catch((err) => {
+        console.warn("No se pudieron cargar las notas de aliento", err);
+      })
       .finally(() => setNotesLoading(false));
   }, []);
   return (

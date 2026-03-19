@@ -6,48 +6,82 @@ import type { ForoPost, ForoCategory, ForoComment, CreateForoPostData } from '@/
 
 // ─── Helpers de normalización ────────────────────────────────────────────────
 
+type ApiRecord = Record<string, unknown>;
+
+function isRecord(value: unknown): value is ApiRecord {
+  return typeof value === 'object' && value !== null;
+}
+
+function unwrapData(value: unknown): unknown {
+  if (!isRecord(value) || !('data' in value)) return value;
+  const data = (value as { data?: unknown }).data;
+  return data ?? value;
+}
+
+function asString(value: unknown, fallback = ''): string {
+  return typeof value === 'string' ? value : fallback;
+}
+
+function asBoolean(value: unknown, fallback = false): boolean {
+  return typeof value === 'boolean' ? value : fallback;
+}
+
+function asNumber(value: unknown, fallback = 0): number {
+  return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+}
+
+function asStringArray(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [];
+}
+
 /** Convierte un post raw de la API al tipo ForoPost del UI. */
-function normalizePost(raw: any): ForoPost {
-  // La API devuelve: authorName, isAnonymous, reactionUps, commentCount
-  const isAnon = raw.isAnonymous ?? raw.is_anonymous ?? false;
+function normalizePost(raw: unknown): ForoPost {
+  const post = isRecord(raw) ? raw : {};
+  const user = isRecord(post.user) ? post.user : {};
+  const tags = asStringArray(post.tags);
+  const isAnon = asBoolean(post.isAnonymous, asBoolean(post.is_anonymous));
+
   return {
-    id: raw.id ?? raw._id ?? String(Date.now()),
-    title: raw.title ?? '',
+    id: asString(post.id, asString(post._id, String(Date.now()))),
+    title: asString(post.title),
     author: isAnon
       ? 'Anónimo'
-      : (raw.authorName ?? raw.user?.name ?? raw.author ?? 'Usuario'),
-    timeAgo: raw.createdAt
-      ? new Date(raw.createdAt).toLocaleDateString('es')
+      : asString(post.authorName, asString(user.name, asString(post.author, 'Usuario'))),
+    timeAgo: asString(post.createdAt)
+      ? new Date(asString(post.createdAt)).toLocaleDateString('es')
       : 'Reciente',
-    tags: raw.tags ?? [],
-    tagVariants: (raw.tags ?? []).map(() => 'default' as const),
-    content: raw.content ?? '',
-    likes: raw.reactionUps ?? raw.likes_count ?? raw.likes ?? 0,
-    comments: raw.commentCount ?? raw.comments_count ?? raw.comments ?? 0,
-    liked: raw.liked ?? false,
-    bookmarked: raw.bookmarked ?? false,
-    authorId: raw.authorId ?? '',
+    tags,
+    tagVariants: tags.map(() => 'default' as const),
+    content: asString(post.content),
+    likes: asNumber(post.reactionUps, asNumber(post.likes_count, asNumber(post.likes))),
+    comments: asNumber(post.commentCount, asNumber(post.comments_count, asNumber(post.comments))),
+    liked: asBoolean(post.liked),
+    bookmarked: asBoolean(post.bookmarked),
+    authorId: asString(post.authorId),
   };
 }
 
 /** Convierte un comentario raw al tipo ForoComment del UI. */
-function normalizeComment(raw: any, currentUserId?: string): ForoComment {
-  const isAnon = raw.isAnonymous ?? raw.is_anonymous ?? false;
-  const isMine = !!currentUserId && raw.authorId === currentUserId;
+function normalizeComment(raw: unknown, currentUserId?: string): ForoComment {
+  const comment = isRecord(raw) ? raw : {};
+  const isAnon = asBoolean(comment.isAnonymous, asBoolean(comment.is_anonymous));
+  const authorId = asString(comment.authorId);
+  const isMine = !!currentUserId && authorId === currentUserId;
+
   return {
-    id: raw.id ?? raw._id ?? String(Date.now()),
-    postId: raw.postId ?? '',
-    authorId: raw.authorId ?? '',
+    id: asString(comment.id, asString(comment._id, String(Date.now()))),
+    postId: asString(comment.postId),
+    authorId,
     author: isAnon
       ? 'Anónimo'
       : isMine
       ? 'Tú'
-      : (raw.authorName ?? 'Miembro de la comunidad'),
-    content: raw.content ?? '',
+      : asString(comment.authorName, 'Miembro de la comunidad'),
+    content: asString(comment.content),
     isAnonymous: isAnon,
-    likes: raw.reactionUps ?? 0,
-    timeAgo: raw.createdAt
-      ? timeAgoFromDate(raw.createdAt)
+    likes: asNumber(comment.reactionUps),
+    timeAgo: asString(comment.createdAt)
+      ? timeAgoFromDate(asString(comment.createdAt))
       : 'Reciente',
     isMine,
   };
@@ -76,11 +110,11 @@ export async function getForoPosts(
   page = 1,
   limit = 10
 ): Promise<ForoPost[]> {
-  const res: any = await apiRequest(
+  const res = await apiRequest<unknown>(
     `/forum/posts?page=${page}&limit=${limit}`
   );
-  const list: any[] = res?.data ?? res ?? [];
-  return Array.isArray(list) ? list.map(normalizePost) : [];
+  const payload = unwrapData(res);
+  return Array.isArray(payload) ? payload.map(normalizePost) : [];
 }
 
 /**
@@ -90,7 +124,7 @@ export async function getForoPosts(
 export async function createForoPost(
   data: CreateForoPostData
 ): Promise<ForoPost> {
-  const res: any = await apiRequest('/forum/posts', {
+  const res = await apiRequest<unknown>('/forum/posts', {
     method: 'POST',
     body: JSON.stringify({
       title: data.title,
@@ -98,7 +132,7 @@ export async function createForoPost(
       is_anonymous: data.isAnonymous,
     }),
   });
-  return normalizePost(res?.data ?? res);
+  return normalizePost(unwrapData(res));
 }
 
 /** Reacciona (like) o quita la reacción de un post. El toggle lo gestiona el backend por JWT. */
@@ -116,10 +150,10 @@ export async function getPostComments(
   postId: string,
   currentUserId?: string
 ): Promise<ForoComment[]> {
-  const res: any = await apiRequest(`/forum/posts/${postId}/comments`);
-  const list: any[] = res?.data ?? res ?? [];
-  return Array.isArray(list)
-    ? list.map((c) => normalizeComment(c, currentUserId))
+  const res = await apiRequest<unknown>(`/forum/posts/${postId}/comments`);
+  const payload = unwrapData(res);
+  return Array.isArray(payload)
+    ? payload.map((comment) => normalizeComment(comment, currentUserId))
     : [];
 }
 
@@ -130,12 +164,11 @@ export async function commentPost(
   is_anonymous = false,
   currentUserId?: string
 ): Promise<ForoComment> {
-  const res: any = await apiRequest(`/forum/posts/${postId}/comments`, {
+  const res = await apiRequest<unknown>(`/forum/posts/${postId}/comments`, {
     method: 'POST',
     body: JSON.stringify({ content, is_anonymous }),
-
   });
-  return normalizeComment(res?.data ?? res, currentUserId);
+  return normalizeComment(unwrapData(res), currentUserId);
 }
 
 /**

@@ -111,7 +111,6 @@ export default function LoginPage() {
     <div
       className="min-h-screen w-full flex items-center justify-center relative overflow-hidden safe-top-padding login-bg"
     >
-      {/* ── Botón volver a la landing ────────────────────────────────────── */}
       <Link
         href="/"
         className="fixed top-4 left-4 z-20 flex items-center gap-2 text-slate-400 hover:text-slate-600 transition-colors"
@@ -128,7 +127,6 @@ export default function LoginPage() {
         </span>
       </Link>
 
-      {/* ── Engrane grande — inferior derecha ────────────────────────────── */}
       <div
         className="absolute pointer-events-none select-none animate-spin-gear hidden sm:block"
         style={{ bottom: "-10%", right: "-5%", opacity: 0.07, color: "#1a365d" }}
@@ -137,7 +135,6 @@ export default function LoginPage() {
         <Gear size={340} teeth={16} color="currentColor" />
       </div>
 
-      {/* ── Engrane mediano — superior izquierda ─────────────────────────── */}
       <div
         className="absolute pointer-events-none select-none animate-spin-gear-reverse hidden sm:block"
         style={{ top: "-8%", left: "-4%", opacity: 0.055, color: "#0ea5e9" }}
@@ -146,7 +143,6 @@ export default function LoginPage() {
         <Gear size={230} teeth={12} color="currentColor" />
       </div>
 
-      {/* ── Formas geométricas flotantes ─────────────────────────────────── */}
       <div
         className="absolute pointer-events-none select-none animate-drift-1 hidden md:block"
         style={{ top: "16%", right: "8%", color: "rgba(14,165,233,0.25)" }}
@@ -176,10 +172,8 @@ export default function LoginPage() {
         <Diamond size={30} color="currentColor" />
       </div>
 
-      {/* ── Contenedor principal ─────────────────────────────────────────── */}
       <div className="relative z-10 w-full max-w-105 px-4 py-8 animate-fade-in-up">
 
-        {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <div
             className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
@@ -209,9 +203,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* ── Tarjeta ──────────────────────────────────────────────────── */}
         <div className="rounded-2xl overflow-hidden login-card">
-          {/* Línea decorativa superior */}
           <div
             aria-hidden="true"
             style={{
@@ -222,7 +214,6 @@ export default function LoginPage() {
 
           <div className="px-6 pt-8 pb-6 sm:px-9 sm:pt-9">
 
-            {/* Encabezado dinámico */}
             <div className="text-center mb-7">
               <h2 className="text-xl italic font-playfair mb-2" style={{ color: 'var(--ui-text-heading)' }}>
                 {mfaToken ? "Verificación de Seguridad" : "Bienvenido de nuevo"}
@@ -242,10 +233,8 @@ export default function LoginPage() {
               )}
             </div>
 
-            {/* Renderizado condicional del formulario */}
             {!mfaToken ? (
               <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
-                {/* Email */}
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[12px] tracking-[1.2px] uppercase font-jetbrains" style={{ color: 'var(--ui-text-muted)' }}>
                     Correo Electrónico
@@ -268,7 +257,6 @@ export default function LoginPage() {
                   </div>
                 </div>
 
-                {/* Contraseña */}
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center justify-between">
                     <label className="text-[12px] tracking-[1.2px] uppercase font-jetbrains" style={{ color: 'var(--ui-text-muted)' }}>
@@ -308,14 +296,12 @@ export default function LoginPage() {
                 </div>
 
 
-                {/* Error */}
                 {error && (
                   <p className="text-[11px] text-center font-jetbrains" style={{ color: "#f87171" }} role="alert">
                     {error}
                   </p>
                 )}
 
-                {/* Botón de envío */}
                 <button
                   type="submit"
                   disabled={isLoading}
@@ -357,7 +343,6 @@ export default function LoginPage() {
                   />
                 </div>
 
-                {/* Recordar dispositivo (MUESTRA AQUÍ) */}
                 <div className="flex items-center justify-center gap-2 -mt-2">
                   <input
                     type="checkbox"
@@ -418,7 +403,6 @@ export default function LoginPage() {
 
           </div>
 
-          {/* Enlace de registro */}
           <div className="px-6 py-5 sm:px-9 flex items-center justify-center gap-1 login-card-footer">
             <span className="text-sm font-jetbrains" style={{ color: 'var(--ui-text-body)' }}>
               ¿No tienes cuenta?{" "}
@@ -432,7 +416,6 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Footer mínimo */}
         <p className="text-[11px] tracking-[1px] uppercase font-jetbrains text-center mt-6" style={{ color: 'var(--ui-text-caption)' }}>
           cada paso, un día a la paz.
         </p>
