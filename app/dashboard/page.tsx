@@ -410,55 +410,61 @@ export default function InicioPage() {
           </div>
         </div>
 
-        {/* ── Notas de Aliento — recibidas del padrino ── */}
-        {(notesLoading || encouragementNotes.length > 0) && (
-          <div className="mt-6 relative pt-3.75">
-            {/* Tape */}
-            <div className="absolute left-[40%] top-0 z-20 pointer-events-none">
-              <div
-                className="w-17.5 h-7.25 bg-[rgba(186,230,253,0.4)]"
-                style={{ backdropFilter: "blur(0.5px)", transform: "rotate(-2deg)" }}
-              />
-            </div>
+        {/* ── Mensaje de tu Padrino — nota más reciente del padrino ── */}
+        <div className="mt-6 relative pt-3.75">
+          {/* Tape */}
+          <div className="absolute left-[35%] top-0 z-20 pointer-events-none">
             <div
-              className="bg-(--surface-card) border border-(--ui-border) relative"
-              style={{ boxShadow: "8px 8px 0px 0px rgba(26,54,93,0.05)" }}
-            >
-              <div className="absolute inset-3 border border-(--ui-border-subtle) pointer-events-none" />
-              <div className="relative z-10 p-6">
+              className="w-17.5 h-7.25 bg-[rgba(186,230,253,0.4)]"
+              style={{ backdropFilter: "blur(0.5px)", transform: "rotate(-2deg)" }}
+            />
+          </div>
+          <div
+            className="bg-(--surface-card) border border-(--ui-border) relative"
+            style={{ boxShadow: "8px 8px 0px 0px rgba(26,54,93,0.05)" }}
+          >
+            <div className="absolute inset-3 border border-(--ui-border-subtle) pointer-events-none" />
+            <div className="relative z-10 p-6 flex flex-col">
+              <div className="flex items-start gap-3 mb-4">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="1.5" className="shrink-0 mt-0.5" aria-hidden="true">
+                  <rect x="2" y="4" width="20" height="16" rx="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M2 6l10 8 10-8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
                 <p
-                  className="font-jetbrains text-[11px] tracking-[1.5px] uppercase text-[rgba(60,107,174,0.6)] dark:text-sky-400 mb-4"
+                  className="font-jetbrains text-[11px] tracking-[1.5px] uppercase text-[rgba(60,107,174,0.6)] dark:text-sky-400"
                 >
-                  Notas de Aliento
+                  Mensaje de tu Padrino
                 </p>
-                {notesLoading ? (
-                  <p
-                    className="font-playfair text-[15px] italic text-[rgba(26,54,93,0.4)] dark:text-slate-500"
-                  >
-                    ···
-                  </p>
-                ) : (
-                  <ul className="flex flex-col gap-4">
-                    {encouragementNotes.map((note) => (
-                      <li key={note.id} className="flex flex-col gap-1">
-                        <p
-                          className="font-playfair text-[16px] italic text-[rgba(26,54,93,0.85)] dark:text-slate-200 leading-relaxed"
-                        >
-                          &ldquo;{note.content}&rdquo;
-                        </p>
-                        <p
-                          className="font-jetbrains text-[11px] text-[rgba(26,54,93,0.4)] dark:text-slate-500"
-                        >
-                          {note.senderName} &mdash; {new Date(note.createdAt).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                )}
               </div>
+              {notesLoading ? (
+                <p
+                  className="font-playfair text-[15px] italic text-[rgba(26,54,93,0.4)] dark:text-slate-500"
+                >
+                  ···
+                </p>
+              ) : encouragementNotes.length > 0 ? (
+                <div className="flex flex-col gap-2">
+                  <p
+                    className="font-playfair text-[16px] italic text-[rgba(26,54,93,0.85)] dark:text-slate-200 leading-relaxed"
+                  >
+                    {encouragementNotes[0].content}
+                  </p>
+                  <p
+                    className="font-jetbrains text-[11px] text-[rgba(26,54,93,0.4)] dark:text-slate-500"
+                  >
+                    {encouragementNotes[0].senderName} &mdash; {new Date(encouragementNotes[0].createdAt).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
+                  </p>
+                </div>
+              ) : (
+                <p
+                  className="font-playfair text-[15px] italic text-[rgba(26,54,93,0.5)] dark:text-slate-500"
+                >
+                  Tu padrino aún no ha enviado un mensaje de aliento.
+                </p>
+              )}
             </div>
           </div>
-        )}
+        </div>
 
       </div>
     </div>

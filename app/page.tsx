@@ -967,10 +967,57 @@ function Footer() {
             </p>
             <a
               href="https://reset-app.tech"
-              className="font-jetbrains text-[11px] text-[#94a3b8] hover:text-[#0d9488] transition-colors"
+              className="font-jetbrains text-[11px] text-[#94a3b8] hover:text-[#0d9488] transition-colors w-fit"
             >
               reset-app.tech
             </a>
+            
+            {/* Social Icons */}
+            <div className="flex gap-3 flex-wrap mt-2 justify-center md:justify-start">
+              <a
+                href="https://www.instagram.com/resetapp.tech?igsh=MWFyMzYxOXZkM2IxYg=="
+                className="size-9 rounded-full border border-[#e2e8f0] text-[#94a3b8] hover:border-[#0d9488] hover:text-[#0d9488] transition-colors flex items-center justify-center"
+                aria-label="Síguenos en Instagram"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37Z" fill="currentColor" />
+                  <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" />
+                </svg>
+              </a>
+
+              <a
+                href="https://www.facebook.com/share/1ED17Hcj2J/"
+                className="size-9 rounded-full border border-[#e2e8f0] text-[#94a3b8] hover:border-[#0d9488] hover:text-[#0d9488] transition-colors flex items-center justify-center"
+                aria-label="Síguenos en Facebook"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                  <path d="M18 2h-3a6 6 0 00-6 6v9m0 0a9 9 0 009 9m0 0v-7a2 2 0 00-2 2m0 0H9m4-11a4 4 0 100-8 4 4 0 000 8z" />
+                  <path d="M7 12v7a1 1 0 001 1h2v-3a1 1 0 011-1h2a1 1 0 011 1v3h2a1 1 0 001-1v-7" />
+                </svg>
+              </a>
+
+              <a
+                href="https://www.tiktok.com/@resetapp.tech"
+                className="size-9 rounded-full border border-[#e2e8f0] text-[#94a3b8] hover:border-[#0d9488] hover:text-[#0d9488] transition-colors flex items-center justify-center"
+                aria-label="Síguenos en TikTok"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                  <path d="M9 12a4 4 0 100-8 4 4 0 000 8z" />
+                  <path d="M12 14s1.5-1 4-1c2.5 0 4.5 1 4.5 3v3.5c0 1.5-1 2.5-2.5 2.5h-4c-1.5 0-2.5-1-2.5-2.5v-3.5" />
+                </svg>
+              </a>
+
+              <a
+                href="https://twitter.com/resetapp"
+                className="size-9 rounded-full border border-[#e2e8f0] text-[#94a3b8] hover:border-[#0d9488] hover:text-[#0d9488] transition-colors flex items-center justify-center"
+                aria-label="Síguenos en X (Twitter)"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                  <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2s9 5 20 5a9.5 9.5 0 00-9-5.5c4.75 2.25 9-2 9-7" />
+                </svg>
+              </a>
+            </div>
           </div>
 
           {/* Producto */}
