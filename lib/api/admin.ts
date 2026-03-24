@@ -5,7 +5,7 @@ import { apiRequest, setToken } from './client';
  * Autentica al administrador específicamente.
  */
 export async function adminLogin(payload: LoginPayload): Promise<AuthBasicResult> {
-  const res = await apiRequest<any>('/admin/login', {
+  const res = await apiRequest<any>('/admin-login', {
     method: 'POST',
     body: JSON.stringify({
       email: payload.email,
