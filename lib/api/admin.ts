@@ -25,45 +25,44 @@ export async function adminLogin(payload: LoginPayload): Promise<AuthBasicResult
 // ─── Metrics Types ───────────────────────────────────────────────────────────
 
 export interface AdminOverview {
-  totalUsers: number;
-  activeUsers24h: number;
-  padrinosCount: number;
-  adictosCount: number;
+  users: { total: number; activeLoggers: number };
+  tracking: { totalLogs: number; totalStreaks: number; activeStreaks: number };
+  forum: { totalPosts: number; totalComments: number; totalReactions: number };
 }
 
-export interface EmotionalTrend {
-  date: string;
-  moodLevel: number;
-  label: string;
+export interface EmotionalTrendsData {
+  global: { avgCraving: number; avgEmotion: number; totalLogs: number };
+  daily: { date: string; avgCraving: number; avgEmotion: number; logCount: number }[];
+  cravingDistribution: { level: number; count: number }[];
+  emotionDistribution: { level: number; count: number }[];
 }
 
 export interface EngagementCorrelation {
-  activeForoUsers: number;
-  avgStreakDays: number;
+  forumUsers: { count: number; avgLogsPerUser: number; avgCraving: number; avgEmotion: number; avgStreakDays: number; relapseRate: number };
+  nonForumUsers: { count: number; avgLogsPerUser: number; avgCraving: number; avgEmotion: number; avgStreakDays: number; relapseRate: number };
 }
 
-export interface ActivityFrequency {
-  timeSlot: string;
-  count: number;
+export interface LogsFrequencyData {
+  summary: { totalLogs: number; avgLogsPerDay: number; logsWithConsumption: number; logsClean: number; uniqueUsersLogging: number };
+  daily: { date: string; count: number }[];
 }
 
-export interface AddictionPrevalence {
-  name: string;
-  value: number;
+export interface LogsByAddictionData {
+  byClassification: { classification: string; totalUsers: number; totalLogs: number; avgLogsPerUser: number; consumedLogs: number; relapseRate: number; activeLoggers: number }[];
+  byAddictionName: { addictionName: string; totalUsers: number; totalLogs: number; avgLogsPerUser: number }[];
 }
 
-export interface HallOfFameStreak {
-  userName: string;
-  days: number;
-  avatarUrl?: string | null;
+export interface StreaksSummaryData {
+  summary: { totalStreaks: number; activeStreaks: number; brokenStreaks: number; relapseRate: number };
+  averages: { avgDaysAll: number; maxDaysAll: number; avgDaysActive: number; maxDaysActive: number };
+  distribution: { "0-7": number; "8-14": number; "15-30": number; "31-60": number; "61-90": number; "90+": number };
 }
 
-export interface ForumReport {
-  id: string;
-  title: string;
-  author: string;
-  reason: string;
-  status: 'PENDING' | 'REVIEWED';
+export interface ReportsSummaryData {
+  totalReports: number;
+  byReason: { reason: string; count: number }[];
+  byStatus: { status: string; count: number }[];
+  byTargetType: { targetType: string; count: number }[];
 }
 
 // ─── API Functions ───────────────────────────────────────────────────────────
@@ -72,29 +71,29 @@ export async function getAdminOverview(): Promise<AdminOverview> {
   return await apiRequest<AdminOverview>('/admin/metrics/overview');
 }
 
-export async function getEmotionalTrends(startDate?: string, endDate?: string): Promise<EmotionalTrend[]> {
+export async function getEmotionalTrends(startDate?: string, endDate?: string): Promise<EmotionalTrendsData> {
   const params = new URLSearchParams();
   if (startDate) params.append('startDate', startDate);
   if (endDate) params.append('endDate', endDate);
-  return await apiRequest<EmotionalTrend[]>(`/admin/metrics/emotional-trends?${params.toString()}`);
+  return await apiRequest<EmotionalTrendsData>(`/admin/metrics/emotional-trends?${params.toString()}`);
 }
 
 export async function getEngagementCorrelation(): Promise<EngagementCorrelation> {
   return await apiRequest<EngagementCorrelation>('/admin/metrics/correlation');
 }
 
-export async function getLogsFrequency(): Promise<ActivityFrequency[]> {
-  return await apiRequest<ActivityFrequency[]>('/admin/metrics/logs-frequency');
+export async function getLogsFrequency(): Promise<LogsFrequencyData> {
+  return await apiRequest<LogsFrequencyData>('/admin/metrics/logs-frequency');
 }
 
-export async function getLogsByAddiction(): Promise<AddictionPrevalence[]> {
-  return await apiRequest<AddictionPrevalence[]>('/admin/metrics/logs-by-addiction');
+export async function getLogsByAddiction(): Promise<LogsByAddictionData> {
+  return await apiRequest<LogsByAddictionData>('/admin/metrics/logs-by-addiction');
 }
 
-export async function getStreaksSummary(): Promise<HallOfFameStreak[]> {
-  return await apiRequest<HallOfFameStreak[]>('/admin/metrics/streaks-summary');
+export async function getStreaksSummary(): Promise<StreaksSummaryData> {
+  return await apiRequest<StreaksSummaryData>('/admin/metrics/streaks-summary');
 }
 
-export async function getReportsSummary(): Promise<ForumReport[]> {
-  return await apiRequest<ForumReport[]>('/admin/metrics/reports-summary');
+export async function getReportsSummary(): Promise<ReportsSummaryData> {
+  return await apiRequest<ReportsSummaryData>('/admin/metrics/reports-summary');
 }

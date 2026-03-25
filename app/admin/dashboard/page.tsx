@@ -11,19 +11,18 @@ import {
   getStreaksSummary, 
   getReportsSummary,
   AdminOverview,
-  EmotionalTrend,
-  ActivityFrequency,
-  AddictionPrevalence,
-  HallOfFameStreak,
-  ForumReport
+  EmotionalTrendsData,
+  LogsFrequencyData,
+  LogsByAddictionData,
+  StreaksSummaryData,
+  ReportsSummaryData
 } from "@/lib/api/admin";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-  AreaChart, Area, PieChart, Pie, Cell, LineChart, Line 
+  LineChart, Line, PieChart, Pie, Cell 
 } from "recharts";
-import Link from "next/link";
 
-const COLORS = ["#0ea5e9", "#7dd3fc", "#10b981", "#f59e0b", "#6366f1"];
+const COLORS = ["#0ea5e9", "#7dd3fc", "#10b981", "#f59e0b", "#6366f1", "#f43f5e"];
 
 export default function AdminDashboard() {
   const { user, isRestoring } = useAuth();
@@ -34,11 +33,11 @@ export default function AdminDashboard() {
 
   // States for different metric modules
   const [overview, setOverview] = useState<AdminOverview | null>(null);
-  const [trends, setTrends] = useState<EmotionalTrend[]>([]);
-  const [frequency, setFrequency] = useState<ActivityFrequency[]>([]);
-  const [prevalence, setPrevalence] = useState<AddictionPrevalence[]>([]);
-  const [streaks, setStreaks] = useState<HallOfFameStreak[]>([]);
-  const [reports, setReports] = useState<ForumReport[]>([]);
+  const [trends, setTrends] = useState<EmotionalTrendsData | null>(null);
+  const [frequency, setFrequency] = useState<LogsFrequencyData | null>(null);
+  const [prevalence, setPrevalence] = useState<LogsByAddictionData | null>(null);
+  const [streaks, setStreaks] = useState<StreaksSummaryData | null>(null);
+  const [reports, setReports] = useState<ReportsSummaryData | null>(null);
 
   useEffect(() => {
     if (!isRestoring) {
@@ -54,7 +53,6 @@ export default function AdminDashboard() {
     setLoading(true);
     setError(null);
     try {
-      // Intentar cargar todo en paralelo
       const [ov, tr, fr, pr, st, re] = await Promise.allSettled([
         getAdminOverview(),
         getEmotionalTrends(),
@@ -71,7 +69,6 @@ export default function AdminDashboard() {
       if (st.status === 'fulfilled') setStreaks(st.value);
       if (re.status === 'fulfilled') setReports(re.value);
 
-      // Si todos fallan (probablemente backend no listo), aplicar mocks para demo
       if (ov.status === 'rejected') applyMocks();
 
     } catch (err: any) {
@@ -84,37 +81,52 @@ export default function AdminDashboard() {
   };
 
   const applyMocks = () => {
-    setOverview({ totalUsers: 342, activeUsers24h: 89, padrinosCount: 56, adictosCount: 286 });
-    setTrends([
-      { date: "Lun", moodLevel: 4, label: "Calmado" },
-      { date: "Mar", moodLevel: 3, label: "Ansioso" },
-      { date: "Mie", moodLevel: 5, label: "Feliz" },
-      { date: "Jue", moodLevel: 4, label: "Calmado" },
-      { date: "Vie", moodLevel: 2, label: "Triste" },
-      { date: "Sab", moodLevel: 5, label: "Motivado" },
-      { date: "Dom", moodLevel: 6, label: "Excelente" },
-    ]);
-    setFrequency([
-      { timeSlot: "08:00", count: 12 },
-      { timeSlot: "12:00", count: 45 },
-      { timeSlot: "16:00", count: 32 },
-      { timeSlot: "20:00", count: 88 },
-      { timeSlot: "00:00", count: 15 },
-    ]);
-    setPrevalence([
-      { name: "Alcohol", value: 35 },
-      { name: "Sustancias", value: 40 },
-      { name: "Conductual", value: 25 },
-    ]);
-    setStreaks([
-      { userName: "Carlos M.", days: 45 },
-      { userName: "Elena R.", days: 32 },
-      { userName: "Juan P.", days: 28 },
-    ]);
-    setReports([
-      { id: "1", title: "Spam en foro", author: "User12", reason: "Publicidad no deseada", status: 'PENDING' },
-      { id: "2", title: "Lenguaje ofensivo", author: "Anon99", reason: "Acoso", status: 'PENDING' },
-    ]);
+    setOverview({
+      users: { total: 1500, activeLoggers: 450 },
+      tracking: { totalLogs: 12500, totalStreaks: 1500, activeStreaks: 1200 },
+      forum: { totalPosts: 300, totalComments: 1200, totalReactions: 5000 }
+    });
+    setTrends({
+      global: { avgCraving: 4.5, avgEmotion: 6.2, totalLogs: 12500 },
+      daily: [
+        { date: "2026-03-18", avgCraving: 4.2, avgEmotion: 5.5, logCount: 150 },
+        { date: "2026-03-19", avgCraving: 3.8, avgEmotion: 6.0, logCount: 162 },
+        { date: "2026-03-20", avgCraving: 3.5, avgEmotion: 6.5, logCount: 140 },
+        { date: "2026-03-21", avgCraving: 4.0, avgEmotion: 6.2, logCount: 180 },
+        { date: "2026-03-22", avgCraving: 4.5, avgEmotion: 5.8, logCount: 155 },
+      ],
+      cravingDistribution: [{ level: 1, count: 500 }],
+      emotionDistribution: [{ level: 10, count: 200 }]
+    });
+    setFrequency({
+      summary: { totalLogs: 12500, avgLogsPerDay: 416.6, logsWithConsumption: 1500, logsClean: 11000, uniqueUsersLogging: 450 },
+      daily: [
+        { date: "2026-03-23T00:00", count: 120 },
+        { date: "2026-03-24T00:00", count: 150 }
+      ]
+    });
+    setPrevalence({
+      byClassification: [
+        { classification: "Sustancias", totalUsers: 800, totalLogs: 8500, avgLogsPerUser: 10.6, consumedLogs: 1200, relapseRate: 14.1, activeLoggers: 300 },
+        { classification: "Conductual", totalUsers: 700, totalLogs: 4000, avgLogsPerUser: 5.7, consumedLogs: 300, relapseRate: 7.5, activeLoggers: 150 }
+      ],
+      byAddictionName: []
+    });
+    setStreaks({
+      summary: { totalStreaks: 1500, activeStreaks: 1200, brokenStreaks: 300, relapseRate: 20.0 },
+      averages: { avgDaysAll: 18.5, maxDaysAll: 365, avgDaysActive: 25.4, maxDaysActive: 365 },
+      distribution: { "0-7": 500, "8-14": 300, "15-30": 200, "31-60": 150, "61-90": 100, "90+": 250 }
+    });
+    setReports({
+      totalReports: 50,
+      byReason: [
+        { reason: "spam", count: 25 },
+        { reason: "lenguaje_ofensivo", count: 15 },
+        { reason: "otro", count: 10 }
+      ],
+      byStatus: [{ status: "pending", count: 40 }],
+      byTargetType: [{ targetType: "post", count: 35 }]
+    });
   };
 
   if (isRestoring || loading) {
@@ -129,6 +141,19 @@ export default function AdminDashboard() {
   }
 
   if (!user || user.role !== "ADMIN") return null;
+
+  // Helpers to safely get array data and map for Recharts
+  const streakDistObj = streaks?.distribution || {};
+  const streaksDistributionData = Object.keys(streakDistObj).map(key => ({
+    rango: key,
+    usuarios: streakDistObj[key as keyof typeof streakDistObj]
+  }));
+
+  const mapDate = (isoString: string) => {
+    const d = new Date(isoString);
+    if (isNaN(d.getTime())) return isoString;
+    return d.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
+  };
 
   return (
     <div className="min-h-screen bg-slate-50/50 pb-20">
@@ -178,34 +203,36 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Overview Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <StatCard title="Usuarios Totales" value={overview?.totalUsers ?? 0} icon="👥" color="text-slate-800" />
-          <StatCard title="Actividad 24h" value={overview?.activeUsers24h ?? 0} icon="⚡" color="text-sky-500" />
-          <StatCard title="Padrinos" value={overview?.padrinosCount ?? 0} icon="🤝" color="text-emerald-500" />
-          <StatCard title="Ahijados" value={overview?.adictosCount ?? 0} icon="🌱" color="text-slate-600" />
+        {/* Overview Stats (Kcards) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <StatCard title="Usuarios Totales" value={overview?.users.total ?? 0} subtitle={`${overview?.users.activeLoggers ?? 0} activos hoy`} icon="👥" color="text-slate-800" />
+          <StatCard title="Rachas Activas" value={overview?.tracking.activeStreaks ?? 0} subtitle={`De ${overview?.tracking.totalStreaks ?? 0} creadas`} icon="🔥" color="text-sky-500" />
+          <StatCard title="Bitácoras Totales" value={overview?.tracking.totalLogs ?? 0} subtitle="Respuestas emocionales" icon="📖" color="text-emerald-500" />
+          <StatCard title="Posts en Foro" value={overview?.forum.totalPosts ?? 0} subtitle={`${overview?.forum.totalComments ?? 0} comentarios`} icon="💬" color="text-slate-600" />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           {/* Emotional Trends (2/3 width) */}
           <div className="lg:col-span-2 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
             <div className="flex items-center justify-between mb-8">
-              <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest font-jetbrains">Progreso Emocional</h3>
-              <select className="text-[11px] bg-slate-50 border-none rounded-lg px-3 py-1 text-slate-500 font-bold outline-none cursor-pointer">
-                <option>Última Semana</option>
-                <option>Último Mes</option>
-              </select>
+              <div>
+                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest font-jetbrains">Tendencias Emocionales</h3>
+                <p className="text-xs text-slate-500 mt-1">Nivel Promedio Global de Emoción: {trends?.global.avgEmotion.toFixed(1) ?? 'N/A'} / 10</p>
+              </div>
             </div>
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={trends}>
+                <LineChart data={trends?.daily || []}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 11}} dy={10} />
-                  <YAxis hide domain={[0, 7]} />
+                  <XAxis dataKey="date" tickFormatter={mapDate} axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 11}} dy={10} />
+                  <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{fill: '#0ea5e9', fontSize: 11}} />
+                  <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{fill: '#f59e0b', fontSize: 11}} />
                   <Tooltip 
                     contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                    labelFormatter={mapDate}
                   />
-                  <Line type="monotone" dataKey="moodLevel" stroke="#0ea5e9" strokeWidth={4} dot={{ r: 4, fill: '#0ea5e9', strokeWidth: 2, stroke: '#fff' }} />
+                  <Line yAxisId="left" type="monotone" name="Emoción (1-10)" dataKey="avgEmotion" stroke="#0ea5e9" strokeWidth={3} dot={false} />
+                  <Line yAxisId="right" type="monotone" name="Craving (1-5)" dataKey="avgCraving" stroke="#f59e0b" strokeWidth={3} strokeDasharray="5 5" dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -213,29 +240,35 @@ export default function AdminDashboard() {
 
           {/* Addiction Prevalence (1/3 width) */}
           <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-            <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest font-jetbrains mb-8">Prevalencia</h3>
+            <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest font-jetbrains mb-8">Base Clínica</h3>
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={prevalence}
+                    data={prevalence?.byClassification || []}
                     cx="50%" cy="50%"
                     innerRadius={60} outerRadius={80}
                     paddingAngle={8}
-                    dataKey="value"
+                    dataKey="totalUsers"
+                    nameKey="classification"
                   >
-                    {prevalence.map((entry, index) => (
+                    {(prevalence?.byClassification || []).map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip 
+                    formatter={(value: number, name: string) => [`${value} usuarios`, name]}
+                  />
                 </PieChart>
               </ResponsiveContainer>
               <div className="flex flex-wrap justify-center gap-4 mt-2">
-                {prevalence.map((item, i) => (
-                  <div key={item.name} className="flex items-center gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
-                    <span className="text-[10px] font-bold text-slate-500 uppercase">{item.name}</span>
+                {(prevalence?.byClassification || []).map((item, i) => (
+                  <div key={item.classification} className="flex flex-col items-center">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
+                      <span className="text-[10px] font-bold text-slate-500 uppercase">{item.classification}</span>
+                    </div>
+                    <span className="text-slate-800 text-xs font-bold">{item.totalUsers}</span>
                   </div>
                 ))}
               </div>
@@ -246,44 +279,46 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           {/* Logs Frequency */}
           <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-            <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest font-jetbrains mb-8">Frecuencia de Check-ins</h3>
+            <div className="mb-8">
+              <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest font-jetbrains">Frecuencia de Entradas</h3>
+              <p className="text-xs text-emerald-500 font-bold mt-1">Registros Limpios: {frequency?.summary?.logsClean ?? 0} vs Recaídas: {frequency?.summary?.logsWithConsumption ?? 0}</p>
+            </div>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={frequency}>
+                <BarChart data={frequency?.daily || []}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis dataKey="timeSlot" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 11}} dy={10} />
+                  <XAxis dataKey="date" tickFormatter={mapDate} axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 11}} dy={10} />
                   <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 11}} />
                   <Tooltip 
                     cursor={{fill: '#f8fafc'}}
                     contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                    labelFormatter={mapDate}
                   />
-                  <Bar dataKey="count" fill="#7dd3fc" radius={[6, 6, 0, 0]} barSize={40} />
+                  <Bar dataKey="count" name="Registros" fill="#7dd3fc" radius={[6, 6, 0, 0]} barSize={20} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          {/* Hall of Fame (Streaks) */}
+          {/* Streaks Distribution */}
           <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-            <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest font-jetbrains mb-8">Salón de la Fama</h3>
-            <div className="space-y-4">
-              {streaks.map((streak, i) => (
-                <div key={i} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl hover:bg-sky-50 transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-white border border-slate-100 flex items-center justify-center font-bold text-sky-600 shadow-sm">
-                      {i + 1}
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-slate-800">{streak.userName}</p>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-tighter">Ahijado Estrella</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-lg font-black text-sky-500">{streak.days}</span>
-                    <span className="text-[10px] text-sky-400 uppercase font-bold ml-1">Días</span>
-                  </div>
-                </div>
-              ))}
+            <div className="mb-8">
+              <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest font-jetbrains">Salón de la Fama: Rachas</h3>
+              <p className="text-xs text-sky-500 font-bold mt-1">Media Activa: {streaks?.averages?.avgDaysActive.toFixed(1) ?? 0} días / Max: {streaks?.averages?.maxDaysActive ?? 0} días</p>
+            </div>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={streaksDistributionData} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#f1f5f9" />
+                  <XAxis type="number" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 11}} />
+                  <YAxis dataKey="rango" type="category" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 11}} width={50} />
+                  <Tooltip 
+                    cursor={{fill: '#f0f9ff'}}
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                  />
+                  <Bar dataKey="usuarios" name="Nro. Usuarios" fill="#38bdf8" radius={[0, 6, 6, 0]} barSize={16} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
@@ -291,38 +326,51 @@ export default function AdminDashboard() {
         {/* Forum Moderation */}
         <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
           <div className="flex items-center justify-between mb-8">
-            <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest font-jetbrains">Reportes de Foro</h3>
+            <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest font-jetbrains">Moderación Comunitaria</h3>
             <span className="px-3 py-1 bg-rose-50 text-rose-500 rounded-full text-[10px] font-bold uppercase tracking-widest">
-              {reports.length} Pendientes
+              {reports?.totalReports ?? 0} Casos Reportados
             </span>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="text-left">
-                  <th className="pb-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">Post / Comentario</th>
-                  <th className="pb-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">Autor</th>
-                  <th className="pb-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">Motivo</th>
-                  <th className="pb-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 text-right">Acción</th>
-                </tr>
-              </thead>
-              <tbody className="text-xs">
-                {reports.map((report) => (
-                  <tr key={report.id} className="border-t border-slate-50 hover:bg-slate-50/50 transition-colors">
-                    <td className="py-4 px-2 font-bold text-slate-700">{report.title}</td>
-                    <td className="py-4 px-2 text-slate-500 font-jetbrains">{report.author}</td>
-                    <td className="py-4 px-2">
-                      <span className="px-2 py-0.5 bg-slate-100 rounded-md text-[10px] font-medium text-slate-600 italic">
-                        "{report.reason}"
-                      </span>
-                    </td>
-                    <td className="py-4 px-2 text-right">
-                      <button className="text-sky-500 hover:text-sky-600 font-bold uppercase tracking-widest text-[10px]">Revisar</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+             {/* By Reason */}
+             <div className="bg-slate-50 p-4 rounded-2xl">
+                <h4 className="text-xs font-bold text-slate-800 mb-3 border-b border-slate-200 pb-2">Por Motivo</h4>
+                <ul className="space-y-2">
+                  {(reports?.byReason || []).map(r => (
+                    <li key={r.reason} className="flex justify-between items-center text-xs">
+                      <span className="text-slate-600 capitalize">{r.reason.replace('_', ' ')}</span>
+                      <span className="font-bold bg-white px-2 py-0.5 rounded-lg shadow-sm text-slate-800">{r.count}</span>
+                    </li>
+                  ))}
+                  {(reports?.byReason || []).length === 0 && <li className="text-xs text-slate-400">Sin datos</li>}
+                </ul>
+             </div>
+             {/* By Status */}
+             <div className="bg-slate-50 p-4 rounded-2xl">
+                <h4 className="text-xs font-bold text-slate-800 mb-3 border-b border-slate-200 pb-2">Estado Actual</h4>
+                <ul className="space-y-2">
+                  {(reports?.byStatus || []).map(r => (
+                    <li key={r.status} className="flex justify-between items-center text-xs">
+                      <span className="text-slate-600 capitalize">{r.status}</span>
+                      <span className={`font-bold bg-white px-2 py-0.5 rounded-lg shadow-sm ${r.status === 'pending' ? 'text-rose-500' : 'text-emerald-500'}`}>{r.count}</span>
+                    </li>
+                  ))}
+                  {(reports?.byStatus || []).length === 0 && <li className="text-xs text-slate-400">Sin datos</li>}
+                </ul>
+             </div>
+             {/* By Target Type */}
+             <div className="bg-slate-50 p-4 rounded-2xl">
+                <h4 className="text-xs font-bold text-slate-800 mb-3 border-b border-slate-200 pb-2">Tipo de Contenido</h4>
+                <ul className="space-y-2">
+                  {(reports?.byTargetType || []).map(r => (
+                    <li key={r.targetType} className="flex justify-between items-center text-xs">
+                      <span className="text-slate-600 capitalize">{r.targetType}</span>
+                      <span className="font-bold bg-white px-2 py-0.5 rounded-lg shadow-sm text-slate-800">{r.count}</span>
+                    </li>
+                  ))}
+                  {(reports?.byTargetType || []).length === 0 && <li className="text-xs text-slate-400">Sin datos</li>}
+                </ul>
+             </div>
           </div>
         </div>
       </main>
@@ -340,16 +388,20 @@ export default function AdminDashboard() {
   );
 }
 
-function StatCard({ title, value, icon, color }: { title: string, value: number, icon: string, color: string }) {
+function StatCard({ title, value, subtitle, icon, color }: { title: string, value: number, subtitle?: string, icon: string, color: string }) {
   return (
-    <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-between mb-4">
-        <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-xl grayscale-[0.5]">
-          {icon}
+    <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+      <div className="relative z-10">
+        <div className="flex items-start justify-between mb-3">
+          <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-2xl grayscale-[0.2]">
+            {icon}
+          </div>
         </div>
+        <p className={`text-4xl font-black tracking-tight ${color}`}>{value.toLocaleString()}</p>
+        <p className="text-[11px] font-bold text-slate-800 uppercase tracking-widest mt-2">{title}</p>
+        {subtitle && <p className="text-[10px] text-slate-400 mt-1 font-jetbrains">{subtitle}</p>}
       </div>
-      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 font-jetbrains">{title}</p>
-      <p className={`text-3xl font-black ${color}`}>{value.toLocaleString()}</p>
+      <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-slate-50 rounded-full blur-2xl z-0" />
     </div>
   );
 }
