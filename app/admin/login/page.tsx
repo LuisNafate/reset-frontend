@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useAdminLogin } from "@/hooks/useAdminLogin";
-import { useState } from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 /* ─── SVG: Eye Icons ──────────────────────────────────────────────────────── */
 function EyeIcon() {
@@ -33,97 +34,123 @@ export default function AdminLoginPage() {
     handleSubmit 
   } = useAdminLogin();
 
-  return (
-    <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden bg-slate-950">
-      {/* Background patterns */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,#1e293b_0%,transparent_70%)]" />
-      </div>
+  const router = useRouter();
 
-      <div className="relative z-10 w-full max-w-md px-6 py-12">
-        <div className="flex flex-col items-center mb-10">
-          <div className="w-20 h-20 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center mb-6 shadow-2xl">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.5">
+  return (
+    <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden safe-top-padding login-bg">
+      {/* Decorative patterns matching main app */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-sky-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-sky-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000" />
+
+      <Link
+        href="/login"
+        className="fixed top-4 left-4 z-20 flex items-center gap-2 text-slate-400 hover:text-slate-600 transition-colors"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <span className="text-[11px] tracking-[1.5px] uppercase font-jetbrains">Volver</span>
+      </Link>
+
+      <div className="relative z-10 w-full max-w-md px-4 py-8 animate-fade-in-up">
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-white border border-sky-100 shadow-md">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="1.5">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M12 8v4M12 16h.01" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+              <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold tracking-tighter text-white mb-2 uppercase">Admin Portal</h1>
-          <p className="text-slate-400 text-sm font-medium tracking-widest uppercase">Seguridad Nivel 1</p>
+          <h1 className="text-4xl tracking-widest text-center leading-tight font-playfair text-slate-900">RESET</h1>
+          <p className="text-[11px] tracking-[3px] uppercase font-jetbrains text-center mt-1 text-sky-500">Módulo Administrativo</p>
         </div>
 
-        <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 p-8 rounded-3xl shadow-2xl">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                Identificador de Administrador
-              </label>
-              <div className="relative">
-                <input
-                  type="email"
-                  name="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  placeholder="admin@reset.tech"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all placeholder:text-slate-700"
-                />
-              </div>
+        <div className="rounded-2xl overflow-hidden login-card shadow-xl border border-white/50 bg-white/80 backdrop-blur-sm">
+          <div
+            className="h-1 bg-gradient-to-r from-transparent via-sky-400 to-transparent"
+          />
+
+          <div className="px-6 pt-10 pb-8 sm:px-9">
+            <div className="text-center mb-8">
+              <h2 className="text-xl italic font-playfair mb-2 text-slate-800">Panel de Control</h2>
+              <div className="mx-auto h-px w-12 bg-gradient-to-r from-transparent via-sky-300 to-transparent" />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                Clave de Acceso Master
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={form.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500 transition-all placeholder:text-slate-700"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
-                >
-                  {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-                </button>
+            <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[12px] tracking-[1.2px] uppercase font-jetbrains text-slate-500">
+                  Identificador Admin
+                </label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                    </svg>
+                  </span>
+                  <input
+                    type="email"
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="admin@reset-app.tech"
+                    className="futuristic-input w-full h-12 rounded-xl pl-12 pr-4 font-jetbrains text-[13px] border border-slate-200 outline-none focus:border-sky-400 transition-colors"
+                  />
+                </div>
               </div>
-            </div>
 
-            {error && (
-              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs text-center font-medium">
-                {error}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[12px] tracking-[1.2px] uppercase font-jetbrains text-slate-500">
+                  Clave Master
+                </label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                    </svg>
+                  </span>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={form.password}
+                    onChange={handleChange}
+                    placeholder="••••••••"
+                    className="futuristic-input w-full h-12 rounded-xl pl-12 pr-12 font-jetbrains text-[13px] border border-slate-200 outline-none focus:border-sky-400 transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-sky-500 transition-colors"
+                  >
+                    {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                  </button>
+                </div>
               </div>
-            )}
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-red-600 hover:bg-red-500 disabled:bg-red-900 disabled:text-red-300 text-white font-bold py-4 rounded-xl shadow-lg shadow-red-900/20 transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-xs"
-            >
-              {isLoading ? (
-                <>
-                  <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Autenticando...
-                </>
-              ) : (
-                "Acceder al Sistema"
+              {error && (
+                <p className="text-[11px] text-center font-jetbrains text-rose-500 animate-shake">
+                  {error}
+                </p>
               )}
-            </button>
-          </form>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full h-12 bg-sky-500 hover:bg-sky-600 disabled:bg-sky-200 text-white rounded-xl flex items-center justify-center gap-3 mt-2 font-jetbrains text-[11px] tracking-[2.5px] uppercase transition-all shadow-md active:scale-95"
+              >
+                {isLoading ? "Autenticando..." : "Acceder al Sistema"}
+              </button>
+            </form>
+          </div>
+
+          <div className="px-6 py-5 sm:px-9 flex flex-col items-center border-t border-slate-50 bg-slate-50/50">
+            <span className="text-[10px] uppercase tracking-widest text-slate-400 font-jetbrains">
+              Acceso restringido a personal autorizado
+            </span>
+          </div>
         </div>
 
-        <div className="mt-8 text-center">
-          <Link href="/login" className="text-slate-500 hover:text-slate-300 text-[10px] uppercase tracking-widest transition-colors font-bold">
-            ← Volver al Portal de Usuarios
-          </Link>
-        </div>
+        <p className="text-[11px] tracking-[1px] uppercase font-jetbrains text-center mt-8 text-slate-400">
+          cada paso, un día a la paz.
+        </p>
       </div>
     </div>
   );
