@@ -20,7 +20,10 @@ export function setToken(token: string | null) {
     if (token) {
       document.cookie = `reset_token=${token}; path=/; max-age=2592000; samesite=lax`;
     } else {
+      // Limpiar la cookie asegurando que el path coincida
       document.cookie = `reset_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+      // Refuerzo para eliminar cualquier residuo (si existiera en otro path o subdominio)
+      document.cookie = `reset_token=; path=/; max-age=0; samesite=lax`;
     }
   }
 }
@@ -76,9 +79,10 @@ export async function apiRequest<T>(
         500: 'Error interno del servidor. Inténtalo de nuevo más tarde.',
       };
 
-      // Adjuntamos el código al objeto de error si existe
+      // Adjuntamos el código y el status al objeto de error si existe
       const errorMessage = msg || fallbacks[res.status] || `Error ${res.status}`;
       const errorObject = new Error(errorMessage) as any;
+      errorObject.status = res.status;
       if (err.code) errorObject.code = err.code;
       
       throw errorObject;

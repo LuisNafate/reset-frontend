@@ -71,15 +71,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser(profile);
             // Sincronizar storage con los datos frescos
             storageSave(STORAGE_KEYS.USER, JSON.stringify(profile)).catch(() => {});
-          } catch (error) {
+          } catch (error: any) {
             console.error("Error al restaurar sesión desde el servidor:", error);
-            // Si el servidor falla, intentar usar los datos locales como fallback
-            const raw = await storageGet(STORAGE_KEYS.USER);
-            if (raw) {
-              setUser(JSON.parse(raw) as AuthUser);
-            } else {
-              // Si no hay datos locales tampoco, limpiar sesión
+            
+            // Si el error es 401 (Unauthorized), significa que el token no es válido.
+            // Debemos limpiar la sesión por completo para evitar bucles de redirección.
+            if (error?.status === 401) {
               clearAuth();
+            } else {
+              // Si el servidor falla por otros motivos (ej: Red), intentar usar los datos locales como fallback
+              const raw = await storageGet(STORAGE_KEYS.USER);
+              if (raw) {
+                setUser(JSON.parse(raw) as AuthUser);
+              } else {
+                clearAuth();
+              }
             }
           }
         }
