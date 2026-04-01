@@ -18,11 +18,18 @@ export function useSession() {
    * Cierra la sesión de forma segura:
    * 1. Limpia el token JWT de memoria.
    * 2. Limpia el estado de usuario del contexto.
-   * 3. Redirige al login.
+   * 3. Redirige al login con navegación completa (NO router.push).
+   *
+   * IMPORTANTE: Se usa window.location.href en lugar de router.push porque
+   * router.push hace una navegación client-side (RSC flight request) que
+   * todavía envía la cookie vieja en el request HTTP. El middleware de Next.js
+   * la lee y redirige de vuelta al dashboard, causando un loop infinito.
+   * Con window.location.href se fuerza una recarga completa del navegador
+   * donde la cookie ya fue eliminada por setToken(null).
    */
   function logout() {
     clearAuth();
-    router.push("/login");
+    window.location.href = "/login";
   }
 
   /**
