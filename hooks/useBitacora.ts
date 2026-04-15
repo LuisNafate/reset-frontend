@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createLog, getLogs } from "@/lib/api/tracking";
-import type { DailyLogResponse } from "@/lib/api/tracking";
+import type { DailyLogResponse, TrackingLogFilters } from "@/lib/api/tracking";
 import {
   getMoodLabel,
   getMoodColor,
@@ -12,6 +12,8 @@ import {
 import type { JournalEntry, MoodId } from "@/types";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
+
+const DEFAULT_RECENT_LIMIT = 5;
 
 const NUMBER_TO_MOOD: Array<[number, MoodId]> = [
   [9, "feliz"],
@@ -32,23 +34,56 @@ function closestMood(value: number): MoodId {
   )[1];
 }
 
+function getTimestamp(raw: DailyLogResponse): string {
+  return (
+    raw.createdAt ??
+    raw.created_at ??
+    raw.logDate ??
+    raw.log_date ??
+    new Date().toISOString()
+  );
+}
+
+function getEmotionLevel(raw: DailyLogResponse): number {
+  if (typeof raw.emotionalState?.level === "number") return raw.emotionalState.level;
+  if (typeof (raw as DailyLogResponse & { emotional_state?: number }).emotional_state === "number") {
+    return (raw as DailyLogResponse & { emotional_state?: number }).emotional_state ?? 5;
+  }
+  if (typeof (raw as DailyLogResponse & { emotionalStateLevel?: number }).emotionalStateLevel === "number") {
+    return (raw as DailyLogResponse & { emotionalStateLevel?: number }).emotionalStateLevel ?? 5;
+  }
+  return 5;
+}
+
 /** Convierte un registro diario de la API al formato JournalEntry del UI. */
 function normalizeEntry(raw: DailyLogResponse): JournalEntry {
-  const dateStr = raw.logDate ?? '';
-  const emotionLevel = raw.emotionalState?.level ?? 5;
+  const timestamp = getTimestamp(raw);
+  const dateStr = raw.logDate ?? raw.log_date ?? timestamp;
+  const emotionLevel = getEmotionLevel(raw);
   return {
     id: raw.id ?? String(Date.now()),
     title: dateStr ? dateStr.split('T')[0] : '',
     mood: closestMood(emotionLevel),
     notes: raw.notes ?? '',
     consumed: raw.consumed ?? false,
-    createdAt: raw.logDate ?? new Date().toISOString(),
+    createdAt: timestamp,
   };
 }
 
 // ─── Hook ───────────────────────────────────────────────────────────────────
 
-export function useBitacora() {
+export function useBitacora(filters: TrackingLogFilters = {}) {
+  const { year, month, day, from, to, userId, page, limit } = filters;
+  const hasActiveTrackingFilters =
+    year !== undefined ||
+    month !== undefined ||
+    day !== undefined ||
+    from !== undefined ||
+    to !== undefined ||
+    userId !== undefined ||
+    page !== undefined ||
+    limit !== undefined;
+
   // ── Lista de entradas ────────────────────────────────────────────────────────
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [isLoadingEntries, setIsLoadingEntries] = useState(true);
@@ -64,23 +99,39 @@ export function useBitacora() {
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
-  // Cargar entradas al montar
   useEffect(() => {
-    getLogs(30)
-      .then((data) => {
+    let cancelled = false;
+
+    async function loadEntries() {
+      setIsLoadingEntries(true);
+      setError(null);
+
+      try {
+        const data = hasActiveTrackingFilters
+          ? await getLogs({ year, month, day, from, to, userId, page, limit })
+          : await getLogs(DEFAULT_RECENT_LIMIT);
+        if (cancelled) return;
+
         setEntries(
           Array.isArray(data)
-            ? data.map(normalizeEntry).sort(
-                (a, b) =>
-                  new Date(b.createdAt).getTime() -
-                  new Date(a.createdAt).getTime()
-              )
+            ? data
+                .map(normalizeEntry)
+                .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
             : []
         );
-      })
-      .catch(() => setError("Error al cargar las entradas"))
-      .finally(() => setIsLoadingEntries(false));
-  }, []);
+      } catch {
+        if (!cancelled) setError("Error al cargar las entradas");
+      } finally {
+        if (!cancelled) setIsLoadingEntries(false);
+      }
+    }
+
+    loadEntries();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [year, month, day, from, to, userId, page, limit]);
 
   const handleSave = async () => {
     if (!notes.trim()) {
@@ -100,8 +151,9 @@ export function useBitacora() {
         notes: notes.trim() || undefined,
       });
       setSaved(true);
-      // Recargar entradas desde la API
-      const refreshed = await getLogs(30);
+      const refreshed = hasActiveTrackingFilters
+        ? await getLogs({ year, month, day, from, to, userId, page, limit })
+        : await getLogs(DEFAULT_RECENT_LIMIT);
       setEntries(
         Array.isArray(refreshed)
           ? refreshed.map(normalizeEntry).sort(

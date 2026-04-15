@@ -5,8 +5,81 @@ import { useBitacora } from "@/hooks/useBitacora";
 import { MOOD_COLORS, formatDate, getMoodDisplayLabel } from "@/lib/bitacora-helpers";
 import BitacoraEntryModal from "@/components/features/dashboard/BitacoraEntryModal";
 import type { JournalEntry, MoodId } from "@/types";
+import type { TrackingLogFilters } from "@/lib/api/tracking";
+
+type FilterMode = "recent" | "month" | "day" | "range";
+
+const MONTH_LABELS = [
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre",
+];
+
+function toDateInputValue(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function getDaysInMonth(year: number, month: number): number {
+  return new Date(year, month, 0).getDate();
+}
+
+function buildFilterSummary(
+  mode: FilterMode,
+  year: number,
+  month: number,
+  day: number,
+  from: string,
+  to: string
+): string {
+  if (mode === "recent") return "Últimos 30 registros";
+  if (mode === "month") return `${MONTH_LABELS[month - 1]} ${year}`;
+  if (mode === "day") return `${day} de ${MONTH_LABELS[month - 1]} de ${year}`;
+  if (from && to) return `${from} → ${to}`;
+  return "Rango personalizado";
+}
 
 export default function BitacoraPage() {
+  const [filterMode, setFilterMode] = React.useState<FilterMode>("recent");
+  const [filterYear, setFilterYear] = React.useState(() => new Date().getFullYear());
+  const [filterMonth, setFilterMonth] = React.useState(() => new Date().getMonth() + 1);
+  const [filterDay, setFilterDay] = React.useState(() => new Date().getDate());
+  const [rangeFrom, setRangeFrom] = React.useState(() => toDateInputValue(new Date(new Date().getFullYear(), new Date().getMonth(), 1)));
+  const [rangeTo, setRangeTo] = React.useState(() => toDateInputValue(new Date()));
+
+  const normalizedRange =
+    rangeFrom && rangeTo && rangeFrom > rangeTo
+      ? { from: rangeTo, to: rangeFrom }
+      : { from: rangeFrom, to: rangeTo };
+
+  const activeFilters: TrackingLogFilters =
+    filterMode === "month"
+      ? { year: filterYear, month: filterMonth }
+      : filterMode === "day"
+        ? { year: filterYear, month: filterMonth, day: filterDay }
+        : filterMode === "range"
+          ? normalizedRange
+          : {};
+
+  const daysInSelectedMonth = getDaysInMonth(filterYear, filterMonth);
+
+  React.useEffect(() => {
+    if (filterDay > daysInSelectedMonth) {
+      setFilterDay(daysInSelectedMonth);
+    }
+  }, [daysInSelectedMonth, filterDay]);
+
   const {
     entries,
     isLoadingEntries,
@@ -29,12 +102,34 @@ export default function BitacoraPage() {
     setConsumed,
     handleSave,
     handleDelete,
-  } = useBitacora();
+  } = useBitacora(activeFilters);
+
+  const filterSummary = buildFilterSummary(
+    filterMode,
+    filterYear,
+    filterMonth,
+    filterDay,
+    normalizedRange.from,
+    normalizedRange.to
+  );
+
+  const yearOptions = React.useMemo(() => {
+    const currentYear = new Date().getFullYear();
+    const startYear = Math.max(2015, currentYear - 8);
+    const years: number[] = [];
+
+    for (let year = currentYear + 1; year >= startYear; year -= 1) {
+      years.push(year);
+    }
+
+    return years;
+  }, []);
 
   // ── Entrada seleccionada para ver detalle ─────────────────────────────
   const [selectedEntry, setSelectedEntry] = React.useState<JournalEntry | null>(null);
 
   const entry = selectedEntry;
+  const hasActiveFilter = filterMode !== "recent";
 
   return (
     <>
@@ -58,6 +153,196 @@ export default function BitacoraPage() {
           >
             Cada entrada queda guardada y ordenada en el tiempo.
           </p>
+        </div>
+
+        {/* ─── Filtros de historial ─────────────────────────────────────── */}
+        <div
+          className="bg-(--surface-card) border border-(--ui-border) rounded-sm overflow-hidden mb-10"
+          style={{ boxShadow: "0px 4px 20px -8px rgba(0,0,0,0.16)" }}
+        >
+          <div className="px-6 pt-6 pb-4 border-b border-(--ui-border) flex items-center justify-between gap-3">
+            <div>
+              <p className="font-jetbrains text-[11px] tracking-[1.8px] uppercase rs-text-muted">
+                Consulta del Historial
+              </p>
+              <p className="font-jetbrains text-[12px] rs-text-caption mt-1">
+                {filterSummary}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setFilterMode("recent")}
+              className="font-jetbrains text-[10px] uppercase tracking-[1.6px] px-3 py-2 rounded-sm border border-(--ui-border) rs-text-caption hover:border-slate-300 hover:text-slate-700 transition-colors"
+            >
+              Ver recientes
+            </button>
+          </div>
+
+          <div className="p-6 space-y-5">
+            <div className="flex flex-wrap gap-2">
+              {([
+                ["recent", "Recientes"],
+                ["month", "Mes"],
+                ["day", "Día"],
+                ["range", "Rango"],
+              ] as const).map(([mode, label]) => {
+                const isActive = filterMode === mode;
+                return (
+                  <button
+                    key={mode}
+                    type="button"
+                    onClick={() => setFilterMode(mode)}
+                    className="font-jetbrains text-[10px] uppercase tracking-[1.6px] px-3.5 py-2 rounded-full border transition-colors"
+                    style={{
+                      borderColor: isActive ? "var(--ui-border)" : "var(--ui-border-subtle)",
+                      backgroundColor: isActive ? "rgba(59,130,246,0.08)" : "transparent",
+                      color: isActive ? "#1d4ed8" : "var(--ui-text-caption)",
+                    }}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {filterMode === "recent" && (
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-sm border border-dashed border-(--ui-border) px-4 py-3">
+                  <p className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted mb-1">
+                    Vista rápida
+                  </p>
+                  <p className="font-jetbrains text-[12px] rs-text-caption">
+                    Se muestran los últimos 5 registros cargados desde la API.
+                  </p>
+                </div>
+                <div className="rounded-sm border border-dashed border-(--ui-border) px-4 py-3">
+                  <p className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted mb-1">
+                    Consejo
+                  </p>
+                  <p className="font-jetbrains text-[12px] rs-text-caption">
+                    Usa mes o día para navegar rápido por el calendario.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {filterMode === "month" && (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="flex flex-col gap-2">
+                  <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
+                    Año
+                  </span>
+                  <select
+                    value={filterYear}
+                    onChange={(e) => setFilterYear(Number(e.target.value))}
+                    className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
+                  >
+                    {yearOptions.map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col gap-2">
+                  <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
+                    Mes
+                  </span>
+                  <select
+                    value={filterMonth}
+                    onChange={(e) => setFilterMonth(Number(e.target.value))}
+                    className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
+                  >
+                    {MONTH_LABELS.map((label, index) => (
+                      <option key={label} value={index + 1}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            )}
+
+            {filterMode === "day" && (
+              <div className="grid gap-4 sm:grid-cols-3">
+                <label className="flex flex-col gap-2">
+                  <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
+                    Año
+                  </span>
+                  <select
+                    value={filterYear}
+                    onChange={(e) => setFilterYear(Number(e.target.value))}
+                    className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
+                  >
+                    {yearOptions.map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col gap-2">
+                  <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
+                    Mes
+                  </span>
+                  <select
+                    value={filterMonth}
+                    onChange={(e) => setFilterMonth(Number(e.target.value))}
+                    className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
+                  >
+                    {MONTH_LABELS.map((label, index) => (
+                      <option key={label} value={index + 1}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col gap-2">
+                  <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
+                    Día
+                  </span>
+                  <select
+                    value={filterDay}
+                    onChange={(e) => setFilterDay(Number(e.target.value))}
+                    className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
+                  >
+                    {Array.from({ length: daysInSelectedMonth }, (_, index) => index + 1).map((day) => (
+                      <option key={day} value={day}>
+                        {day}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            )}
+
+            {filterMode === "range" && (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="flex flex-col gap-2">
+                  <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
+                    Desde
+                  </span>
+                  <input
+                    type="date"
+                    value={rangeFrom}
+                    onChange={(e) => setRangeFrom(e.target.value)}
+                    className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
+                  />
+                </label>
+                <label className="flex flex-col gap-2">
+                  <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
+                    Hasta
+                  </span>
+                  <input
+                    type="date"
+                    value={rangeTo}
+                    onChange={(e) => setRangeTo(e.target.value)}
+                    className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
+                  />
+                </label>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* ─── Formulario nueva entrada ────────────────────────────────────── */}
@@ -231,12 +516,17 @@ export default function BitacoraPage() {
         {/* ─── Lista de entradas ───────────────────────────────────────────── */}
         <div>
           {/* Cabecera de sección */}
-          <div className="flex items-center justify-between mb-5">
-            <p
-              className="font-jetbrains text-[11px] tracking-[1.8px] uppercase rs-text-muted"
-            >
-              Mis Registros
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-5">
+            <div>
+              <p
+                className="font-jetbrains text-[11px] tracking-[1.8px] uppercase rs-text-muted"
+              >
+                Mis Registros
+              </p>
+              <p className="font-jetbrains text-[11px] rs-text-caption mt-1">
+                {filterSummary}
+              </p>
+            </div>
             {!isLoadingEntries && (
               <span
                 className="font-jetbrains text-[11px] tracking-[1px] uppercase rs-text-caption"
@@ -261,7 +551,9 @@ export default function BitacoraPage() {
               <p
                 className="font-jetbrains text-[13px] rs-text-caption"
               >
-                Aún no hay entradas. ¡Escribe tu primera nota!
+                {hasActiveFilter
+                  ? "No hay entradas para este filtro. Prueba otra fecha o vuelve a recientes."
+                  : "Aún no hay entradas. ¡Escribe tu primera nota!"}
               </p>
             </div>
           )}

@@ -4,6 +4,17 @@
 
 import { apiRequest } from './client';
 
+export interface TrackingLogFilters {
+  year?: number;
+  month?: number;
+  day?: number;
+  from?: string;
+  to?: string;
+  userId?: string;
+  page?: number;
+  limit?: number;
+}
+
 // ─── Tipos de petición ───────────────────────────────────────────────────────
 
 /**
@@ -28,12 +39,17 @@ export interface CreateDailyLogPayload {
 export interface DailyLogResponse {
   id: string;
   userId: string;
-  logDate: string;      // 'YYYY-MM-DD'
+  logDate: string;
   consumed: boolean;
-  triggers: string;
-  notes: string;
+  triggers?: string;
+  notes?: string;
   cravingLevel?: { level: number; label: string };
   emotionalState?: { level: number; label: string };
+  cravingLevelId?: string;
+  emotionalStateId?: string;
+  createdAt?: string;
+  log_date?: string;
+  created_at?: string;
 }
 
 export interface TrackingStatisticsResponse {
@@ -63,13 +79,42 @@ export const createLog = (data: CreateDailyLogPayload): Promise<DailyLogResponse
     }),
   });
 
+function appendParam(params: URLSearchParams, key: string, value: unknown) {
+  if (value === undefined || value === null || value === '') return;
+  params.set(key, String(value));
+}
+
+function buildLogsPath(filters: TrackingLogFilters = {}): string {
+  const params = new URLSearchParams();
+
+  appendParam(params, 'year', filters.year);
+  appendParam(params, 'month', filters.month);
+  appendParam(params, 'day', filters.day);
+  appendParam(params, 'from', filters.from);
+  appendParam(params, 'to', filters.to);
+  appendParam(params, 'userId', filters.userId);
+  appendParam(params, 'page', filters.page);
+  appendParam(params, 'limit', filters.limit);
+
+  const query = params.toString();
+  return query ? `/tracking/logs?${query}` : '/tracking/logs';
+}
+
 /**
  * Obtiene los últimos registros del usuario autenticado.
- * @param page Página (1-based). Default 1.
- * @param limit Cantidad de registros por página. Default 30.
  */
-export const getLogs = (limit = 30, page = 1): Promise<DailyLogResponse[]> =>
-  apiRequest<DailyLogResponse[]>(`/tracking/logs?page=${page}&limit=${limit}`);
+export function getLogs(limit?: number, page?: number): Promise<DailyLogResponse[]>;
+export function getLogs(filters?: TrackingLogFilters): Promise<DailyLogResponse[]>;
+export function getLogs(
+  arg1: number | TrackingLogFilters = 30,
+  arg2 = 1
+): Promise<DailyLogResponse[]> {
+  if (typeof arg1 === 'number') {
+    return apiRequest<DailyLogResponse[]>(buildLogsPath({ limit: arg1, page: arg2 }));
+  }
+
+  return apiRequest<DailyLogResponse[]>(buildLogsPath(arg1));
+}
 
 /** Devuelve las estadísticas consolidadas del usuario autenticado. */
 export const getStatistics = (): Promise<TrackingStatisticsResponse> =>
