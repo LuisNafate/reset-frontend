@@ -512,8 +512,8 @@ export default function RegisterPage() {
                 {/* Indicadores visuales de requisitos de contraseña */}
                 {form.password.length > 0 && (
                   <div className="flex flex-col gap-1 mt-1">
-                    <p className="text-[11px] tracking-wide flex items-center gap-1" style={{ fontFamily: "'JetBrains Mono', monospace", color: form.password.length >= 6 ? '#22c55e' : '#f87171' }}>
-                      {form.password.length >= 6 ? '✓' : '✗'} Al menos 6 caracteres
+                    <p className="text-[11px] tracking-wide flex items-center gap-1" style={{ fontFamily: "'JetBrains Mono', monospace", color: form.password.length >= 8 ? '#22c55e' : '#f87171' }}>
+                      {form.password.length >= 8 ? '✓' : '✗'} Al menos 8 caracteres
                     </p>
                     <p className="text-[11px] tracking-wide flex items-center gap-1" style={{ fontFamily: "'JetBrains Mono', monospace", color: (/[a-zA-Z]/.test(form.password) && /[0-9]/.test(form.password)) ? '#22c55e' : '#f87171' }}>
                       {(/[a-zA-Z]/.test(form.password) && /[0-9]/.test(form.password)) ? '✓' : '✗'} Alfanumérica (letras y números)

@@ -49,8 +49,8 @@ export function useRegister() {
       setError('Elige una contraseña.');
       return;
     }
-    if (form.password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres.');
+    if (form.password.length < 8) {
+      setError('La contraseña debe tener al menos 8 caracteres.');
       return;
     }
     const hasLetter = /[a-zA-Z]/.test(form.password);
@@ -73,8 +73,8 @@ export function useRegister() {
       setError("Completa todos los campos de cuenta.");
       return;
     }
-    if (form.password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres.');
+    if (form.password.length < 8) {
+      setError('La contraseña debe tener al menos 8 caracteres.');
       return;
     }
     const hasLetter = /[a-zA-Z]/.test(form.password);
