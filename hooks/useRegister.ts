@@ -53,6 +53,13 @@ export function useRegister() {
       setError('La contraseña debe tener al menos 6 caracteres.');
       return;
     }
+    const hasLetter = /[a-zA-Z]/.test(form.password);
+    const hasNumber = /[0-9]/.test(form.password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>\-_]/.test(form.password);
+    if (!hasLetter || !hasNumber || !hasSpecial) {
+      setError('La contraseña debe ser alfanumérica y contener un carácter especial.');
+      return;
+    }
     if (form.password !== form.confirmPassword) {
       setError('Las contraseñas no coinciden.');
       return;
@@ -64,6 +71,21 @@ export function useRegister() {
   const handleSubmit = async () => {
     if (!form.name || !form.email || !form.password) {
       setError("Completa todos los campos de cuenta.");
+      return;
+    }
+    if (form.password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+    const hasLetter = /[a-zA-Z]/.test(form.password);
+    const hasNumber = /[0-9]/.test(form.password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>\-_]/.test(form.password);
+    if (!hasLetter || !hasNumber || !hasSpecial) {
+      setError('La contraseña debe ser alfanumérica y contener un carácter especial.');
+      return;
+    }
+    if (form.password !== form.confirmPassword) {
+      setError('Las contraseñas no coinciden.');
       return;
     }
     if (role === "user") {

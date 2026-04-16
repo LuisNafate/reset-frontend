@@ -34,7 +34,7 @@ export function middleware(request: NextRequest) {
 
   // Rutas que requieren autenticación
   const isProtectedRoute = pathname.startsWith('/dashboard') || pathname.startsWith('/acompanante');
-  
+
   // Rutas que NO deben ser accesibles si ya estás logueado (opcional)
   const isAuthRoute = pathname === '/login' || pathname === '/register';
 
