@@ -130,6 +130,7 @@ export default function BitacoraPage() {
 
   const entry = selectedEntry;
   const hasActiveFilter = filterMode !== "recent";
+  const visibleEntries = filterMode === "recent" ? entries.slice(0, 5) : entries;
 
   return (
     <>
@@ -341,9 +342,199 @@ export default function BitacoraPage() {
               <span
                 className="font-jetbrains text-[11px] tracking-[1px] uppercase rs-text-caption"
               >
-                {entries.length} {entries.length === 1 ? "entrada" : "entradas"}
+                {visibleEntries.length} {visibleEntries.length === 1 ? "entrada" : "entradas"}
               </span>
             )}
+          </div>
+
+          {/* ─── Filtros de historial ─────────────────────────────────────── */}
+          <div
+            className="bg-(--surface-card) border border-(--ui-border) rounded-sm overflow-hidden mb-6"
+            style={{ boxShadow: "0px 4px 20px -8px rgba(0,0,0,0.16)" }}
+          >
+            <div className="px-6 pt-6 pb-4 border-b border-(--ui-border) flex items-center justify-between gap-3">
+              <div>
+                <p className="font-jetbrains text-[11px] tracking-[1.8px] uppercase rs-text-muted">
+                  Consulta del Historial
+                </p>
+                <p className="font-jetbrains text-[12px] rs-text-caption mt-1">
+                  {filterSummary}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFilterMode("recent")}
+                className="font-jetbrains text-[10px] uppercase tracking-[1.6px] px-3 py-2 rounded-sm border border-(--ui-border) rs-text-caption hover:border-slate-300 hover:text-slate-700 transition-colors"
+              >
+                Ver recientes
+              </button>
+            </div>
+
+            <div className="p-6 space-y-5">
+              <div className="flex flex-wrap gap-2">
+                {([
+                  ["recent", "Recientes"],
+                  ["month", "Mes"],
+                  ["day", "Día"],
+                  ["range", "Rango"],
+                ] as const).map(([mode, label]) => {
+                  const isActive = filterMode === mode;
+                  return (
+                    <button
+                      key={mode}
+                      type="button"
+                      onClick={() => setFilterMode(mode)}
+                      className="font-jetbrains text-[10px] uppercase tracking-[1.6px] px-3.5 py-2 rounded-full border transition-colors"
+                      style={{
+                        borderColor: isActive ? "var(--ui-border)" : "var(--ui-border-subtle)",
+                        backgroundColor: isActive ? "rgba(59,130,246,0.08)" : "transparent",
+                        color: isActive ? "#1d4ed8" : "var(--ui-text-caption)",
+                      }}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {filterMode === "recent" && (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-sm border border-dashed border-(--ui-border) px-4 py-3">
+                    <p className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted mb-1">
+                      Vista rápida
+                    </p>
+                    <p className="font-jetbrains text-[12px] rs-text-caption">
+                      Se muestran tus últimos 5 registros.
+                    </p>
+                  </div>
+                  <div className="rounded-sm border border-dashed border-(--ui-border) px-4 py-3">
+                    <p className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted mb-1">
+                      Consejo
+                    </p>
+                    <p className="font-jetbrains text-[12px] rs-text-caption">
+                      Usa mes o día para navegar rápido por el calendario.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {filterMode === "month" && (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label className="flex flex-col gap-2">
+                    <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
+                      Año
+                    </span>
+                    <select
+                      value={filterYear}
+                      onChange={(e) => setFilterYear(Number(e.target.value))}
+                      className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
+                    >
+                      {yearOptions.map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="flex flex-col gap-2">
+                    <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
+                      Mes
+                    </span>
+                    <select
+                      value={filterMonth}
+                      onChange={(e) => setFilterMonth(Number(e.target.value))}
+                      className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
+                    >
+                      {MONTH_LABELS.map((label, index) => (
+                        <option key={label} value={index + 1}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+              )}
+
+              {filterMode === "day" && (
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <label className="flex flex-col gap-2">
+                    <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
+                      Año
+                    </span>
+                    <select
+                      value={filterYear}
+                      onChange={(e) => setFilterYear(Number(e.target.value))}
+                      className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
+                    >
+                      {yearOptions.map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="flex flex-col gap-2">
+                    <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
+                      Mes
+                    </span>
+                    <select
+                      value={filterMonth}
+                      onChange={(e) => setFilterMonth(Number(e.target.value))}
+                      className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
+                    >
+                      {MONTH_LABELS.map((label, index) => (
+                        <option key={label} value={index + 1}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="flex flex-col gap-2">
+                    <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
+                      Día
+                    </span>
+                    <select
+                      value={filterDay}
+                      onChange={(e) => setFilterDay(Number(e.target.value))}
+                      className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
+                    >
+                      {Array.from({ length: daysInSelectedMonth }, (_, index) => index + 1).map((day) => (
+                        <option key={day} value={day}>
+                          {day}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+              )}
+
+              {filterMode === "range" && (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label className="flex flex-col gap-2">
+                    <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
+                      Desde
+                    </span>
+                    <input
+                      type="date"
+                      value={rangeFrom}
+                      onChange={(e) => setRangeFrom(e.target.value)}
+                      className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-2">
+                    <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
+                      Hasta
+                    </span>
+                    <input
+                      type="date"
+                      value={rangeTo}
+                      onChange={(e) => setRangeTo(e.target.value)}
+                      className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
+                    />
+                  </label>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Estado de carga */}
@@ -370,7 +561,7 @@ export default function BitacoraPage() {
 
           {/* Tarjetas de entradas */}
           <div className="flex flex-col gap-3">
-            {entries.map((entry) => {
+            {visibleEntries.map((entry) => {
               const { date, time } = formatDate(entry.createdAt);
               const colors = MOOD_COLORS[entry.mood as MoodId];
               const entryMoodLabel = getMoodDisplayLabel(entry.mood as MoodId);
@@ -457,196 +648,6 @@ export default function BitacoraPage() {
                 </div>
               );
             })}
-          </div>
-        </div>
-
-        {/* ─── Filtros de historial ─────────────────────────────────────── */}
-        <div
-          className="bg-(--surface-card) border border-(--ui-border) rounded-sm overflow-hidden mt-10"
-          style={{ boxShadow: "0px 4px 20px -8px rgba(0,0,0,0.16)" }}
-        >
-          <div className="px-6 pt-6 pb-4 border-b border-(--ui-border) flex items-center justify-between gap-3">
-            <div>
-              <p className="font-jetbrains text-[11px] tracking-[1.8px] uppercase rs-text-muted">
-                Consulta del Historial
-              </p>
-              <p className="font-jetbrains text-[12px] rs-text-caption mt-1">
-                {filterSummary}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setFilterMode("recent")}
-              className="font-jetbrains text-[10px] uppercase tracking-[1.6px] px-3 py-2 rounded-sm border border-(--ui-border) rs-text-caption hover:border-slate-300 hover:text-slate-700 transition-colors"
-            >
-              Ver recientes
-            </button>
-          </div>
-
-          <div className="p-6 space-y-5">
-            <div className="flex flex-wrap gap-2">
-              {([
-                ["recent", "Recientes"],
-                ["month", "Mes"],
-                ["day", "Día"],
-                ["range", "Rango"],
-              ] as const).map(([mode, label]) => {
-                const isActive = filterMode === mode;
-                return (
-                  <button
-                    key={mode}
-                    type="button"
-                    onClick={() => setFilterMode(mode)}
-                    className="font-jetbrains text-[10px] uppercase tracking-[1.6px] px-3.5 py-2 rounded-full border transition-colors"
-                    style={{
-                      borderColor: isActive ? "var(--ui-border)" : "var(--ui-border-subtle)",
-                      backgroundColor: isActive ? "rgba(59,130,246,0.08)" : "transparent",
-                      color: isActive ? "#1d4ed8" : "var(--ui-text-caption)",
-                    }}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-
-            {filterMode === "recent" && (
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-sm border border-dashed border-(--ui-border) px-4 py-3">
-                  <p className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted mb-1">
-                    Vista rápida
-                  </p>
-                  <p className="font-jetbrains text-[12px] rs-text-caption">
-                    Se muestran tus últimos 5 registros.
-                  </p>
-                </div>
-                <div className="rounded-sm border border-dashed border-(--ui-border) px-4 py-3">
-                  <p className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted mb-1">
-                    Consejo
-                  </p>
-                  <p className="font-jetbrains text-[12px] rs-text-caption">
-                    Usa mes o día para navegar rápido por el calendario.
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {filterMode === "month" && (
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="flex flex-col gap-2">
-                  <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
-                    Año
-                  </span>
-                  <select
-                    value={filterYear}
-                    onChange={(e) => setFilterYear(Number(e.target.value))}
-                    className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
-                  >
-                    {yearOptions.map((year) => (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="flex flex-col gap-2">
-                  <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
-                    Mes
-                  </span>
-                  <select
-                    value={filterMonth}
-                    onChange={(e) => setFilterMonth(Number(e.target.value))}
-                    className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
-                  >
-                    {MONTH_LABELS.map((label, index) => (
-                      <option key={label} value={index + 1}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-            )}
-
-            {filterMode === "day" && (
-              <div className="grid gap-4 sm:grid-cols-3">
-                <label className="flex flex-col gap-2">
-                  <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
-                    Año
-                  </span>
-                  <select
-                    value={filterYear}
-                    onChange={(e) => setFilterYear(Number(e.target.value))}
-                    className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
-                  >
-                    {yearOptions.map((year) => (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="flex flex-col gap-2">
-                  <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
-                    Mes
-                  </span>
-                  <select
-                    value={filterMonth}
-                    onChange={(e) => setFilterMonth(Number(e.target.value))}
-                    className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
-                  >
-                    {MONTH_LABELS.map((label, index) => (
-                      <option key={label} value={index + 1}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="flex flex-col gap-2">
-                  <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
-                    Día
-                  </span>
-                  <select
-                    value={filterDay}
-                    onChange={(e) => setFilterDay(Number(e.target.value))}
-                    className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
-                  >
-                    {Array.from({ length: daysInSelectedMonth }, (_, index) => index + 1).map((day) => (
-                      <option key={day} value={day}>
-                        {day}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-            )}
-
-            {filterMode === "range" && (
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="flex flex-col gap-2">
-                  <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
-                    Desde
-                  </span>
-                  <input
-                    type="date"
-                    value={rangeFrom}
-                    onChange={(e) => setRangeFrom(e.target.value)}
-                    className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
-                  />
-                </label>
-                <label className="flex flex-col gap-2">
-                  <span className="font-jetbrains text-[10px] uppercase tracking-[1.4px] rs-text-muted">
-                    Hasta
-                  </span>
-                  <input
-                    type="date"
-                    value={rangeTo}
-                    onChange={(e) => setRangeTo(e.target.value)}
-                    className="font-jetbrains h-11 rounded-lg border border-(--ui-border) bg-(--surface-input) px-4 text-[13px] outline-none focus:border-sky-300"
-                  />
-                </label>
-              </div>
-            )}
           </div>
         </div>
 
