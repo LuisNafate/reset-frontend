@@ -51,12 +51,14 @@ function buildFilterSummary(
 }
 
 export default function BitacoraPage() {
+  const ENTRIES_PER_PAGE = 5;
   const [filterMode, setFilterMode] = React.useState<FilterMode>("recent");
   const [filterYear, setFilterYear] = React.useState(() => new Date().getFullYear());
   const [filterMonth, setFilterMonth] = React.useState(() => new Date().getMonth() + 1);
   const [filterDay, setFilterDay] = React.useState(() => new Date().getDate());
   const [rangeFrom, setRangeFrom] = React.useState(() => toDateInputValue(new Date(new Date().getFullYear(), new Date().getMonth(), 1)));
   const [rangeTo, setRangeTo] = React.useState(() => toDateInputValue(new Date()));
+  const [currentPage, setCurrentPage] = React.useState(1);
 
   const normalizedRange =
     rangeFrom && rangeTo && rangeFrom > rangeTo
@@ -130,7 +132,21 @@ export default function BitacoraPage() {
 
   const entry = selectedEntry;
   const hasActiveFilter = filterMode !== "recent";
-  const visibleEntries = filterMode === "recent" ? entries.slice(0, 5) : entries;
+  const totalPages = Math.max(1, Math.ceil(entries.length / ENTRIES_PER_PAGE));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const pageStart = (safeCurrentPage - 1) * ENTRIES_PER_PAGE;
+  const pageEnd = pageStart + ENTRIES_PER_PAGE;
+  const visibleEntries = entries.slice(pageStart, pageEnd);
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [filterMode, filterYear, filterMonth, filterDay, normalizedRange.from, normalizedRange.to]);
+
+  React.useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   return (
     <>
@@ -649,6 +665,51 @@ export default function BitacoraPage() {
               );
             })}
           </div>
+
+          {!isLoadingEntries && entries.length > ENTRIES_PER_PAGE && (
+            <div className="mt-6 flex items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                disabled={safeCurrentPage === 1}
+                className="font-jetbrains h-9 min-w-9 px-3 rounded-sm border border-(--ui-border) rs-text-caption disabled:opacity-40 disabled:cursor-not-allowed hover:border-slate-300 transition-colors"
+                aria-label="Página anterior"
+              >
+                ←
+              </button>
+
+              {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => {
+                const isActive = pageNumber === safeCurrentPage;
+                return (
+                  <button
+                    key={pageNumber}
+                    type="button"
+                    onClick={() => setCurrentPage(pageNumber)}
+                    className="font-jetbrains h-9 min-w-9 px-3 rounded-sm border text-[11px] tracking-[1px] transition-colors"
+                    style={{
+                      borderColor: isActive ? "#2563eb" : "var(--ui-border)",
+                      color: isActive ? "#1d4ed8" : "var(--ui-text-caption)",
+                      backgroundColor: isActive ? "rgba(37,99,235,0.08)" : "transparent",
+                    }}
+                    aria-label={`Ir a página ${pageNumber}`}
+                    aria-current={isActive ? "page" : undefined}
+                  >
+                    {pageNumber}
+                  </button>
+                );
+              })}
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                disabled={safeCurrentPage === totalPages}
+                className="font-jetbrains h-9 min-w-9 px-3 rounded-sm border border-(--ui-border) rs-text-caption disabled:opacity-40 disabled:cursor-not-allowed hover:border-slate-300 transition-colors"
+                aria-label="Página siguiente"
+              >
+                →
+              </button>
+            </div>
+          )}
         </div>
 
       </div>

@@ -13,7 +13,7 @@ import type { JournalEntry, MoodId } from "@/types";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-const DEFAULT_RECENT_LIMIT = 5;
+const DEFAULT_RECENT_LIMIT = 30;
 
 const NUMBER_TO_MOOD: Array<[number, MoodId]> = [
   [9, "feliz"],
