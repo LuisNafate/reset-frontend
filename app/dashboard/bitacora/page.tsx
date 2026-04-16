@@ -35,6 +35,25 @@ function getDaysInMonth(year: number, month: number): number {
   return new Date(year, month, 0).getDate();
 }
 
+function toUtcStartOfDayIso(year: number, month: number, day: number): string {
+  return new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0)).toISOString();
+}
+
+function toUtcEndOfDayIso(year: number, month: number, day: number): string {
+  return new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999)).toISOString();
+}
+
+function parseYmd(dateValue: string): { year: number; month: number; day: number } | null {
+  const match = dateValue.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return null;
+
+  return {
+    year: Number(match[1]),
+    month: Number(match[2]),
+    day: Number(match[3]),
+  };
+}
+
 function buildFilterSummary(
   mode: FilterMode,
   year: number,
@@ -65,14 +84,49 @@ export default function BitacoraPage() {
       ? { from: rangeTo, to: rangeFrom }
       : { from: rangeFrom, to: rangeTo };
 
-  const activeFilters: TrackingLogFilters =
-    filterMode === "month"
-      ? { year: filterYear, month: filterMonth }
-      : filterMode === "day"
-        ? { year: filterYear, month: filterMonth, day: filterDay }
-        : filterMode === "range"
-          ? normalizedRange
-          : {};
+  const activeFilters: TrackingLogFilters = React.useMemo(() => {
+    if (filterMode === "month") {
+      const monthLastDay = getDaysInMonth(filterYear, filterMonth);
+      return {
+        year: filterYear,
+        month: filterMonth,
+        from: toUtcStartOfDayIso(filterYear, filterMonth, 1),
+        to: toUtcEndOfDayIso(filterYear, filterMonth, monthLastDay),
+      };
+    }
+
+    if (filterMode === "day") {
+      return {
+        year: filterYear,
+        month: filterMonth,
+        day: filterDay,
+        from: toUtcStartOfDayIso(filterYear, filterMonth, filterDay),
+        to: toUtcEndOfDayIso(filterYear, filterMonth, filterDay),
+      };
+    }
+
+    if (filterMode === "range") {
+      const fromParts = parseYmd(normalizedRange.from);
+      const toParts = parseYmd(normalizedRange.to);
+      return {
+        from: fromParts
+          ? toUtcStartOfDayIso(fromParts.year, fromParts.month, fromParts.day)
+          : normalizedRange.from,
+        to: toParts
+          ? toUtcEndOfDayIso(toParts.year, toParts.month, toParts.day)
+          : normalizedRange.to,
+      };
+    }
+
+    return {};
+  }, [
+    filterMode,
+    filterYear,
+    filterMonth,
+    filterDay,
+    normalizedRange.from,
+    normalizedRange.to,
+  ]);
 
   const daysInSelectedMonth = getDaysInMonth(filterYear, filterMonth);
 
