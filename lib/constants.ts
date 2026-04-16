@@ -1,12 +1,12 @@
 import type { AddictionType, Mood } from "@/types";
 
 export const ADDICTION_TYPES: AddictionType[] = [
-  { id: "alcohol", label: "Alcohol" },
-  { id: "drogas", label: "Drogas" },
-  { id: "apuestas", label: "Apuestas" },
-  { id: "videojuegos", label: "Videojuegos" },
-  { id: "celular", label: "Celular" },
-  { id: "sexo", label: "Sexo" },
+  { id: "alcohol", label: "Alcohol", classification: "Sustancias" },
+  { id: "drogas", label: "Drogas", classification: "Sustancias" },
+  { id: "apuestas", label: "Apuestas", classification: "Conductual" },
+  { id: "videojuegos", label: "Videojuegos", classification: "Conductual" },
+  { id: "celular", label: "Celular", classification: "Conductual" },
+  { id: "sexo", label: "Sexo", classification: "Conductual" },
   { id: "otros", label: "Otros" },
 ];
 

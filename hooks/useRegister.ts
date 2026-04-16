@@ -105,19 +105,26 @@ export function useRegister() {
     setIsLoading(true);
     setError(null);
     try {
-      // Determinar el nombre legible de la adicción para el backend
+      // Determinar el nombre legible y la clasificación para el backend
+      const selectedType = ADDICTION_TYPES.find((a) => a.id === selectedAddiction);
+      
       const addictionLabel =
         selectedAddiction === "otros"
           ? otherDescription.trim()
-          : ADDICTION_TYPES.find((a) => a.id === selectedAddiction)?.label ?? selectedAddiction;
+          : selectedType?.label ?? selectedAddiction;
 
-      // Mapear clasificación al formato del contrato
-      const classificationLabel =
-        addictionClassification === "conductual"
-          ? "Conductual"
-          : addictionClassification === "sustancia"
-          ? "Sustancias"
-          : undefined;
+      // Si es "otros", usamos la clasificación elegida interactivamente.
+      // Si es estándar, la tomamos de la constante ADDICTION_TYPES.
+      let classificationLabel = selectedType?.classification;
+      
+      if (selectedAddiction === "otros") {
+        classificationLabel =
+          addictionClassification === "conductual"
+            ? "Conductual"
+            : addictionClassification === "sustancia"
+            ? "Sustancias"
+            : undefined;
+      }
 
       await register({
         name: form.name,

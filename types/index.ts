@@ -74,6 +74,7 @@ export type AddictionTypeId =
 export interface AddictionType {
   id: AddictionTypeId;
   label: string;
+  classification?: "Sustancias" | "Conductual";
 }
 
 // ─── Journal / Bitácora ──────────────────────────────────────────────────────
