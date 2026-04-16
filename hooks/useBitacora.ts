@@ -55,6 +55,56 @@ function getEmotionLevel(raw: DailyLogResponse): number {
   return 5;
 }
 
+function parseYmdFromDate(rawDate?: string): { year: number; month: number; day: number } | null {
+  if (!rawDate) return null;
+
+  const match = rawDate.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (match) {
+    return {
+      year: Number(match[1]),
+      month: Number(match[2]),
+      day: Number(match[3]),
+    };
+  }
+
+  const parsed = new Date(rawDate);
+  if (Number.isNaN(parsed.getTime())) return null;
+
+  return {
+    year: parsed.getUTCFullYear(),
+    month: parsed.getUTCMonth() + 1,
+    day: parsed.getUTCDate(),
+  };
+}
+
+function applyClientSideFilters(data: DailyLogResponse[], filters: TrackingLogFilters): DailyLogResponse[] {
+  const { year, month, day, from, to } = filters;
+
+  if (year !== undefined || month !== undefined || day !== undefined) {
+    return data.filter((item) => {
+      const sourceDate = item.logDate ?? item.log_date ?? item.createdAt ?? item.created_at;
+      const ymd = parseYmdFromDate(sourceDate);
+      if (!ymd) return false;
+      if (year !== undefined && ymd.year !== year) return false;
+      if (month !== undefined && ymd.month !== month) return false;
+      if (day !== undefined && ymd.day !== day) return false;
+      return true;
+    });
+  }
+
+  if (from || to) {
+    const fromTime = from ? new Date(from).getTime() : Number.NEGATIVE_INFINITY;
+    const toTime = to ? new Date(to).getTime() : Number.POSITIVE_INFINITY;
+    return data.filter((item) => {
+      const sourceDate = item.logDate ?? item.log_date ?? item.createdAt ?? item.created_at;
+      const valueTime = sourceDate ? new Date(sourceDate).getTime() : Number.NaN;
+      return Number.isFinite(valueTime) && valueTime >= fromTime && valueTime <= toTime;
+    });
+  }
+
+  return data;
+}
+
 /** Convierte un registro diario de la API al formato JournalEntry del UI. */
 function normalizeEntry(raw: DailyLogResponse): JournalEntry {
   const timestamp = getTimestamp(raw);
@@ -112,9 +162,13 @@ export function useBitacora(filters: TrackingLogFilters = {}) {
           : await getLogs(DEFAULT_RECENT_LIMIT);
         if (cancelled) return;
 
+        const filteredData = Array.isArray(data)
+          ? applyClientSideFilters(data, { year, month, day, from, to })
+          : [];
+
         setEntries(
-          Array.isArray(data)
-            ? data
+          filteredData
+            ? filteredData
                 .map(normalizeEntry)
                 .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
             : []
@@ -154,9 +208,14 @@ export function useBitacora(filters: TrackingLogFilters = {}) {
       const refreshed = hasActiveTrackingFilters
         ? await getLogs({ year, month, day, from, to, userId, page, limit })
         : await getLogs(DEFAULT_RECENT_LIMIT);
+
+      const filteredRefreshed = Array.isArray(refreshed)
+        ? applyClientSideFilters(refreshed, { year, month, day, from, to })
+        : [];
+
       setEntries(
-        Array.isArray(refreshed)
-          ? refreshed.map(normalizeEntry).sort(
+        filteredRefreshed
+          ? filteredRefreshed.map(normalizeEntry).sort(
               (a, b) =>
                 new Date(b.createdAt).getTime() -
                 new Date(a.createdAt).getTime()
